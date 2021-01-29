@@ -6,30 +6,34 @@ class EnvironmentVariables {
   PORT: number;
 
   @IsString()
-  DB_POSTGRES_HOST: string;
+  TYPEORM_HOST: string;
 
   @IsNumber()
-  DB_POSTGRES_PORT: number;
+  TYPEORM_PORT: number;
 
   @IsString()
-  DB_POSTGRES_USER: string;
+  TYPEORM_USERNAME: string;
 
   @IsString()
-  DB_POSTGRES_PASSWORD: string;
+  TYPEORM_PASSWORD: string;
 
   @IsString()
-  DB_POSTGRES_DB: string;
+  TYPEORM_DATABASE: string;
+
+  @IsString()
+  TYPEORM_MIGRATIONS: string;
 }
 
 export default () => {
   const config = {
     PORT: parseInt(process.env.PORT, 10) || 3000,
 
-    DB_POSTGRES_HOST: process.env.DB_POSTGRES_HOST,
-    DB_POSTGRES_PORT: parseInt(process.env.DB_POSTGRES_PORT),
-    DB_POSTGRES_USER: process.env.DB_POSTGRES_USER,
-    DB_POSTGRES_PASSWORD: process.env.DB_POSTGRES_PASSWORD || '',
-    DB_POSTGRES_DB: process.env.DB_POSTGRES_DB,
+    TYPEORM_HOST: process.env.TYPEORM_HOST,
+    TYPEORM_PORT: parseInt(process.env.TYPEORM_PORT),
+    TYPEORM_USERNAME: process.env.TYPEORM_USERNAME,
+    TYPEORM_PASSWORD: process.env.TYPEORM_PASSWORD || '',
+    TYPEORM_DATABASE: process.env.TYPEORM_DATABASE,
+    TYPEORM_MIGRATIONS: process.env.TYPEORM_MIGRATIONS,
   };
   const validatedConfig = plainToClass(EnvironmentVariables, config, {
     enableImplicitConversion: true,
