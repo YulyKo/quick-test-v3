@@ -1,0 +1,20 @@
+
+version: '3'
+services:
+  pg:
+    container_name: pg
+    image: postgres:11.5-alpine
+    volumes:
+      - temp:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+  redis:
+    container_name: redis
+    image: redis:alpine
+    volumes:
+      - temp:/var/lib/redis/data
+    ports:
+      - 6379:6379
+volumes:
+  temp:
+    driver: local
