@@ -1,6 +1,9 @@
 import { plainToClass } from 'class-transformer';
 import { IsNumber, IsString, validateSync } from 'class-validator';
+import * as dotenv from 'dotenv';
+import { constants } from './constants';
 
+dotenv.config();
 class EnvironmentVariables {
   @IsNumber()
   PORT: number;
@@ -22,9 +25,12 @@ class EnvironmentVariables {
 
   @IsString()
   TYPEORM_MIGRATIONS: string;
+
+  @IsString()
+  JWT_SECRET: string;
 }
 
-export default () => {
+const validation = () => {
   const config = {
     PORT: parseInt(process.env.PORT, 10) || 3000,
 
@@ -34,6 +40,8 @@ export default () => {
     TYPEORM_PASSWORD: process.env.TYPEORM_PASSWORD || '',
     TYPEORM_DATABASE: process.env.TYPEORM_DATABASE,
     TYPEORM_MIGRATIONS: process.env.TYPEORM_MIGRATIONS,
+
+    JWT_SECRET: process.env.JWT_SECRET,
   };
   const validatedConfig = plainToClass(EnvironmentVariables, config, {
     enableImplicitConversion: true,
@@ -46,4 +54,9 @@ export default () => {
     throw new Error(errors.toString());
   }
   return validatedConfig;
+};
+
+export const config = {
+  constants,
+  env: validation(),
 };
