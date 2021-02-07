@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { UserService } from '../user/user.service';
 import { LoginDto } from './dto/loginDto';
 import { RegistrationDto } from './dto/registrationDto';
+import { CheckEmailDto } from './dto/emailDto';
 
 @Injectable()
 export class AuthService {
@@ -12,6 +13,18 @@ export class AuthService {
     private userService: UserService,
     private jwtService: JwtService,
   ) {}
+
+  public async checkEmail(params: CheckEmailDto) {
+    const isFree: boolean = await this.userService.isFreeEmail(params.email);
+    if (isFree) {
+      return true;
+    } else {
+      throw new HttpException(
+        'this email has already existed',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
 
   public async registration(credentials: RegistrationDto) {
     const hash = await bcrypt.hash(credentials.password, 10);

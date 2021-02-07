@@ -1,8 +1,17 @@
-import { Controller, Post, ValidationPipe, Body } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  ValidationPipe,
+  Body,
+  Head,
+  Param,
+  Get,
+} from '@nestjs/common';
 
 import { AuthService } from './auth.service';
 import { RegistrationDto } from './dto/registrationDto';
 import { LoginDto } from './dto/loginDto';
+import { CheckEmailDto } from './dto/emailDto';
 import { Public } from './auth.decorator';
 
 @Public()
@@ -18,5 +27,10 @@ export class AuthController {
   @Post('registration')
   async registration(@Body(ValidationPipe) credentials: RegistrationDto) {
     return this.authService.registration(credentials);
+  }
+
+  @Get('email/:email')
+  async checkEmail(@Param(ValidationPipe) params: CheckEmailDto) {
+    return this.authService.checkEmail(params);
   }
 }

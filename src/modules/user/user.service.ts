@@ -3,14 +3,22 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/createUserDto';
 
-import { User } from './user.entity';
+import { Users } from './user.entity';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @InjectRepository(Users)
+    private userRepository: Repository<Users>,
   ) {}
+
+  async isFreeEmail(email: string) {
+    const userWhithEmail = await this.userRepository.find({ email });
+    if (userWhithEmail.length) {
+      return false;
+    }
+    return true;
+  }
 
   async create(userData: CreateUserDto) {
     const newUser = await this.userRepository.create(userData);
