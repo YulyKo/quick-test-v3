@@ -15,7 +15,7 @@ export class UserTable1611932277003 implements MigrationInterface {
             generationStrategy: 'uuid',
           },
           {
-            name: 'e-mail',
+            name: 'email',
             type: 'varchar',
             length: '255',
             isNullable: false,
