@@ -5,7 +5,6 @@ import {
   Body,
   Head,
   Param,
-  Get,
 } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
@@ -29,7 +28,7 @@ export class AuthController {
     return this.authService.registration(credentials);
   }
 
-  @Get('email/:email')
+  @Head('email/:email')
   async checkEmail(@Param(ValidationPipe) params: CheckEmailDto) {
     return this.authService.checkEmail(params);
   }
