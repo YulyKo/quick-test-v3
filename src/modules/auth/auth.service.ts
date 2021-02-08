@@ -5,7 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { UserService } from '../user/user.service';
 import { LoginDto } from './dto/loginDto';
 import { RegistrationDto } from './dto/registrationDto';
-import { CheckEmailDto } from './dto/emailDto';
+import { EmailDto } from './dto/emailDto';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +14,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  public async checkEmail(params: CheckEmailDto) {
+  public async checkEmail(params: EmailDto) {
     const isFree: boolean = await this.userService.isFreeEmail(params.email);
     if (isFree) {
       return true;
