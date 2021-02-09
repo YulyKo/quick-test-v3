@@ -1,4 +1,14 @@
-import { BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeUpdate,
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+
+import { Answers } from './answers.entity';
+import { Users } from '../../user/entities/user.entity';
 
 export enum QuestionTemplate {
   BOOLEAN = 'boolean',
@@ -46,4 +56,10 @@ export class Questions {
     this.created = new Date();
     this.updated = new Date();
   }
+
+  @OneToMany(() => Answers, (answer) => answer.questions)
+  answers: Answers[];
+
+  @ManyToOne(() => Users, (user) => user.questions)
+  user: Users;
 }

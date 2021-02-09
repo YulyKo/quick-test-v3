@@ -3,24 +3,48 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
-import { Questions } from './question.entity';
+import { Questions } from './entities/question.entity';
+import { Answers } from './entities/answers.entity';
+import { Users } from '../user/entities/user.entity';
 
 @Injectable()
 export class QuestionService {
   constructor(
     @InjectRepository(Questions)
     private questionRepository: Repository<Questions>,
+
+    @InjectRepository(Answers)
+    private answersRepository: Repository<Answers>,
+
+    @InjectRepository(Users)
+    private userRepository: Repository<Users>,
   ) {}
 
-  async create(createQuestionDto: CreateQuestionDto) {
+  async create(user_id: string, createQuestionDto: CreateQuestionDto) {
     try {
-      const question = await this.questionRepository.create(createQuestionDto);
+      const user = await this.userRepository.findOne({
+        id: user_id,
+      });
+
+      // answer records
+      const answers = await this.answersRepository.create(
+        createQuestionDto.answers,
+      );
+      await this.answersRepository.save(answers);
+
+      // question record
+      const question = await this.questionRepository.create({
+        ...createQuestionDto,
+        answers,
+        user,
+      });
       await this.questionRepository.save(question);
+
       return {
         message: 'question successfully created',
         id: question.id,
-        // created: question.created,
-        // updated: question.updated,
+        created: question.created.getTime(),
+        updated: question.updated.getTime(),
       };
     } catch (error) {
       throw new HttpException(
@@ -30,8 +54,25 @@ export class QuestionService {
     }
   }
 
-  findAll() {
-    return `This action returns all question`;
+  async findAll(user_id: string) {
+    try {
+      const user = await this.userRepository.findOne({
+        id: user_id,
+      });
+
+      const questions = await this.questionRepository.find({
+        where: {
+          user,
+        },
+        relations: ['answers'],
+      });
+      return questions;
+    } catch (error) {
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   findOne(id: number) {

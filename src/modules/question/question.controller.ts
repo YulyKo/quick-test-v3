@@ -11,19 +11,20 @@ import {
 import { QuestionService } from './question.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
+import { GetUser } from '../auth/get-user.decorator';
 
 @Controller('question')
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
   @Post()
-  create(@Body() createQuestionDto: CreateQuestionDto) {
-    return this.questionService.create(createQuestionDto);
+  create(@GetUser() user, @Body() createQuestionDto: CreateQuestionDto) {
+    return this.questionService.create(user.id, createQuestionDto);
   }
 
   @Get()
-  findAll() {
-    return this.questionService.findAll();
+  findAll(@GetUser() user) {
+    return this.questionService.findAll(user.id);
   }
 
   @Get(':id')
