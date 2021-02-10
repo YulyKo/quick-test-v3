@@ -6,9 +6,16 @@ import { UserModule } from './modules/user/user.module';
 import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
 import { AuthModule } from './modules/auth/auth.module';
 import { QuestionModule } from './modules/question/question.module';
+import { AnswersModule } from './modules/answers/answers.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(), UserModule, AuthModule, QuestionModule],
+  imports: [
+    TypeOrmModule.forRoot(),
+    UserModule,
+    AuthModule,
+    QuestionModule,
+    AnswersModule,
+  ],
   providers: [
     {
       provide: APP_GUARD,

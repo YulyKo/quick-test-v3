@@ -8,7 +8,7 @@ const SWAGGER = new DocumentBuilder()
 
 export const constants = {
   JWT: {
-    expiresIn: '60m',
+    expiresIn: '720m',
     publicKey: 'isPublic',
   },
   SWAGGER,

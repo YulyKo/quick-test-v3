@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { QuestionService } from './question.service';
 import { QuestionController } from './question.controller';
 import { Questions } from './entities/question.entity';
-import { Answers } from './entities/answers.entity';
+import { Answers } from '../answers/entities/answers.entity';
 import { Users } from '../user/entities/user.entity';
 
 @Module({

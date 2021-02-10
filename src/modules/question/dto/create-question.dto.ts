@@ -5,8 +5,6 @@ import {
   QuestionTemplate,
 } from '../entities/question.entity';
 
-import { CreateAnswerDto } from './create-answer.dto';
-
 export class CreateQuestionDto {
   @ApiProperty()
   name: string;
@@ -22,7 +20,4 @@ export class CreateQuestionDto {
 
   @ApiProperty()
   answer_type: QuestionAnswerType;
-
-  @ApiProperty()
-  answers: CreateAnswerDto[];
 }

@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { Answers } from './answers.entity';
+import { Answers } from '../../answers/entities/answers.entity';
 import { Users } from '../../user/entities/user.entity';
 
 export enum QuestionTemplate {
@@ -53,7 +53,6 @@ export class Questions {
 
   @BeforeUpdate()
   updateTimestamp() {
-    this.created = new Date();
     this.updated = new Date();
   }
 

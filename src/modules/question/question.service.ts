@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { Questions } from './entities/question.entity';
-import { Answers } from './entities/answers.entity';
+import { Answers } from '../answers/entities/answers.entity';
 import { Users } from '../user/entities/user.entity';
 
 @Injectable()
@@ -26,16 +26,9 @@ export class QuestionService {
         id: user_id,
       });
 
-      // answer records
-      const answers = await this.answersRepository.create(
-        createQuestionDto.answers,
-      );
-      await this.answersRepository.save(answers);
-
       // question record
       const question = await this.questionRepository.create({
         ...createQuestionDto,
-        answers,
         user,
       });
       await this.questionRepository.save(question);
@@ -75,12 +68,62 @@ export class QuestionService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} question`;
+  async findOne(user_id: string, id: string) {
+    try {
+      const user = await this.userRepository.findOne({
+        id: user_id,
+      });
+
+      const question = await this.questionRepository.find({
+        where: {
+          id,
+          user,
+        },
+        relations: ['answers'],
+      });
+      return question;
+    } catch (error) {
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
-  update(id: number, updateQuestionDto: UpdateQuestionDto) {
-    return `This action updates a #${id} question`;
+  async update(
+    user_id: string,
+    id: string,
+    updateQuestionDto: UpdateQuestionDto,
+  ) {
+    try {
+      const user = await this.userRepository.findOne({
+        id: user_id,
+      });
+
+      const question = await this.questionRepository.findOne({
+        id,
+        user,
+      });
+
+      if (!question)
+        throw new HttpException(
+          'user does not have question with this id',
+          HttpStatus.BAD_REQUEST,
+        );
+
+      await this.questionRepository.save({ ...updateQuestionDto, id });
+      return {
+        message: 'question successfully updated',
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   remove(id: number) {

@@ -28,16 +28,17 @@ export class QuestionController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.questionService.findOne(+id);
+  findOne(@GetUser() user, @Param('id') id: string) {
+    return this.questionService.findOne(user.id, id);
   }
 
   @Put(':id')
   update(
+    @GetUser() user,
     @Param('id') id: string,
     @Body() updateQuestionDto: UpdateQuestionDto,
   ) {
-    return this.questionService.update(+id, updateQuestionDto);
+    return this.questionService.update(user.id, id, updateQuestionDto);
   }
 
   @Delete(':id')
