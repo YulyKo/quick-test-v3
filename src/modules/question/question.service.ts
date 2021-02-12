@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { Questions } from './entities/question.entity';
-import { Answers } from '../answers/entities/answers.entity';
 import { QuestionError } from './question.error';
 
 @Injectable()
@@ -12,9 +11,6 @@ export class QuestionService {
   constructor(
     @InjectRepository(Questions)
     private questionRepository: Repository<Questions>,
-
-    @InjectRepository(Answers)
-    private answersRepository: Repository<Answers>,
   ) {}
 
   async create(user_id: string, createQuestionDto: CreateQuestionDto) {
