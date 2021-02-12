@@ -1,11 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { Questions } from './entities/question.entity';
 import { Answers } from '../answers/entities/answers.entity';
-import { Users } from '../user/entities/user.entity';
+import { QuestionError } from './question.error';
 
 @Injectable()
 export class QuestionService {
@@ -15,78 +15,59 @@ export class QuestionService {
 
     @InjectRepository(Answers)
     private answersRepository: Repository<Answers>,
-
-    @InjectRepository(Users)
-    private userRepository: Repository<Users>,
   ) {}
 
   async create(user_id: string, createQuestionDto: CreateQuestionDto) {
     try {
-      const user = await this.userRepository.findOne({
-        id: user_id,
-      });
-
       // question record
       const question = await this.questionRepository.create({
         ...createQuestionDto,
-        user,
+        user: {
+          id: user_id,
+        },
       });
       await this.questionRepository.save(question);
 
-      return {
-        message: 'question successfully created',
-        id: question.id,
-        created: question.created.getTime(),
-        updated: question.updated.getTime(),
-      };
+      return question;
     } catch (error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw error;
     }
   }
 
   async findAll(user_id: string) {
     try {
-      const user = await this.userRepository.findOne({
-        id: user_id,
-      });
-
       const questions = await this.questionRepository.find({
         where: {
-          user,
+          user: {
+            id: user_id,
+          },
         },
         relations: ['answers'],
       });
       return questions;
     } catch (error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw error;
     }
   }
 
   async findOne(user_id: string, id: string) {
     try {
-      const user = await this.userRepository.findOne({
-        id: user_id,
-      });
-
-      const question = await this.questionRepository.find({
+      const question = await this.questionRepository.findOne({
         where: {
           id,
-          user,
+          user: {
+            id: user_id,
+          },
         },
         relations: ['answers'],
       });
+
+      if (!question)
+        throw new QuestionError('user does not have question with this id');
+
       return question;
     } catch (error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw error;
     }
   }
 
@@ -96,37 +77,24 @@ export class QuestionService {
     updateQuestionDto: UpdateQuestionDto,
   ) {
     try {
-      const user = await this.userRepository.findOne({
-        id: user_id,
-      });
-
-      const question = await this.questionRepository.findOne({
-        id,
-        user,
-      });
-
-      if (!question)
-        throw new HttpException(
-          'user does not have question with this id',
-          HttpStatus.BAD_REQUEST,
-        );
-
-      await this.questionRepository.save({ ...updateQuestionDto, id });
-      return {
-        message: 'question successfully updated',
-      };
+      const question = await this.findOne(user_id, id);
+      const updatedQuestion = { ...question, ...updateQuestionDto };
+      await this.questionRepository.save(updatedQuestion);
+      return updatedQuestion;
     } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw error;
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} question`;
+  async remove(user_id: string, id: string) {
+    try {
+      const question = await this.findOne(user_id, id);
+      await this.questionRepository.softDelete({ id: question.id });
+      return {
+        id,
+      };
+    } catch (error) {
+      throw error;
+    }
   }
 }

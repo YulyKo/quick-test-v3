@@ -1,6 +1,9 @@
 import {
   BeforeUpdate,
   Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
@@ -45,11 +48,14 @@ export class Questions {
   })
   public answer_type: QuestionAnswerType;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   created: Date;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @UpdateDateColumn()
   updated: Date;
+
+  @DeleteDateColumn()
+  deleted?: Date;
 
   @BeforeUpdate()
   updateTimestamp() {

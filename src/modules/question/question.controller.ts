@@ -6,43 +6,44 @@ import {
   Put,
   Param,
   Delete,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 
-import { QuestionService } from './question.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { GetUser } from '../auth/get-user.decorator';
+import { QuestionHttpService } from './question.http.service';
 
 @Controller('question')
 export class QuestionController {
-  constructor(private readonly questionService: QuestionService) {}
+  constructor(private readonly questionHttpService: QuestionHttpService) {}
 
   @Post()
   create(@GetUser() user, @Body() createQuestionDto: CreateQuestionDto) {
-    return this.questionService.create(user.id, createQuestionDto);
+    return this.questionHttpService.create(user.id, createQuestionDto);
   }
 
   @Get()
   findAll(@GetUser() user) {
-    return this.questionService.findAll(user.id);
+    return this.questionHttpService.findAll(user.id);
   }
 
   @Get(':id')
-  findOne(@GetUser() user, @Param('id') id: string) {
-    return this.questionService.findOne(user.id, id);
+  findOne(@GetUser() user, @Param('id', new ParseUUIDPipe()) id: string) {
+    return this.questionHttpService.findOne(user.id, id);
   }
 
   @Put(':id')
   update(
     @GetUser() user,
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateQuestionDto: UpdateQuestionDto,
   ) {
-    return this.questionService.update(user.id, id, updateQuestionDto);
+    return this.questionHttpService.update(user.id, id, updateQuestionDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.questionService.remove(+id);
+  remove(@GetUser() user, @Param('id', new ParseUUIDPipe()) id: string) {
+    return this.questionHttpService.deleteOne(user.id, id);
   }
 }
