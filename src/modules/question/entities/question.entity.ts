@@ -62,8 +62,8 @@ export class Questions {
     this.updated = new Date();
   }
 
-  @OneToMany(() => Answers, (answer) => answer.questions)
-  answers: Answers[];
+  @OneToMany(() => Answers, (answer) => answer.question)
+  answers: Answers;
 
   @ManyToOne(() => Users, (user) => user.questions)
   user: Users;

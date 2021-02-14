@@ -40,7 +40,6 @@ export class QuestionHttpService {
 
   async findOne(user_id: string, id: string) {
     try {
-      console.log('find one');
       const question = await this.questionService.findOne(user_id, id);
       return question;
     } catch (error) {

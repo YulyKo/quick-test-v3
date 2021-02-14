@@ -16,6 +16,6 @@ export class Users {
   @Column()
   public hash: string;
 
-  @OneToMany(() => Questions, (question) => question.user)
+  @OneToMany(() => Questions, (question) => question.user, { cascade: true })
   questions: Questions[];
 }

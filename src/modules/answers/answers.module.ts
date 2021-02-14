@@ -3,13 +3,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AnswersController } from './answers.controller';
 import { AnswersService } from './answers.service';
-import { Questions } from '../question/entities/question.entity';
+import { AnswersHttpService } from './answers.http.service';
 import { Answers } from './entities/answers.entity';
-import { Users } from '../user/entities/user.entity';
+import { QuestionModule } from '../question/question.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Questions, Answers, Users])],
+  imports: [TypeOrmModule.forFeature([Answers]), QuestionModule],
   controllers: [AnswersController],
-  providers: [AnswersService],
+  providers: [AnswersHttpService, AnswersService],
 })
 export class AnswersModule {}
