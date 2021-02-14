@@ -7,7 +7,6 @@ import {
   Param,
   HttpStatus,
 } from '@nestjs/common';
-
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';

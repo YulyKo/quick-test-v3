@@ -8,11 +8,6 @@ import {
   Delete,
   ParseUUIDPipe,
 } from '@nestjs/common';
-
-import { CreateQuestionDto } from './dto/create-question.dto';
-import { UpdateQuestionDto } from './dto/update-question.dto';
-import { GetUser } from '../auth/get-user.decorator';
-import { QuestionHttpService } from './question.http.service';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -20,6 +15,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { HttpStatus } from '@nestjs/common';
+
+import { CreateQuestionDto } from './dto/create-question.dto';
+import { UpdateQuestionDto } from './dto/update-question.dto';
+import { GetUser } from '../auth/get-user.decorator';
+import { QuestionHttpService } from './question.http.service';
 
 @ApiTags('questions')
 @ApiBearerAuth()
