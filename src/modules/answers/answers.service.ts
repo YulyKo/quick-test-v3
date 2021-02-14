@@ -22,7 +22,7 @@ export class AnswersService {
     createAnswerDto: CreateAnswerDto,
   ) {
     try {
-      const question = await this.questionService.findOne(user_id, question_id);
+      const question = await this.questionService.getById(user_id, question_id);
       const answer = await this.answersRepository.create({
         ...createAnswerDto,
         question,
@@ -37,7 +37,7 @@ export class AnswersService {
 
   async getAll(user_id: string, question_id: string) {
     try {
-      const question = await this.questionService.findOne(user_id, question_id);
+      const question = await this.questionService.getById(user_id, question_id);
       const answers = await this.answersRepository.find({
         where: {
           question,
@@ -51,7 +51,7 @@ export class AnswersService {
 
   async getById(user_id: string, question_id: string, id: string) {
     try {
-      const question = await this.questionService.findOne(user_id, question_id);
+      const question = await this.questionService.getById(user_id, question_id);
       const answer = await this.answersRepository.findOne({
         where: {
           question,

@@ -30,7 +30,7 @@ export class QuestionService {
     }
   }
 
-  async findAll(user_id: string) {
+  async getAll(user_id: string) {
     try {
       const questions = await this.questionRepository.find({
         where: {
@@ -46,7 +46,7 @@ export class QuestionService {
     }
   }
 
-  async findOne(user_id: string, id: string) {
+  async getById(user_id: string, id: string) {
     try {
       const question = await this.questionRepository.findOne({
         where: {
@@ -73,7 +73,7 @@ export class QuestionService {
     updateQuestionDto: UpdateQuestionDto,
   ) {
     try {
-      const question = await this.findOne(user_id, id);
+      const question = await this.getById(user_id, id);
       const updatedQuestion = { ...question, ...updateQuestionDto };
       await this.questionRepository.save(updatedQuestion);
       return updatedQuestion;
@@ -84,7 +84,7 @@ export class QuestionService {
 
   async remove(user_id: string, id: string) {
     try {
-      const question = await this.findOne(user_id, id);
+      const question = await this.getById(user_id, id);
       await this.questionRepository.softDelete({ id: question.id });
       return {
         id,

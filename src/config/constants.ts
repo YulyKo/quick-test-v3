@@ -1,6 +1,7 @@
 import { DocumentBuilder } from '@nestjs/swagger';
 
 const SWAGGER = new DocumentBuilder()
+  .addBearerAuth()
   .setTitle('quick test')
   .setDescription('The API v3')
   .setVersion('1.0')

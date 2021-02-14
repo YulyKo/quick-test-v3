@@ -26,9 +26,9 @@ export class QuestionHttpService {
     }
   }
 
-  async findAll(user_id: string) {
+  async getAll(user_id: string) {
     try {
-      const questions = await this.questionService.findAll(user_id);
+      const questions = await this.questionService.getAll(user_id);
       return questions;
     } catch (error) {
       throw new HttpException(
@@ -38,9 +38,9 @@ export class QuestionHttpService {
     }
   }
 
-  async findOne(user_id: string, id: string) {
+  async getById(user_id: string, id: string) {
     try {
-      const question = await this.questionService.findOne(user_id, id);
+      const question = await this.questionService.getById(user_id, id);
       return question;
     } catch (error) {
       if (error instanceof QuestionError)
@@ -80,7 +80,7 @@ export class QuestionHttpService {
     }
   }
 
-  async deleteOne(user_id: string, id: string) {
+  async deleteById(user_id: string, id: string) {
     try {
       const question = await this.questionService.remove(user_id, id);
       return {
