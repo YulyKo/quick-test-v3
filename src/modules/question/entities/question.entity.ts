@@ -69,6 +69,6 @@ export class Questions {
   @ManyToOne(() => Users, (user) => user.questions)
   user: Users;
 
-  @ManyToOne(() => Users, (user) => user.questions)
+  @ManyToOne(() => Folders, (folder) => folder.questions)
   folder: Folders;
 }

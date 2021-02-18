@@ -44,8 +44,8 @@ export class Folders {
   @OneToMany(() => Folders, (folder) => folder.parent)
   children: Folders[];
 
-  @OneToMany(() => Questions, (question) => question.id)
-  questions: Questions;
+  @OneToMany(() => Questions, (question) => question.folder)
+  questions: Questions[];
 
   @ManyToOne(() => Users, (user) => user.folders)
   user: Users;

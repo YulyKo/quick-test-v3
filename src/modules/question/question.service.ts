@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { FoldersService } from '../folders/folders.service';
 
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
@@ -10,6 +11,8 @@ import { QuestionError } from './question.error';
 @Injectable()
 export class QuestionService {
   constructor(
+    private readonly folderService: FoldersService,
+
     @InjectRepository(Questions)
     private questionRepository: Repository<Questions>,
   ) {}
@@ -17,12 +20,19 @@ export class QuestionService {
   async create(user_id: string, createQuestionDto: CreateQuestionDto) {
     try {
       // question record
-      const question = await this.questionRepository.create({
+      const question = this.questionRepository.create({
         ...createQuestionDto,
         user: {
           id: user_id,
         },
+        folder: createQuestionDto.folder_id
+          ? await this.folderService.getById(
+              user_id,
+              createQuestionDto.folder_id,
+            )
+          : null,
       });
+
       await this.questionRepository.save(question);
 
       return question;

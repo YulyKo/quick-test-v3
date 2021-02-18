@@ -37,9 +37,9 @@ export class FoldersHttpService {
     }
   }
 
-  async get(user_id: string) {
+  async getAll(user_id: string) {
     try {
-      const folders = await this.foldersService.getFromMain(user_id);
+      const folders = await this.foldersService.getAll(user_id);
       return folders;
     } catch (error) {
       if (error instanceof FoldersError)
@@ -54,8 +54,8 @@ export class FoldersHttpService {
 
   async getById(user_id: string, id: string) {
     try {
-      const folders = await this.foldersService.getFromParent(user_id, id);
-      return folders;
+      const files = await this.foldersService.getById(user_id, id);
+      return files;
     } catch (error) {
       if (error instanceof FoldersError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);

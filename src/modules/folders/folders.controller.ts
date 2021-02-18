@@ -103,7 +103,7 @@ export class FoldersController {
   })
   @Get()
   getAll(@GetUser() user) {
-    return this.filesHttpService.get(user.id);
+    return this.filesHttpService.getAll(user.id);
   }
 
   @ApiOperation({ summary: 'get all files from specific folder this user' })

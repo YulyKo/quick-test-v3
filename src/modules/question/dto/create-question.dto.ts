@@ -23,4 +23,7 @@ export class CreateQuestionDto {
 
   @ApiProperty()
   answer_type: QuestionAnswerType;
+
+  @ApiProperty()
+  folder_id?: string;
 }

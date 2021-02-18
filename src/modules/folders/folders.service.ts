@@ -68,26 +68,12 @@ export class FoldersService {
     }
   }
 
-  async getFromMain(user_id: string) {
+  async getAll(user_id: string) {
     const folders = await this.folderRepository.find({
       where: {
         user: {
           id: user_id,
         },
-        parent: null,
-      },
-    });
-    return folders;
-  }
-
-  async getFromParent(user_id: string, id) {
-    const parent = await this.getParent(user_id, id);
-    const folders = await this.folderRepository.find({
-      where: {
-        user: {
-          id: user_id,
-        },
-        parent,
       },
     });
     return folders;

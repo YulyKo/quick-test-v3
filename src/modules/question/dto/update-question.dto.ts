@@ -20,4 +20,7 @@ export class UpdateQuestionDto {
 
   @ApiProperty()
   answer_type?: QuestionAnswerType;
+
+  @ApiProperty()
+  folder_id?: string;
 }
