@@ -16,6 +16,9 @@ export class CreateQuestionDto {
   time: number;
 
   @ApiProperty()
+  parent_id?: string;
+
+  @ApiProperty()
   template: QuestionTemplate;
 
   @ApiProperty()
