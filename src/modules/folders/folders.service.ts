@@ -13,16 +13,20 @@ export class FoldersService {
     private folderRepository: Repository<Folders>,
   ) {}
 
-  private async _create(
+  async create(
     user_id: string,
+    parent_id: string,
     createFolderDto: CreateFolderDto,
-    parent?: Folders,
   ) {
     const folder = this.folderRepository.create({
       ...createFolderDto,
       user: { id: user_id },
-      parent,
     });
+    if (user_id !== parent_id) {
+      folder.parent = await this.getParent(user_id, parent_id);
+    } else {
+      folder.id = user_id;
+    }
     await this.folderRepository.save(folder);
     return folder;
   }
@@ -43,29 +47,6 @@ export class FoldersService {
         `this user doesn't have parent with this parentId: ${parent_id}`,
       );
     return parent;
-  }
-
-  async createInParent(
-    user_id: string,
-    parent_id: string,
-    createFolderDto: CreateFolderDto,
-  ) {
-    try {
-      const parent = await this.getParent(user_id, parent_id);
-      const folder = await this._create(user_id, createFolderDto, parent);
-      return folder;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async createInMain(user_id: string, createFolderDto: CreateFolderDto) {
-    try {
-      const folder = await this._create(user_id, createFolderDto);
-      return folder;
-    } catch (error) {
-      throw error;
-    }
   }
 
   async getAll(user_id: string) {

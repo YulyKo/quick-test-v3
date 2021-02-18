@@ -14,13 +14,11 @@ export class FoldersHttpService {
     parent_id?: string,
   ) {
     try {
-      const folder = parent_id
-        ? await this.foldersService.createInParent(
-            user_id,
-            parent_id,
-            createFolderDto,
-          )
-        : await this.foldersService.createInMain(user_id, createFolderDto);
+      const folder = await this.foldersService.create(
+        user_id,
+        parent_id,
+        createFolderDto,
+      );
 
       return {
         message: 'folder successful created',
