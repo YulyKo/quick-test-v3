@@ -8,17 +8,9 @@ import { FoldersService } from './folders.service';
 export class FoldersHttpService {
   constructor(private readonly foldersService: FoldersService) {}
 
-  async create(
-    user_id: string,
-    createFolderDto: CreateFolderDto,
-    parent_id?: string,
-  ) {
+  async create(user_id: string, createFolderDto: CreateFolderDto) {
     try {
-      const folder = await this.foldersService.create(
-        user_id,
-        parent_id,
-        createFolderDto,
-      );
+      const folder = await this.foldersService.create(user_id, createFolderDto);
 
       return {
         message: 'folder successful created',

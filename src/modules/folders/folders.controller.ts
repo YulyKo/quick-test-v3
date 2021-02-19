@@ -44,27 +44,6 @@ export class FoldersController {
     return this.filesHttpService.create(user.id, createFolderDto);
   }
 
-  @ApiOperation({ summary: 'create folder in parent folder' })
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    schema: {
-      example: [
-        {
-          message: 'folder successful created',
-          id: 'uuid',
-        },
-      ],
-    },
-  })
-  @Post(':id')
-  createChild(
-    @GetUser() user,
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() createFolderDto: CreateFolderDto,
-  ) {
-    return this.filesHttpService.create(user.id, createFolderDto, id);
-  }
-
   @ApiOperation({ summary: 'update specific folder by id' })
   @ApiResponse({
     status: HttpStatus.OK,

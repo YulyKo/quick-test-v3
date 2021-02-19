@@ -9,9 +9,13 @@ export class FilesService {
     private readonly questionService: QuestionService,
   ) {}
 
-  async getFromMain(id: string) {
+  async getById(user_id: string, id: string) {
     // get folders
-    const files = await this.foldersService.getById(id, id);
+    const files = await this.foldersService.getAllById(user_id, id);
+    return {
+      folders: files.children,
+      question: files.questions,
+    };
     // get questions
   }
 }

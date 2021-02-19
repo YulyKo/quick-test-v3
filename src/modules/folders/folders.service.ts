@@ -15,38 +15,22 @@ export class FoldersService {
 
   async create(
     user_id: string,
-    parent_id: string,
     createFolderDto: CreateFolderDto,
+    isMainFolder?: boolean,
   ) {
     const folder = this.folderRepository.create({
       ...createFolderDto,
       user: { id: user_id },
     });
-    if (user_id !== parent_id) {
-      folder.parent = await this.getParent(user_id, parent_id);
-    } else {
+    if (isMainFolder) {
       folder.id = user_id;
+    } else {
+      folder.parent = createFolderDto.folder_id
+        ? await this.getById(user_id, createFolderDto.folder_id)
+        : await this.getById(user_id, user_id);
     }
     await this.folderRepository.save(folder);
     return folder;
-  }
-
-  async getParent(user_id: string, parent_id: string) {
-    const parent = await this.folderRepository.findOne({
-      where: {
-        id: parent_id,
-
-        user: {
-          id: user_id,
-        },
-      },
-    });
-
-    if (!parent)
-      throw new FoldersError(
-        `this user doesn't have parent with this parentId: ${parent_id}`,
-      );
-    return parent;
   }
 
   async getAll(user_id: string) {
@@ -74,6 +58,21 @@ export class FoldersService {
     return folder;
   }
 
+  async getAllById(user_id: string, id: string) {
+    const folder = await this.folderRepository.findOne({
+      where: {
+        user: {
+          id: user_id,
+        },
+        id,
+      },
+      relations: ['children', 'questions'],
+    });
+    if (!folder)
+      throw new FoldersError("user doesn't have folder with this id");
+    return folder;
+  }
+
   async updateById(
     user_id: string,
     id: string,
@@ -84,12 +83,10 @@ export class FoldersService {
     const newFolder = { ...folder, ...updateFolderDto };
 
     if (updateFolderDto.parent_id) {
-      if (updateFolderDto.parent_id === 'main') {
-        newFolder.parent = null;
-      } else {
-        const parent = await this.getById(user_id, updateFolderDto.parent_id);
-        newFolder.parent = parent;
-      }
+      newFolder.parent =
+        updateFolderDto.parent_id !== 'main'
+          ? await this.getById(user_id, updateFolderDto.parent_id)
+          : await this.getById(user_id, user_id);
     }
     await this.folderRepository.save(newFolder);
     return folder;

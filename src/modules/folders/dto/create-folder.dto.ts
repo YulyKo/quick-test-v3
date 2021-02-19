@@ -6,4 +6,7 @@ export class CreateFolderDto {
 
   @ApiProperty()
   color: string;
+
+  @ApiProperty()
+  folder_id?: string;
 }

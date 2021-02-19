@@ -36,10 +36,14 @@ export class AuthService {
         hash,
       });
       delete createdUser.hash;
-      await this.folderService.create(createdUser.id, createdUser.id, {
-        name: 'main',
-        color: '#ffffff',
-      });
+      await this.folderService.create(
+        createdUser.id,
+        {
+          name: 'main',
+          color: '#ffffff',
+        },
+        true,
+      );
       return createdUser;
     } catch (error) {
       throw new HttpException(

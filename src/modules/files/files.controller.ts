@@ -1,4 +1,10 @@
-import { Controller, Get, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { GetUser } from '../auth/get-user.decorator';
 import { FilesHttpService } from './files.http.service';
@@ -19,7 +25,23 @@ export class FilesController {
     },
   })
   @Get()
-  create(@GetUser() user) {
+  getFromMain(@GetUser() user) {
     return this.filesHttpService.getFromMain(user.id);
+  }
+
+  @ApiOperation({ summary: 'get all files from specific page' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    schema: {
+      example: {
+        id: 'uuid',
+        created: 'timestamptz',
+        message: 'question successfully created',
+      },
+    },
+  })
+  @Get(':id')
+  getFromFolder(@GetUser() user, @Param('id', new ParseUUIDPipe()) id: string) {
+    return this.filesHttpService.getFromFolder(user.id, id);
   }
 }

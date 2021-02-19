@@ -19,18 +19,17 @@ export class QuestionService {
 
   async create(user_id: string, createQuestionDto: CreateQuestionDto) {
     try {
+      const folder = await this.folderService.getById(
+        user_id,
+        createQuestionDto.folder_id || user_id,
+      );
       // question record
       const question = this.questionRepository.create({
         ...createQuestionDto,
         user: {
           id: user_id,
         },
-        folder: createQuestionDto.folder_id
-          ? await this.folderService.getById(
-              user_id,
-              createQuestionDto.folder_id,
-            )
-          : null,
+        folder,
       });
 
       await this.questionRepository.save(question);
@@ -83,14 +82,22 @@ export class QuestionService {
     id: string,
     updateQuestionDto: UpdateQuestionDto,
   ) {
-    try {
-      const question = await this.getById(user_id, id);
-      const updatedQuestion = { ...question, ...updateQuestionDto };
-      await this.questionRepository.save(updatedQuestion);
-      return updatedQuestion;
-    } catch (error) {
-      throw error;
+    const question = await this.getById(user_id, id);
+
+    const updatedQuestion = { ...question, ...updateQuestionDto };
+
+    if (updateQuestionDto.folder_id) {
+      const newParent = await this.folderService.getById(
+        user_id,
+        updateQuestionDto.folder_id !== 'main'
+          ? updateQuestionDto.folder_id
+          : user_id,
+      );
+      updatedQuestion.folder = newParent;
     }
+
+    await this.questionRepository.save(updatedQuestion);
+    return updatedQuestion;
   }
 
   async remove(user_id: string, id: string) {
