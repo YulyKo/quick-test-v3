@@ -42,14 +42,21 @@ export class QuestionService {
 
   async getAll(user_id: string) {
     try {
-      const questions = await this.questionRepository.find({
-        where: {
-          user: {
-            id: user_id,
-          },
-        },
-        relations: ['answers'],
-      });
+      const questions = await this.questionRepository
+        .createQueryBuilder('questions')
+        .where({ user: user_id })
+        .select([
+          'questions.id',
+          'questions.name',
+          'questions.text',
+          'questions.time',
+          'questions.created',
+          'questions.updated',
+          'folders.id',
+        ])
+        .leftJoinAndSelect('questions.folder', 'folders', '')
+        .getMany();
+
       return questions;
     } catch (error) {
       throw error;
