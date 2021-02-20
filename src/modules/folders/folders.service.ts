@@ -62,16 +62,22 @@ export class FoldersService {
     const folder = await this.folderRepository
       .createQueryBuilder('folders')
       .where({ user: user_id, id })
-      .leftJoinAndSelect(
-        'folders.children',
-        'children',
-        'children.deleted IS NULL',
-      )
-      .leftJoinAndSelect(
-        'folders.questions',
-        'questions',
-        'questions.deleted IS NULL',
-      )
+      .leftJoin('folders.children', 'children', 'children.deleted IS NULL')
+      .addSelect([
+        'children.id',
+        'children.name',
+        'children.color',
+        'children.created',
+        'children.updated',
+      ])
+      .leftJoin('folders.questions', 'questions', 'questions.deleted IS NULL')
+      .addSelect([
+        'questions.id',
+        'questions.name',
+        'questions.answer_type',
+        'questions.created',
+        'questions.updated',
+      ])
       .getOne();
     if (!folder)
       throw new FoldersError("user doesn't have folder with this id");
