@@ -52,9 +52,10 @@ export class QuestionService {
           'questions.time',
           'questions.created',
           'questions.updated',
-          'folders.id',
+          'folder.id',
         ])
-        .leftJoinAndSelect('questions.folder', 'folders', '')
+        .leftJoin('questions.folder', 'folder')
+        .leftJoinAndSelect('questions.answers', 'answers')
         .getMany();
 
       return questions;
@@ -65,15 +66,21 @@ export class QuestionService {
 
   async getById(user_id: string, id: string) {
     try {
-      const question = await this.questionRepository.findOne({
-        where: {
-          id,
-          user: {
-            id: user_id,
-          },
-        },
-        relations: ['answers'],
-      });
+      const question = await this.questionRepository
+        .createQueryBuilder('questions')
+        .where({ user: user_id, id })
+        .select([
+          'questions.id',
+          'questions.name',
+          'questions.text',
+          'questions.time',
+          'questions.created',
+          'questions.updated',
+          'folder.id',
+        ])
+        .leftJoin('questions.folder', 'folder')
+        .leftJoinAndSelect('questions.answers', 'answers')
+        .getOne();
 
       if (!question)
         throw new QuestionError('user does not have question with this id');

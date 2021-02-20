@@ -59,15 +59,20 @@ export class FoldersService {
   }
 
   async getAllById(user_id: string, id: string) {
-    const folder = await this.folderRepository.findOne({
-      where: {
-        user: {
-          id: user_id,
-        },
-        id,
-      },
-      relations: ['children', 'questions'],
-    });
+    const folder = await this.folderRepository
+      .createQueryBuilder('folders')
+      .where({ user: user_id, id })
+      .leftJoinAndSelect(
+        'folders.children',
+        'children',
+        'children.deleted IS NULL',
+      )
+      .leftJoinAndSelect(
+        'folders.questions',
+        'questions',
+        'questions.deleted IS NULL',
+      )
+      .getOne();
     if (!folder)
       throw new FoldersError("user doesn't have folder with this id");
     return folder;
