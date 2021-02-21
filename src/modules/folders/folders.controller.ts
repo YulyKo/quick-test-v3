@@ -27,7 +27,9 @@ import { FoldersHttpService } from './folders.http.service';
 export class FoldersController {
   constructor(private readonly filesHttpService: FoldersHttpService) {}
 
-  @ApiOperation({ summary: 'create folder in main folder' })
+  @ApiOperation({
+    summary: 'create folder in main folder, folder_id is optional',
+  })
   @ApiResponse({
     status: HttpStatus.CREATED,
     schema: {
@@ -65,17 +67,20 @@ export class FoldersController {
     return this.filesHttpService.update(user.id, id, updateFolderDto);
   }
 
-  @ApiOperation({ summary: 'get all files this user' })
+  @ApiOperation({ summary: 'get all folders this user' })
   @ApiResponse({
     status: HttpStatus.OK,
     schema: {
       example: [
         {
           id: 'uuid',
-          name: 'new folder 1',
-          color: '#f3f3f3',
+          name: 'string',
+          color: 'hex',
           created: 'timestamptz',
           updated: 'timestamptz',
+          parent: {
+            id: 'id parent uuid',
+          },
         },
       ],
     },
@@ -92,10 +97,13 @@ export class FoldersController {
       example: [
         {
           id: 'uuid',
-          name: 'new folder 1',
-          color: '#f3f3f3',
+          name: 'string',
+          color: 'hex',
           created: 'timestamptz',
           updated: 'timestamptz',
+          parent: {
+            id: 'id parent uuid',
+          },
         },
       ],
     },

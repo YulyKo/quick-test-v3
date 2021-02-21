@@ -5,10 +5,18 @@ import {
   Param,
   ParseUUIDPipe,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+
 import { GetUser } from '../auth/get-user.decorator';
 import { FilesHttpService } from './files.http.service';
 
+@ApiBearerAuth()
+@ApiTags('files')
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesHttpService: FilesHttpService) {}
@@ -18,9 +26,24 @@ export class FilesController {
     status: HttpStatus.OK,
     schema: {
       example: {
-        id: 'uuid',
-        created: 'timestamptz',
-        message: 'question successfully created',
+        folders: [
+          {
+            id: 'uuid',
+            name: 'text',
+            color: 'hex',
+            updated: 'timestamptz',
+            created: 'timestamptz',
+          },
+        ],
+        questions: [
+          {
+            id: 'uuid',
+            name: 'text',
+            answer_type: 'button|user_input',
+            created: 'timestamptz',
+            updated: 'timestamptz',
+          },
+        ],
       },
     },
   })
@@ -34,9 +57,24 @@ export class FilesController {
     status: HttpStatus.OK,
     schema: {
       example: {
-        id: 'uuid',
-        created: 'timestamptz',
-        message: 'question successfully created',
+        folders: [
+          {
+            id: 'uuid',
+            name: 'text',
+            color: 'hex',
+            updated: 'timestamptz',
+            created: 'timestamptz',
+          },
+        ],
+        questions: [
+          {
+            id: 'uuid',
+            name: 'text',
+            answer_type: 'button|user_input',
+            created: 'timestamptz',
+            updated: 'timestamptz',
+          },
+        ],
       },
     },
   })
