@@ -34,25 +34,37 @@ export class FoldersService {
   }
 
   async getAll(user_id: string) {
-    const folders = await this.folderRepository.find({
-      where: {
-        user: {
-          id: user_id,
-        },
-      },
-    });
+    const folders = await this.folderRepository
+      .createQueryBuilder('folders')
+      .where({ user: user_id })
+      .andWhere('folders.parent NOTNULL')
+      .select([
+        'folders.id',
+        'folders.name',
+        'folders.color',
+        'folders.created',
+        'folders.updated',
+      ])
+      .leftJoin('folders.parent', 'parent')
+      .addSelect(['parent.id'])
+      .getMany();
     return folders;
   }
 
   async getById(user_id: string, id: string) {
-    const folder = await this.folderRepository.findOne({
-      where: {
-        user: {
-          id: user_id,
-        },
-        id,
-      },
-    });
+    const folder = await this.folderRepository
+      .createQueryBuilder('folders')
+      .where({ user: user_id, id })
+      .select([
+        'folders.id',
+        'folders.name',
+        'folders.color',
+        'folders.created',
+        'folders.updated',
+      ])
+      .leftJoin('folders.parent', 'parent')
+      .addSelect(['parent.id'])
+      .getOne();
     if (!folder)
       throw new FoldersError("user doesn't have folder with this id");
     return folder;

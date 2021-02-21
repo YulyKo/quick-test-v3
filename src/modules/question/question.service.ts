@@ -76,9 +76,9 @@ export class QuestionService {
           'questions.time',
           'questions.created',
           'questions.updated',
-          'folder.id',
         ])
         .leftJoin('questions.folder', 'folder')
+        .addSelect(['folder.id'])
         .leftJoinAndSelect('questions.answers', 'answers')
         .getOne();
 
