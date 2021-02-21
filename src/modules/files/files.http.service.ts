@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { FoldersError } from '../folders/folders.error';
 import { FilesService } from './files.service';
 
 @Injectable()
@@ -11,7 +12,13 @@ export class FilesHttpService {
 
       return files;
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      if (error instanceof FoldersError)
+        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
   async getFromFolder(user_id: string, id: string) {
@@ -20,7 +27,13 @@ export class FilesHttpService {
 
       return files;
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      if (error instanceof FoldersError)
+        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

@@ -41,10 +41,14 @@ export class Folders {
   @ManyToOne(() => Folders, (folder) => folder.children)
   parent: Folders;
 
-  @OneToMany(() => Folders, (folder) => folder.parent)
+  @OneToMany(() => Folders, (folder) => folder.parent, {
+    cascade: true,
+  })
   children: Folders[];
 
-  @OneToMany(() => Questions, (question) => question.folder)
+  @OneToMany(() => Questions, (question) => question.folder, {
+    cascade: true,
+  })
   questions: Questions[];
 
   @ManyToOne(() => Users, (user) => user.folders)

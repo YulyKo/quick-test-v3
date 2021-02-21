@@ -18,77 +18,65 @@ export class QuestionService {
   ) {}
 
   async create(user_id: string, createQuestionDto: CreateQuestionDto) {
-    try {
-      const folder = await this.folderService.getById(
-        user_id,
-        createQuestionDto.folder_id || user_id,
-      );
-      // question record
-      const question = this.questionRepository.create({
-        ...createQuestionDto,
-        user: {
-          id: user_id,
-        },
-        folder,
-      });
+    const folder = await this.folderService.getById(
+      user_id,
+      createQuestionDto.folder_id || user_id,
+    );
+    // question record
+    const question = this.questionRepository.create({
+      ...createQuestionDto,
+      user: {
+        id: user_id,
+      },
+      folder,
+    });
 
-      await this.questionRepository.save(question);
+    await this.questionRepository.save(question);
 
-      return question;
-    } catch (error) {
-      throw error;
-    }
+    return question;
   }
 
   async getAll(user_id: string) {
-    try {
-      const questions = await this.questionRepository
-        .createQueryBuilder('questions')
-        .where({ user: user_id })
-        .select([
-          'questions.id',
-          'questions.name',
-          'questions.text',
-          'questions.time',
-          'questions.created',
-          'questions.updated',
-          'folder.id',
-        ])
-        .leftJoin('questions.folder', 'folder')
-        .leftJoinAndSelect('questions.answers', 'answers')
-        .getMany();
+    const questions = await this.questionRepository
+      .createQueryBuilder('questions')
+      .where({ user: user_id })
+      .select([
+        'questions.id',
+        'questions.name',
+        'questions.text',
+        'questions.time',
+        'questions.created',
+        'questions.updated',
+        'folder.id',
+      ])
+      .leftJoin('questions.folder', 'folder')
+      .leftJoinAndSelect('questions.answers', 'answers')
+      .getMany();
 
-      return questions;
-    } catch (error) {
-      throw error;
-    }
+    return questions;
   }
 
   async getById(user_id: string, id: string) {
-    try {
-      const question = await this.questionRepository
-        .createQueryBuilder('questions')
-        .where({ user: user_id, id })
-        .select([
-          'questions.id',
-          'questions.name',
-          'questions.text',
-          'questions.time',
-          'questions.created',
-          'questions.updated',
-        ])
-        .leftJoin('questions.folder', 'folder')
-        .addSelect(['folder.id'])
-        .leftJoinAndSelect('questions.answers', 'answers')
-        .getOne();
+    const question = await this.questionRepository
+      .createQueryBuilder('questions')
+      .where({ user: user_id, id })
+      .select([
+        'questions.id',
+        'questions.name',
+        'questions.text',
+        'questions.time',
+        'questions.created',
+        'questions.updated',
+      ])
+      .leftJoin('questions.folder', 'folder')
+      .addSelect(['folder.id'])
+      .leftJoinAndSelect('questions.answers', 'answers')
+      .getOne();
 
-      if (!question)
-        throw new QuestionError('user does not have question with this id');
+    if (!question)
+      throw new QuestionError('user does not have question with this id');
 
-      return question;
-    } catch (error) {
-      throw error;
-    }
+    return question;
   }
 
   async update(
@@ -115,14 +103,8 @@ export class QuestionService {
   }
 
   async remove(user_id: string, id: string) {
-    try {
-      const question = await this.getById(user_id, id);
-      await this.questionRepository.softDelete({ id: question.id });
-      return {
-        id,
-      };
-    } catch (error) {
-      throw error;
-    }
+    const question = await this.getById(user_id, id);
+    await this.questionRepository.softRemove(question);
+    return question;
   }
 }
