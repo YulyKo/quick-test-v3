@@ -36,6 +36,8 @@ export class Answers {
     this.updated = new Date();
   }
 
-  @ManyToOne(() => Questions, (question) => question.answers)
+  @ManyToOne(() => Questions, (question) => question.answers, {
+    onDelete: 'CASCADE',
+  })
   question: Questions;
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { FoldersService } from '../folders/folders.service';
 
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
@@ -10,62 +11,72 @@ import { QuestionError } from './question.error';
 @Injectable()
 export class QuestionService {
   constructor(
+    private readonly folderService: FoldersService,
+
     @InjectRepository(Questions)
     private questionRepository: Repository<Questions>,
   ) {}
 
   async create(user_id: string, createQuestionDto: CreateQuestionDto) {
-    try {
-      // question record
-      const question = await this.questionRepository.create({
-        ...createQuestionDto,
-        user: {
-          id: user_id,
-        },
-      });
-      await this.questionRepository.save(question);
+    const folder = await this.folderService.getById(
+      user_id,
+      createQuestionDto.folder_id || user_id,
+    );
+    // question record
+    const question = this.questionRepository.create({
+      ...createQuestionDto,
+      user: {
+        id: user_id,
+      },
+      folder,
+    });
 
-      return question;
-    } catch (error) {
-      throw error;
-    }
+    await this.questionRepository.save(question);
+
+    return question;
   }
 
   async getAll(user_id: string) {
-    try {
-      const questions = await this.questionRepository.find({
-        where: {
-          user: {
-            id: user_id,
-          },
-        },
-        relations: ['answers'],
-      });
-      return questions;
-    } catch (error) {
-      throw error;
-    }
+    const questions = await this.questionRepository
+      .createQueryBuilder('questions')
+      .where({ user: user_id })
+      .select([
+        'questions.id',
+        'questions.name',
+        'questions.text',
+        'questions.time',
+        'questions.created',
+        'questions.updated',
+        'folder.id',
+      ])
+      .leftJoin('questions.folder', 'folder')
+      .leftJoinAndSelect('questions.answers', 'answers')
+      .getMany();
+
+    return questions;
   }
 
   async getById(user_id: string, id: string) {
-    try {
-      const question = await this.questionRepository.findOne({
-        where: {
-          id,
-          user: {
-            id: user_id,
-          },
-        },
-        relations: ['answers'],
-      });
+    const question = await this.questionRepository
+      .createQueryBuilder('questions')
+      .where({ user: user_id, id })
+      .select([
+        'questions.id',
+        'questions.name',
+        'questions.text',
+        'questions.time',
+        'questions.created',
+        'questions.updated',
+      ])
+      .leftJoin('questions.folder', 'folder')
+      .addSelect(['folder.id'])
+      .leftJoinAndSelect('questions.answers', 'answers')
+      .getOne();
 
-      if (!question)
-        throw new QuestionError('user does not have question with this id');
+    if (!question)
+      throw new QuestionError('user does not have question with this id');
 
-      return question;
-    } catch (error) {
-      throw error;
-    }
+    return question;
   }
 
   async update(
@@ -73,25 +84,27 @@ export class QuestionService {
     id: string,
     updateQuestionDto: UpdateQuestionDto,
   ) {
-    try {
-      const question = await this.getById(user_id, id);
-      const updatedQuestion = { ...question, ...updateQuestionDto };
-      await this.questionRepository.save(updatedQuestion);
-      return updatedQuestion;
-    } catch (error) {
-      throw error;
+    const question = await this.getById(user_id, id);
+
+    const updatedQuestion = { ...question, ...updateQuestionDto };
+
+    if (updateQuestionDto.folder_id) {
+      const newParent = await this.folderService.getById(
+        user_id,
+        updateQuestionDto.folder_id !== 'main'
+          ? updateQuestionDto.folder_id
+          : user_id,
+      );
+      updatedQuestion.folder = newParent;
     }
+
+    await this.questionRepository.save(updatedQuestion);
+    return updatedQuestion;
   }
 
   async remove(user_id: string, id: string) {
-    try {
-      const question = await this.getById(user_id, id);
-      await this.questionRepository.softDelete({ id: question.id });
-      return {
-        id,
-      };
-    } catch (error) {
-      throw error;
-    }
+    const question = await this.getById(user_id, id);
+    await this.questionRepository.softRemove(question);
+    return question;
   }
 }

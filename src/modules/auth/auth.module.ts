@@ -7,11 +7,13 @@ import { AuthService } from './auth.service';
 import { UserModule } from '../user/user.module';
 import { JwtStrategy } from './jwt.strategy';
 import { config } from '../../config';
+import { FoldersModule } from '../folders/folders.module';
 
 @Module({
   imports: [
     UserModule,
     PassportModule,
+    FoldersModule,
     JwtModule.register({
       secret: config.env.JWT_SECRET,
       signOptions: { expiresIn: config.constants.JWT.expiresIn },

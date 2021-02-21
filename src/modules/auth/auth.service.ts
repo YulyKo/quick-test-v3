@@ -6,12 +6,14 @@ import { UserService } from '../user/user.service';
 import { LoginDto } from './dto/loginDto';
 import { RegistrationDto } from './dto/registrationDto';
 import { EmailDto } from './dto/emailDto';
+import { FoldersService } from '../folders/folders.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
+    private folderService: FoldersService,
   ) {}
 
   public async checkEmail(params: EmailDto) {
@@ -34,6 +36,14 @@ export class AuthService {
         hash,
       });
       delete createdUser.hash;
+      await this.folderService.create(
+        createdUser.id,
+        {
+          name: 'main',
+          color: '#ffffff',
+        },
+        true,
+      );
       return createdUser;
     } catch (error) {
       throw new HttpException(

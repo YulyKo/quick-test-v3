@@ -16,8 +16,14 @@ export class CreateQuestionDto {
   time: number;
 
   @ApiProperty()
+  parent_id?: string;
+
+  @ApiProperty()
   template: QuestionTemplate;
 
   @ApiProperty()
   answer_type: QuestionAnswerType;
+
+  @ApiProperty()
+  folder_id?: string;
 }

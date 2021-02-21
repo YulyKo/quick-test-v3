@@ -12,6 +12,7 @@ import {
 
 import { Answers } from '../../answers/entities/answers.entity';
 import { Users } from '../../user/entities/user.entity';
+import { Folders } from '../../folders/entities/folders.entity';
 
 export enum QuestionTemplate {
   BOOLEAN = 'boolean',
@@ -67,4 +68,7 @@ export class Questions {
 
   @ManyToOne(() => Users, (user) => user.questions)
   user: Users;
+
+  @ManyToOne(() => Folders, (folder) => folder.questions)
+  folder: Folders;
 }

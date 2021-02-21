@@ -7,6 +7,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { QuestionModule } from './modules/question/question.module';
 import { AnswersModule } from './modules/answers/answers.module';
 import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
+import { FoldersModule } from './modules/folders/folders.module';
+import { FilesModule } from './modules/files/files.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
     AuthModule,
     QuestionModule,
     AnswersModule,
+    FoldersModule,
+    FilesModule,
   ],
   providers: [
     {
