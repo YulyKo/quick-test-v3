@@ -1,12 +1,25 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
-import { DatabaseModule } from './database/database.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { UserModule } from './modules/user/user.module';
-import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
 import { AuthModule } from './modules/auth/auth.module';
+import { QuestionModule } from './modules/question/question.module';
+import { AnswersModule } from './modules/answers/answers.module';
+import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
+import { FoldersModule } from './modules/folders/folders.module';
+import { FilesModule } from './modules/files/files.module';
 
 @Module({
-  imports: [DatabaseModule, UserModule, AuthModule],
+  imports: [
+    TypeOrmModule.forRoot(),
+    UserModule,
+    AuthModule,
+    QuestionModule,
+    AnswersModule,
+    FoldersModule,
+    FilesModule,
+  ],
   providers: [
     {
       provide: APP_GUARD,

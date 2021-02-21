@@ -1,6 +1,7 @@
 import { DocumentBuilder } from '@nestjs/swagger';
 
 const SWAGGER = new DocumentBuilder()
+  .addBearerAuth()
   .setTitle('quick test')
   .setDescription('The API v3')
   .setVersion('1.0')
@@ -8,7 +9,7 @@ const SWAGGER = new DocumentBuilder()
 
 export const constants = {
   JWT: {
-    expiresIn: '60m',
+    expiresIn: '720m',
     publicKey: 'isPublic',
   },
   SWAGGER,

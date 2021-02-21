@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserDto } from './dto/createUserDto';
 
-import { Users } from './user.entity';
+import { CreateUserDto } from './dto/createUserDto';
+import { Users } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -13,8 +13,8 @@ export class UserService {
   ) {}
 
   async isFreeEmail(email: string) {
-    const userWhithEmail = await this.userRepository.find({ email });
-    if (userWhithEmail.length) {
+    const userWithEmail = await this.userRepository.find({ email });
+    if (userWithEmail.length) {
       return false;
     }
     return true;

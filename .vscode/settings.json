@@ -1,7 +1,9 @@
 {
     "cSpell.words": [
         "nestjs",
+        "ossp",
         "postgres",
-        "typeorm"
+        "typeorm",
+        "varchar"
     ]
 }

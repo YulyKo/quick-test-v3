@@ -27,6 +27,15 @@ class EnvironmentVariables {
   TYPEORM_MIGRATIONS: string;
 
   @IsString()
+  TYPEORM_MIGRATIONS_DIR: string;
+
+  @IsString()
+  TYPEORM_ENTITIES: string;
+
+  @IsString()
+  TYPEORM_SYNCHRONIZE: string;
+
+  @IsString()
   JWT_SECRET: string;
 }
 
@@ -39,7 +48,10 @@ const validation = () => {
     TYPEORM_USERNAME: process.env.TYPEORM_USERNAME,
     TYPEORM_PASSWORD: process.env.TYPEORM_PASSWORD || '',
     TYPEORM_DATABASE: process.env.TYPEORM_DATABASE,
+    TYPEORM_ENTITIES: process.env.TYPEORM_ENTITIES,
     TYPEORM_MIGRATIONS: process.env.TYPEORM_MIGRATIONS,
+    TYPEORM_MIGRATIONS_DIR: process.env.TYPEORM_MIGRATIONS_DIR,
+    TYPEORM_SYNCHRONIZE: process.env.TYPEORM_SYNCHRONIZE,
 
     JWT_SECRET: process.env.JWT_SECRET,
   };
