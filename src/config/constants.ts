@@ -26,4 +26,18 @@ export const constants = {
       color: '#ffffff',
     },
   },
+  question: {
+    name: {
+      min: 2,
+      max: 20,
+    },
+    text: {
+      min: 2,
+      max: 200,
+    },
+    time: {
+      min: 15,
+      max: 60,
+    },
+  },
 };
