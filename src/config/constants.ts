@@ -13,4 +13,17 @@ export const constants = {
     publicKey: 'isPublic',
   },
   SWAGGER,
+  auth: {
+    name: {
+      min: 2,
+      max: 20,
+    },
+    password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,20}$/,
+  },
+  default: {
+    folder: {
+      name: 'main',
+      color: '#ffffff',
+    },
+  },
 };
