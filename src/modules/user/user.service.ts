@@ -22,7 +22,7 @@ export class UserService {
   }
 
   async create(userData: CreateUserDto) {
-    const emailIsFree = await !this.isFreeEmail(userData.email);
+    const emailIsFree = await this.isFreeEmail(userData.email);
     if (!emailIsFree)
       throw new UserError('User with this email has already existed');
     const newUser = await this.userRepository.create(userData);
