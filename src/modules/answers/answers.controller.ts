@@ -3,18 +3,12 @@ import {
   Controller,
   Delete,
   Get,
-  HttpStatus,
   Param,
   ParseUUIDPipe,
   Post,
   Put,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { GetUser } from '../auth/get-user.decorator';
 import { AnswersHttpService } from './answers.http.service';
@@ -28,20 +22,6 @@ export class AnswersController {
   constructor(private readonly answerHttpService: AnswersHttpService) {}
 
   @ApiOperation({ summary: 'get all answers in question this user' })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    schema: {
-      example: [
-        {
-          id: 'uuid',
-          name: 'name answer',
-          is_true: 'boolean',
-          created: 'timestamptz',
-          updated: 'timestamptz',
-        },
-      ],
-    },
-  })
   @Get()
   findAll(
     @GetUser() user,
@@ -51,18 +31,6 @@ export class AnswersController {
   }
 
   @ApiOperation({ summary: 'get answer in question this user' })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    schema: {
-      example: {
-        id: 'uuid',
-        name: 'name answer',
-        is_true: 'boolean',
-        created: 'timestamptz',
-        updated: 'timestamptz',
-      },
-    },
-  })
   @Get(':id')
   findOne(
     @GetUser() user,
@@ -73,16 +41,6 @@ export class AnswersController {
   }
 
   @ApiOperation({ summary: 'create answer' })
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    schema: {
-      example: {
-        id: 'uuid',
-        created: 'timestamptz',
-        message: 'answer successfully created',
-      },
-    },
-  })
   @Post()
   create(
     @GetUser() user,
@@ -93,16 +51,6 @@ export class AnswersController {
   }
 
   @ApiOperation({ summary: 'update answer' })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    schema: {
-      example: {
-        id: 'uuid',
-        updated: 'timestamptz',
-        message: 'asnwer successfully updated',
-      },
-    },
-  })
   @Put(':id')
   update(
     @GetUser() user,
@@ -118,16 +66,7 @@ export class AnswersController {
     );
   }
 
-  @ApiOperation({ summary: 'delete asnwer by id' })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    schema: {
-      example: {
-        id: 'uuid',
-        message: 'question successfully deleted',
-      },
-    },
-  })
+  @ApiOperation({ summary: 'delete answer by id' })
   @Delete(':id')
   delete(
     @GetUser() user,

@@ -1,5 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { plainToClass } from 'class-transformer';
 import { CreateFolderDto } from './dto/create-folder.dto';
+import { ResponseFolderDto } from './dto/response-folder.dto';
 import { UpdateFolderDto } from './dto/update-folder.dto';
 import { FoldersError } from './folders.error';
 import { FoldersService } from './folders.service';
@@ -12,10 +14,8 @@ export class FoldersHttpService {
     try {
       const folder = await this.foldersService.create(user_id, createFolderDto);
 
-      return {
-        message: 'folder successful created',
-        id: folder.id,
-      };
+      const responseFolder = plainToClass(ResponseFolderDto, folder);
+      return responseFolder;
     } catch (error) {
       if (error instanceof FoldersError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -30,7 +30,7 @@ export class FoldersHttpService {
   async getAll(user_id: string) {
     try {
       const folders = await this.foldersService.getAll(user_id);
-      return folders;
+      return folders.map((folder) => plainToClass(ResponseFolderDto, folder));
     } catch (error) {
       if (error instanceof FoldersError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -44,8 +44,9 @@ export class FoldersHttpService {
 
   async getById(user_id: string, id: string) {
     try {
-      const files = await this.foldersService.getById(user_id, id);
-      return files;
+      const folder = await this.foldersService.getById(user_id, id);
+      const responseFolder = plainToClass(ResponseFolderDto, folder);
+      return responseFolder;
     } catch (error) {
       if (error instanceof FoldersError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -64,10 +65,8 @@ export class FoldersHttpService {
         id,
         updateFolderDto,
       );
-      return {
-        message: 'folder successful updated',
-        id: folder.id,
-      };
+      const responseFolder = plainToClass(ResponseFolderDto, folder);
+      return responseFolder;
     } catch (error) {
       if (error instanceof FoldersError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -81,11 +80,7 @@ export class FoldersHttpService {
 
   async deleteById(user_id: string, id: string) {
     try {
-      const folder = await this.foldersService.removeByID(user_id, id);
-      return {
-        id: folder.id,
-        message: 'folder successfully deleted',
-      };
+      await this.foldersService.removeByID(user_id, id);
     } catch (error) {
       if (error instanceof FoldersError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
