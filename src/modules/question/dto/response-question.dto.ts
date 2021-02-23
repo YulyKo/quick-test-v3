@@ -1,4 +1,4 @@
-import { Exclude, Expose, Transform } from 'class-transformer';
+import { Exclude, Expose, Transform, Type } from 'class-transformer';
 import {
   IsDate,
   IsEnum,
@@ -56,6 +56,7 @@ export class ResponseQuestionDto {
   answer_type: QuestionAnswerType;
 
   @Expose()
+  @Type(() => ResponseAnswersDto)
   answers: ResponseAnswersDto[];
 
   @Expose()
