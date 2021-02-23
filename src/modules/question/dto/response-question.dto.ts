@@ -1,5 +1,6 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Exclude, Expose, Transform, Type } from 'class-transformer';
 import {
+  IsDate,
   IsEnum,
   IsNumber,
   IsString,
@@ -11,39 +12,58 @@ import {
 } from 'class-validator';
 
 import { config } from 'src/config';
+import { ResponseAnswersDto } from 'src/modules/answers/dto/response-answer.dto';
 import {
   QuestionAnswerType,
   QuestionTemplate,
 } from '../entities/question.entity';
 
-export class CreateQuestionDto {
-  @ApiProperty()
+@Exclude()
+export class ResponseQuestionDto {
+  @Expose()
+  @IsUUID()
+  id: string;
+
+  @Expose()
   @IsString()
   @MinLength(config.constants.question.name.min)
   @MaxLength(config.constants.question.name.max)
   name: string;
 
-  @ApiProperty()
+  @Expose()
   @IsString()
   @MinLength(config.constants.question.text.min)
   @MaxLength(config.constants.question.text.max)
   text: string;
 
-  @ApiProperty()
+  @Expose()
   @IsNumber()
   @Min(config.constants.question.time.min)
   @Max(config.constants.question.time.max)
   time: number;
 
-  @ApiProperty()
+  @Expose()
+  @IsUUID()
+  @Transform((value) => value.obj.folder.id, { toClassOnly: true })
+  folder_id: string;
+
+  @Expose()
   @IsEnum(QuestionTemplate)
   template: QuestionTemplate;
 
-  @ApiProperty()
+  @Expose()
   @IsEnum(QuestionAnswerType)
   answer_type: QuestionAnswerType;
 
-  @ApiPropertyOptional()
-  @IsUUID()
-  folder_id?: string;
+  @Expose()
+  @Type(() => ResponseAnswersDto)
+  answers: ResponseAnswersDto[];
+
+  @Expose()
+  @IsDate()
+  created: Date;
+
+  @Expose()
+  @IsDate()
+  updated: Date;
 }

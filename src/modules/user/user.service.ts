@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 import { CreateUserDto } from './dto/createUserDto';
 import { Users } from './entities/user.entity';
+import { UserError } from './user.error';
 
 @Injectable()
 export class UserService {
@@ -21,6 +22,9 @@ export class UserService {
   }
 
   async create(userData: CreateUserDto) {
+    const emailIsFree = await this.isFreeEmail(userData.email);
+    if (!emailIsFree)
+      throw new UserError('User with this email has already existed');
     const newUser = await this.userRepository.create(userData);
     await this.userRepository.save(newUser);
     return newUser;

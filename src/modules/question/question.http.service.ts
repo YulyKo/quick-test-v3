@@ -1,7 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { plainToClass } from 'class-transformer';
 import { FoldersError } from '../folders/folders.error';
 
 import { CreateQuestionDto } from './dto/create-question.dto';
+import { ResponseQuestionDto } from './dto/response-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { QuestionError } from './question.error';
 import { QuestionService } from './question.service';
@@ -17,11 +19,8 @@ export class QuestionHttpService {
         createQuestionDto,
       );
 
-      return {
-        id: question.id,
-        created: question.created,
-        message: 'question successfully created',
-      };
+      const responseQuestion = plainToClass(ResponseQuestionDto, question);
+      return responseQuestion;
     } catch (error) {
       if (error instanceof QuestionError || error instanceof FoldersError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -36,7 +35,9 @@ export class QuestionHttpService {
   async getAll(user_id: string) {
     try {
       const questions = await this.questionService.getAll(user_id);
-      return questions;
+      return questions.map((question) =>
+        plainToClass(ResponseQuestionDto, question),
+      );
     } catch (error) {
       throw new HttpException(
         'Something went wrong',
@@ -48,7 +49,8 @@ export class QuestionHttpService {
   async getById(user_id: string, id: string) {
     try {
       const question = await this.questionService.getById(user_id, id);
-      return question;
+      const responseQuestion = plainToClass(ResponseQuestionDto, question);
+      return responseQuestion;
     } catch (error) {
       if (error instanceof QuestionError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -60,22 +62,19 @@ export class QuestionHttpService {
     }
   }
 
-  async update(
+  async updateById(
     user_id: string,
     id: string,
     updateQuestionDto: UpdateQuestionDto,
   ) {
     try {
-      const question = await this.questionService.update(
+      const question = await this.questionService.updateById(
         user_id,
         id,
         updateQuestionDto,
       );
-      return {
-        id: question.id,
-        updated: question.updated,
-        message: 'question successfully updated',
-      };
+      const responseQuestion = plainToClass(ResponseQuestionDto, question);
+      return responseQuestion;
     } catch (error) {
       if (error instanceof QuestionError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -89,11 +88,7 @@ export class QuestionHttpService {
 
   async deleteById(user_id: string, id: string) {
     try {
-      const question = await this.questionService.remove(user_id, id);
-      return {
-        id: question.id,
-        message: 'question successfully deleted',
-      };
+      await this.questionService.removeById(user_id, id);
     } catch (error) {
       if (error instanceof QuestionError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
