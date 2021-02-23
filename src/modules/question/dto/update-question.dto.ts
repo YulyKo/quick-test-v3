@@ -1,26 +1,49 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  IsEnum,
+  IsNumber,
+  IsString,
+  IsUUID,
+  Max,
+  MaxLength,
+  Min,
+  MinLength,
+} from 'class-validator';
 
+import { config } from 'src/config';
 import {
   QuestionAnswerType,
   QuestionTemplate,
 } from '../entities/question.entity';
 
 export class UpdateQuestionDto {
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsString()
+  @MinLength(config.constants.question.name.min)
+  @MaxLength(config.constants.question.name.max)
   name?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsString()
+  @MinLength(config.constants.question.text.min)
+  @MaxLength(config.constants.question.text.max)
   text?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsNumber()
+  @Min(config.constants.question.time.min)
+  @Max(config.constants.question.time.max)
   time?: number;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsEnum(QuestionTemplate)
   template?: QuestionTemplate;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsEnum(QuestionAnswerType)
   answer_type?: QuestionAnswerType;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsUUID()
   folder_id?: string;
 }

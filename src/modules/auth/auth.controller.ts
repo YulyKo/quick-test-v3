@@ -6,6 +6,7 @@ import {
   Head,
   Param,
   HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -31,6 +32,7 @@ export class AuthController {
     },
   })
   @Post('login')
+  @HttpCode(200)
   async login(@Body(ValidationPipe) credentials: LoginDto) {
     return this.authService.login(credentials);
   }

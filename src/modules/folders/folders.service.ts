@@ -108,18 +108,14 @@ export class FoldersService {
     if (updateFolderDto.parent_id) {
       if (updateFolderDto.parent_id === id)
         throw new FoldersError('folder id and parent_id has equal value');
-      newFolder.parent =
-        updateFolderDto.parent_id !== 'main'
-          ? await this.getById(user_id, updateFolderDto.parent_id)
-          : await this.getById(user_id, user_id);
+      newFolder.parent = await this.getById(user_id, updateFolderDto.parent_id);
     }
     await this.folderRepository.save(newFolder);
     return folder;
   }
 
-  async removeByID(user_id: string, id: string) {
+  async removeById(user_id: string, id: string) {
     const folder = await this.getAllById(user_id, id);
     await this.folderRepository.softRemove(folder);
-    return folder;
   }
 }

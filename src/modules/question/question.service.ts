@@ -40,16 +40,8 @@ export class QuestionService {
     const questions = await this.questionRepository
       .createQueryBuilder('questions')
       .where({ user: user_id })
-      .select([
-        'questions.id',
-        'questions.name',
-        'questions.text',
-        'questions.time',
-        'questions.created',
-        'questions.updated',
-        'folder.id',
-      ])
       .leftJoin('questions.folder', 'folder')
+      .addSelect(['folder.id'])
       .leftJoinAndSelect('questions.answers', 'answers')
       .getMany();
 
@@ -60,14 +52,6 @@ export class QuestionService {
     const question = await this.questionRepository
       .createQueryBuilder('questions')
       .where({ user: user_id, id })
-      .select([
-        'questions.id',
-        'questions.name',
-        'questions.text',
-        'questions.time',
-        'questions.created',
-        'questions.updated',
-      ])
       .leftJoin('questions.folder', 'folder')
       .addSelect(['folder.id'])
       .leftJoinAndSelect('questions.answers', 'answers')
@@ -79,7 +63,7 @@ export class QuestionService {
     return question;
   }
 
-  async update(
+  async updateById(
     user_id: string,
     id: string,
     updateQuestionDto: UpdateQuestionDto,
@@ -91,9 +75,7 @@ export class QuestionService {
     if (updateQuestionDto.folder_id) {
       const newParent = await this.folderService.getById(
         user_id,
-        updateQuestionDto.folder_id !== 'main'
-          ? updateQuestionDto.folder_id
-          : user_id,
+        updateQuestionDto.folder_id,
       );
       updatedQuestion.folder = newParent;
     }
@@ -102,9 +84,8 @@ export class QuestionService {
     return updatedQuestion;
   }
 
-  async remove(user_id: string, id: string) {
+  async removeById(user_id: string, id: string) {
     const question = await this.getById(user_id, id);
     await this.questionRepository.softRemove(question);
-    return question;
   }
 }
