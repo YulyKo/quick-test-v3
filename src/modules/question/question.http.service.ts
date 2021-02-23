@@ -62,13 +62,13 @@ export class QuestionHttpService {
     }
   }
 
-  async update(
+  async updateById(
     user_id: string,
     id: string,
     updateQuestionDto: UpdateQuestionDto,
   ) {
     try {
-      const question = await this.questionService.update(
+      const question = await this.questionService.updateById(
         user_id,
         id,
         updateQuestionDto,
@@ -88,7 +88,7 @@ export class QuestionHttpService {
 
   async deleteById(user_id: string, id: string) {
     try {
-      await this.questionService.remove(user_id, id);
+      await this.questionService.removeById(user_id, id);
     } catch (error) {
       if (error instanceof QuestionError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);

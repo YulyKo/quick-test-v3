@@ -58,7 +58,11 @@ export class FoldersHttpService {
     }
   }
 
-  async update(user_id: string, id: string, updateFolderDto: UpdateFolderDto) {
+  async updateById(
+    user_id: string,
+    id: string,
+    updateFolderDto: UpdateFolderDto,
+  ) {
     try {
       const folder = await this.foldersService.updateById(
         user_id,
@@ -80,7 +84,7 @@ export class FoldersHttpService {
 
   async deleteById(user_id: string, id: string) {
     try {
-      await this.foldersService.removeByID(user_id, id);
+      await this.foldersService.removeById(user_id, id);
     } catch (error) {
       if (error instanceof FoldersError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);

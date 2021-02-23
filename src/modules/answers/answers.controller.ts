@@ -23,7 +23,7 @@ export class AnswersController {
 
   @ApiOperation({ summary: 'get all answers in question this user' })
   @Get()
-  findAll(
+  getAll(
     @GetUser() user,
     @Param('questionId', new ParseUUIDPipe()) question_id: string,
   ) {
@@ -32,7 +32,7 @@ export class AnswersController {
 
   @ApiOperation({ summary: 'get answer in question this user' })
   @Get(':id')
-  findOne(
+  getOne(
     @GetUser() user,
     @Param('questionId', new ParseUUIDPipe()) question_id: string,
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -52,7 +52,7 @@ export class AnswersController {
 
   @ApiOperation({ summary: 'update answer' })
   @Put(':id')
-  update(
+  updateById(
     @GetUser() user,
     @Param('questionId', new ParseUUIDPipe()) question_id: string,
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -68,7 +68,7 @@ export class AnswersController {
 
   @ApiOperation({ summary: 'delete answer by id' })
   @Delete(':id')
-  delete(
+  deleteById(
     @GetUser() user,
     @Param('questionId', new ParseUUIDPipe()) question_id: string,
     @Param('id', new ParseUUIDPipe()) id: string,

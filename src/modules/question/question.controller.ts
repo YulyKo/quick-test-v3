@@ -29,13 +29,13 @@ export class QuestionController {
 
   @ApiOperation({ summary: 'get all question this user' })
   @Get()
-  findAll(@GetUser() user) {
+  getAll(@GetUser() user) {
     return this.questionHttpService.getAll(user.id);
   }
 
   @ApiOperation({ summary: 'get question by id this user' })
   @Get(':id')
-  findOne(@GetUser() user, @Param('id', new ParseUUIDPipe()) id: string) {
+  getOne(@GetUser() user, @Param('id', new ParseUUIDPipe()) id: string) {
     return this.questionHttpService.getById(user.id, id);
   }
 
@@ -46,12 +46,12 @@ export class QuestionController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateQuestionDto: UpdateQuestionDto,
   ) {
-    return this.questionHttpService.update(user.id, id, updateQuestionDto);
+    return this.questionHttpService.updateById(user.id, id, updateQuestionDto);
   }
 
   @ApiOperation({ summary: 'delete question by id' })
   @Delete(':id')
-  remove(@GetUser() user, @Param('id', new ParseUUIDPipe()) id: string) {
+  delete(@GetUser() user, @Param('id', new ParseUUIDPipe()) id: string) {
     return this.questionHttpService.deleteById(user.id, id);
   }
 }

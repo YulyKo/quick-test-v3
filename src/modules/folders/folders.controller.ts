@@ -36,7 +36,7 @@ export class FoldersController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateFolderDto: UpdateFolderDto,
   ) {
-    return this.filesHttpService.update(user.id, id, updateFolderDto);
+    return this.filesHttpService.updateById(user.id, id, updateFolderDto);
   }
 
   @ApiOperation({ summary: 'get all folders this user' })
@@ -47,7 +47,7 @@ export class FoldersController {
 
   @ApiOperation({ summary: 'get all files from specific folder this user' })
   @Get(':id')
-  getById(@GetUser() user, @Param('id', new ParseUUIDPipe()) id: string) {
+  getOne(@GetUser() user, @Param('id', new ParseUUIDPipe()) id: string) {
     return this.filesHttpService.getById(user.id, id);
   }
 
