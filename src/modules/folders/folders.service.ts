@@ -108,10 +108,7 @@ export class FoldersService {
     if (updateFolderDto.parent_id) {
       if (updateFolderDto.parent_id === id)
         throw new FoldersError('folder id and parent_id has equal value');
-      newFolder.parent =
-        updateFolderDto.parent_id !== 'main'
-          ? await this.getById(user_id, updateFolderDto.parent_id)
-          : await this.getById(user_id, user_id);
+      newFolder.parent = await this.getById(user_id, updateFolderDto.parent_id);
     }
     await this.folderRepository.save(newFolder);
     return folder;

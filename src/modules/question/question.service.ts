@@ -75,9 +75,7 @@ export class QuestionService {
     if (updateQuestionDto.folder_id) {
       const newParent = await this.folderService.getById(
         user_id,
-        updateQuestionDto.folder_id !== 'main'
-          ? updateQuestionDto.folder_id
-          : user_id,
+        updateQuestionDto.folder_id,
       );
       updatedQuestion.folder = newParent;
     }
