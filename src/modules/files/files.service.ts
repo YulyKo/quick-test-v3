@@ -7,9 +7,6 @@ export class FilesService {
 
   async getById(user_id: string, id: string) {
     const files = await this.foldersService.getAllById(user_id, id);
-    return {
-      folders: files.children,
-      questions: files.questions,
-    };
+    return files;
   }
 }

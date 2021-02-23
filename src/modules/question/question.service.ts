@@ -40,16 +40,8 @@ export class QuestionService {
     const questions = await this.questionRepository
       .createQueryBuilder('questions')
       .where({ user: user_id })
-      .select([
-        'questions.id',
-        'questions.name',
-        'questions.text',
-        'questions.time',
-        'questions.created',
-        'questions.updated',
-        'folder.id',
-      ])
       .leftJoin('questions.folder', 'folder')
+      .addSelect(['folder.id'])
       .leftJoinAndSelect('questions.answers', 'answers')
       .getMany();
 
@@ -60,14 +52,6 @@ export class QuestionService {
     const question = await this.questionRepository
       .createQueryBuilder('questions')
       .where({ user: user_id, id })
-      .select([
-        'questions.id',
-        'questions.name',
-        'questions.text',
-        'questions.time',
-        'questions.created',
-        'questions.updated',
-      ])
       .leftJoin('questions.folder', 'folder')
       .addSelect(['folder.id'])
       .leftJoinAndSelect('questions.answers', 'answers')
