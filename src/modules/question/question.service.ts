@@ -89,6 +89,5 @@ export class QuestionService {
   async removeById(user_id: string, id: string) {
     const question = await this.getById(user_id, id);
     await this.questionRepository.softRemove(question);
-    return question;
   }
 }

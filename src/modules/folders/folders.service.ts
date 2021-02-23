@@ -120,6 +120,5 @@ export class FoldersService {
   async removeById(user_id: string, id: string) {
     const folder = await this.getAllById(user_id, id);
     await this.folderRepository.softRemove(folder);
-    return folder;
   }
 }
