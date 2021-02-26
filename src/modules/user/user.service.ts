@@ -1,9 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserDto } from './dto/createUserDto';
 
-import { Users } from './user.entity';
+import { CreateUserDto } from './dto/createUserDto';
+import { Users } from './entities/user.entity';
+import { UserError } from './user.error';
 
 @Injectable()
 export class UserService {
@@ -13,14 +14,17 @@ export class UserService {
   ) {}
 
   async isFreeEmail(email: string) {
-    const userWhithEmail = await this.userRepository.find({ email });
-    if (userWhithEmail.length) {
+    const userWithEmail = await this.userRepository.find({ email });
+    if (userWithEmail.length) {
       return false;
     }
     return true;
   }
 
   async create(userData: CreateUserDto) {
+    const emailIsFree = await this.isFreeEmail(userData.email);
+    if (!emailIsFree)
+      throw new UserError('User with this email has already existed');
     const newUser = await this.userRepository.create(userData);
     await this.userRepository.save(newUser);
     return newUser;

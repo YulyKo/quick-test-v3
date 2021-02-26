@@ -5,8 +5,9 @@ import {
   Body,
   Head,
   Param,
+  HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
-
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
@@ -23,7 +24,7 @@ export class AuthController {
 
   @ApiOperation({ summary: 'login user' })
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     schema: {
       example: {
         access_token: 'some access_token',
@@ -31,13 +32,14 @@ export class AuthController {
     },
   })
   @Post('login')
+  @HttpCode(200)
   async login(@Body(ValidationPipe) credentials: LoginDto) {
     return this.authService.login(credentials);
   }
 
   @ApiOperation({ summary: 'registration user' })
   @ApiResponse({
-    status: 201,
+    status: HttpStatus.CREATED,
     schema: {
       example: {
         email: 'user email',
@@ -52,7 +54,11 @@ export class AuthController {
   }
 
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'this email has already existed',
   })
   @ApiOperation({ summary: 'check if email is free' })
   @Head('email/:email')

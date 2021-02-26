@@ -6,12 +6,16 @@ import { UserService } from '../user/user.service';
 import { LoginDto } from './dto/loginDto';
 import { RegistrationDto } from './dto/registrationDto';
 import { EmailDto } from './dto/emailDto';
+import { FoldersService } from '../folders/folders.service';
+import { config } from 'src/config';
+import { UserError } from '../user/user.error';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
+    private folderService: FoldersService,
   ) {}
 
   public async checkEmail(params: EmailDto) {
@@ -34,8 +38,15 @@ export class AuthService {
         hash,
       });
       delete createdUser.hash;
+      await this.folderService.create(
+        createdUser.id,
+        config.constants.default.folder,
+        true,
+      );
       return createdUser;
     } catch (error) {
+      if (error instanceof UserError)
+        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
       throw new HttpException(
         'Something went wrong',
         HttpStatus.INTERNAL_SERVER_ERROR,
