@@ -44,7 +44,9 @@ export class ResponseQuestionDto {
 
   @Expose()
   @IsUUID()
-  @Transform((value) => value.obj.folder.id, { toClassOnly: true })
+  @Transform((value) => value.obj.folder.id, {
+    toClassOnly: true,
+  })
   folder_id: string;
 
   @Expose()

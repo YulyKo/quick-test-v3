@@ -9,6 +9,7 @@ import { AnswersModule } from './modules/answers/answers.module';
 import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
 import { FoldersModule } from './modules/folders/folders.module';
 import { FilesModule } from './modules/files/files.module';
+import { TestModule } from './modules/test/test.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { FilesModule } from './modules/files/files.module';
     AnswersModule,
     FoldersModule,
     FilesModule,
+    TestModule,
   ],
   providers: [
     {

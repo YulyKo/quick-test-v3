@@ -63,6 +63,24 @@ export class QuestionService {
     return question;
   }
 
+  async getByIds(user_id: string, ids: string[]) {
+    const questions = await this.questionRepository
+      .createQueryBuilder('questions')
+      .where({ user: user_id })
+      .andWhereInIds(ids)
+      .leftJoin('questions.folder', 'folder')
+      .addSelect(['folder.id'])
+      .leftJoinAndSelect('questions.answers', 'answers')
+      .getMany();
+
+    if (questions.length !== ids.length)
+      throw new QuestionError(
+        'user does not have one of questions with requested id',
+      );
+
+    return questions;
+  }
+
   async updateById(
     user_id: string,
     id: string,
