@@ -27,13 +27,13 @@ export class TestController {
   }
 
   @Get()
-  getAll() {
-    return this.testHttpService.getAll();
+  getAll(@GetUser() user) {
+    return this.testHttpService.getAll(user.id);
   }
 
   @Get(':id')
-  getOne(@Param('id') id: string) {
-    return this.testHttpService.getOne(id);
+  getOne(@GetUser() user, @Param('id') id: string) {
+    return this.testHttpService.getOne(user.id, id);
   }
 
   @Put(':id')

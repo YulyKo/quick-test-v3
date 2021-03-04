@@ -30,7 +30,7 @@ export class TestService {
       createTestDto.folder_id || user_id,
     );
 
-    const code = await this.generateCode();
+    const code = await this.getUniqCode();
     const test = this.testRepository.create({
       ...createTestDto,
       code,
@@ -45,23 +45,58 @@ export class TestService {
     return test;
   }
 
-  findAll() {
-    return `This action returns all test`;
+  async getAll(user_id: string) {
+    const tests = await this.testRepository
+      .createQueryBuilder('test')
+      .where({ user: user_id })
+      .leftJoin('test.folder', 'folder')
+      .addSelect(['folder.id'])
+      .leftJoinAndSelect('test.questions', 'questions')
+      .leftJoin('questions.folder', 'question_folder')
+      .addSelect(['question_folder.id'])
+      .leftJoinAndSelect('questions.answers', 'answers')
+      .getMany();
+
+    return tests;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} test`;
+  async getById(user_id: string, id: string) {
+    const test = await this.testRepository
+      .createQueryBuilder('test')
+      .where({ user: user_id, id })
+      .leftJoin('test.folder', 'folder')
+      .addSelect(['folder.id'])
+      .leftJoinAndSelect('test.questions', 'questions')
+      .leftJoin('questions.folder', 'question_folder')
+      .addSelect(['question_folder.id'])
+      .leftJoinAndSelect('questions.answers', 'answers')
+      .getOne();
+
+    return test;
   }
 
-  update(id: number, updateTestDto: UpdateTestDto) {
-    return `This action updates a #${id} test`;
+  async updateById(user_id: string, id: string, updateTestDto: UpdateTestDto) {
+    const test = await this.getById(user_id, id);
+
+    const newTest = { ...test, updateTestDto };
+    if (updateTestDto.folder_id) {
+      const newFolder = await this.folderService.getById(
+        user_id,
+        updateTestDto.folder_id,
+      );
+      newTest.folder = newFolder;
+    }
+
+    await this.testRepository.save(newTest);
+    return newTest;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} test`;
+  async deleteById(user_id: string, id: string) {
+    const test = await this.getById(user_id, id);
+    await this.testRepository.softRemove(test);
   }
 
-  generateCode() {
+  private generateCode() {
     let code = '';
     for (let char = 0; char < config.constants.test.code.length; char++) {
       code += config.constants.test.code.characters.charAt(
@@ -70,6 +105,21 @@ export class TestService {
         ),
       );
     }
+    return code;
+  }
+
+  private async isUniqCode(code: string) {
+    const codeFromDB = await this.testRepository.findOne({ code });
+    return !codeFromDB;
+  }
+
+  private async getUniqCode() {
+    let code;
+    let isUniq;
+    do {
+      code = this.generateCode();
+      isUniq = await this.isUniqCode(code);
+    } while (!isUniq);
     return code;
   }
 }

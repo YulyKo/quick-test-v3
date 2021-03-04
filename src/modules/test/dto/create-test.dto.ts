@@ -15,8 +15,10 @@ export class CreateTestDto {
   @MaxLength(config.constants.test.text.max)
   text: string;
 
-  @ApiProperty()
   @IsString({ each: true })
+  @ApiProperty({
+    description: 'array of uuid questions id',
+  })
   questions: string[];
 
   @ApiPropertyOptional()

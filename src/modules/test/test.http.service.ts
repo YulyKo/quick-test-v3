@@ -32,19 +32,85 @@ export class TestHttpService {
     }
   }
 
-  getAll() {
-    return `This action returns all test`;
+  async getAll(user_id: string) {
+    try {
+      const tests = await this.testService.getAll(user_id);
+
+      return tests.map((test) => plainToClass(ResponseTestDto, test));
+    } catch (error) {
+      if (
+        error instanceof TestError ||
+        error instanceof FoldersError ||
+        error instanceof QuestionError
+      )
+        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
-  getOne(id: string) {
-    return `This action returns a #${id} test`;
+  async getOne(user_id: string, id: string) {
+    try {
+      const test = await this.testService.getById(user_id, id);
+
+      return plainToClass(ResponseTestDto, test);
+    } catch (error) {
+      if (
+        error instanceof TestError ||
+        error instanceof FoldersError ||
+        error instanceof QuestionError
+      )
+        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
-  updateById(id: string, updateTestDto: UpdateTestDto) {
-    return `This action updates a #${id} test`;
+  async updateById(user_id: string, id: string, updateTestDto: UpdateTestDto) {
+    try {
+      const test = await this.testService.updateById(
+        user_id,
+        id,
+        updateTestDto,
+      );
+
+      return plainToClass(ResponseTestDto, test);
+    } catch (error) {
+      if (
+        error instanceof TestError ||
+        error instanceof FoldersError ||
+        error instanceof QuestionError
+      )
+        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
-  deleteById(id: string) {
-    return `This action removes a #${id} test`;
+  async deleteById(user_id: string, id: string) {
+    try {
+      await this.testService.deleteById(user_id, id);
+    } catch (error) {
+      if (
+        error instanceof TestError ||
+        error instanceof FoldersError ||
+        error instanceof QuestionError
+      )
+        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
