@@ -22,7 +22,7 @@ export class FoldersController {
   constructor(private readonly filesHttpService: FoldersHttpService) {}
 
   @ApiOperation({
-    summary: 'create folder in main folder, folder_id is optional',
+    summary: 'create folder in main folder, folderId is optional',
   })
   @Post()
   create(@GetUser() user, @Body() createFolderDto: CreateFolderDto) {

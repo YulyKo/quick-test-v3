@@ -22,9 +22,9 @@ export class FilesHttpService {
       );
     }
   }
-  async getFromFolder(user_id: string, id: string) {
+  async getFromFolder(userId: string, id: string) {
     try {
-      const files = await this.filesService.getById(user_id, id);
+      const files = await this.filesService.getById(userId, id);
       return plainToClass(ResponseFilesDto, files);
     } catch (error) {
       if (error instanceof FoldersError)

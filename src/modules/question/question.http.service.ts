@@ -12,10 +12,10 @@ import { QuestionService } from './question.service';
 export class QuestionHttpService {
   constructor(private readonly questionService: QuestionService) {}
 
-  async create(user_id: string, createQuestionDto: CreateQuestionDto) {
+  async create(userId: string, createQuestionDto: CreateQuestionDto) {
     try {
       const question = await this.questionService.create(
-        user_id,
+        userId,
         createQuestionDto,
       );
 
@@ -32,9 +32,9 @@ export class QuestionHttpService {
     }
   }
 
-  async getAll(user_id: string) {
+  async getAll(userId: string) {
     try {
-      const questions = await this.questionService.getAll(user_id);
+      const questions = await this.questionService.getAll(userId);
       return questions.map((question) =>
         plainToClass(ResponseQuestionDto, question),
       );
@@ -46,9 +46,9 @@ export class QuestionHttpService {
     }
   }
 
-  async getById(user_id: string, id: string) {
+  async getById(userId: string, id: string) {
     try {
-      const question = await this.questionService.getById(user_id, id);
+      const question = await this.questionService.getById(userId, id);
       const responseQuestion = plainToClass(ResponseQuestionDto, question);
       return responseQuestion;
     } catch (error) {
@@ -63,13 +63,13 @@ export class QuestionHttpService {
   }
 
   async updateById(
-    user_id: string,
+    userId: string,
     id: string,
     updateQuestionDto: UpdateQuestionDto,
   ) {
     try {
       const question = await this.questionService.updateById(
-        user_id,
+        userId,
         id,
         updateQuestionDto,
       );
@@ -86,9 +86,9 @@ export class QuestionHttpService {
     }
   }
 
-  async deleteById(user_id: string, id: string) {
+  async deleteById(userId: string, id: string) {
     try {
-      await this.questionService.removeById(user_id, id);
+      await this.questionService.removeById(userId, id);
     } catch (error) {
       if (error instanceof QuestionError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);

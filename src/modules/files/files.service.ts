@@ -5,8 +5,8 @@ import { FoldersService } from '../folders/folders.service';
 export class FilesService {
   constructor(private readonly foldersService: FoldersService) {}
 
-  async getById(user_id: string, id: string) {
-    const files = await this.foldersService.getAllById(user_id, id);
+  async getById(userId: string, id: string) {
+    const files = await this.foldersService.getAllById(userId, id);
     return files;
   }
 }

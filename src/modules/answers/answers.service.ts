@@ -18,12 +18,12 @@ export class AnswersService {
   ) {}
 
   async create(
-    user_id: string,
-    question_id: string,
+    userId: string,
+    questionId: string,
     createAnswerDto: CreateAnswerDto,
   ) {
     try {
-      const question = await this.questionService.getById(user_id, question_id);
+      const question = await this.questionService.getById(userId, questionId);
       const answer = await this.answersRepository.create({
         ...createAnswerDto,
         question,
@@ -36,9 +36,9 @@ export class AnswersService {
     }
   }
 
-  async getAll(user_id: string, question_id: string) {
+  async getAll(userId: string, questionId: string) {
     try {
-      const question = await this.questionService.getById(user_id, question_id);
+      const question = await this.questionService.getById(userId, questionId);
       const answers = await this.answersRepository.find({
         where: {
           question,
@@ -50,9 +50,9 @@ export class AnswersService {
     }
   }
 
-  async getById(user_id: string, question_id: string, id: string) {
+  async getById(userId: string, questionId: string, id: string) {
     try {
-      const question = await this.questionService.getById(user_id, question_id);
+      const question = await this.questionService.getById(userId, questionId);
       const answer = await this.answersRepository.findOne({
         where: {
           question,
@@ -68,13 +68,13 @@ export class AnswersService {
   }
 
   async updateById(
-    user_id: string,
-    question_id: string,
+    userId: string,
+    questionId: string,
     id: string,
     updateAnswerDto: UpdateAnswerDto,
   ) {
     try {
-      const answer = await this.getById(user_id, question_id, id);
+      const answer = await this.getById(userId, questionId, id);
       const updatedAnswer = {
         ...answer,
         ...updateAnswerDto,
@@ -86,9 +86,9 @@ export class AnswersService {
     }
   }
 
-  async deleteById(user_id: string, question_id: string, id: string) {
+  async deleteById(userId: string, questionId: string, id: string) {
     try {
-      const answer = await this.getById(user_id, question_id, id);
+      const answer = await this.getById(userId, questionId, id);
       await this.answersRepository.softDelete({
         id: answer.id,
       });

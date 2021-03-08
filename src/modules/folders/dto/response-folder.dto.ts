@@ -27,5 +27,5 @@ export class ResponseFolderDto {
   @Expose()
   @IsUUID()
   @Transform((value) => value.obj.parent.id, { toClassOnly: true })
-  folder_id: string;
+  folderId: string;
 }
