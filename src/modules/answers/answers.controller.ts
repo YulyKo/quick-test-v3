@@ -25,42 +25,42 @@ export class AnswersController {
   @Get()
   getAll(
     @GetUser() user,
-    @Param('questionId', new ParseUUIDPipe()) question_id: string,
+    @Param('questionId', new ParseUUIDPipe()) questionId: string,
   ) {
-    return this.answerHttpService.getAll(user.id, question_id);
+    return this.answerHttpService.getAll(user.id, questionId);
   }
 
   @ApiOperation({ summary: 'get answer in question this user' })
   @Get(':id')
   getOne(
     @GetUser() user,
-    @Param('questionId', new ParseUUIDPipe()) question_id: string,
+    @Param('questionId', new ParseUUIDPipe()) questionId: string,
     @Param('id', new ParseUUIDPipe()) id: string,
   ) {
-    return this.answerHttpService.getById(user.id, question_id, id);
+    return this.answerHttpService.getById(user.id, questionId, id);
   }
 
   @ApiOperation({ summary: 'create answer' })
   @Post()
   create(
     @GetUser() user,
-    @Param('questionId', new ParseUUIDPipe()) question_id: string,
+    @Param('questionId', new ParseUUIDPipe()) questionId: string,
     @Body() createAnswerDto: CreateAnswerDto,
   ) {
-    return this.answerHttpService.create(user.id, question_id, createAnswerDto);
+    return this.answerHttpService.create(user.id, questionId, createAnswerDto);
   }
 
   @ApiOperation({ summary: 'update answer' })
   @Put(':id')
   updateById(
     @GetUser() user,
-    @Param('questionId', new ParseUUIDPipe()) question_id: string,
+    @Param('questionId', new ParseUUIDPipe()) questionId: string,
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateAnswerDto: UpdateAnswerDto,
   ) {
     return this.answerHttpService.updateById(
       user.id,
-      question_id,
+      questionId,
       id,
       updateAnswerDto,
     );
@@ -70,9 +70,9 @@ export class AnswersController {
   @Delete(':id')
   deleteById(
     @GetUser() user,
-    @Param('questionId', new ParseUUIDPipe()) question_id: string,
+    @Param('questionId', new ParseUUIDPipe()) questionId: string,
     @Param('id', new ParseUUIDPipe()) id: string,
   ) {
-    return this.answerHttpService.deleteById(user.id, question_id, id);
+    return this.answerHttpService.deleteById(user.id, questionId, id);
   }
 }

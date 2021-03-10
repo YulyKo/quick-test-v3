@@ -60,9 +60,9 @@ export class AuthService {
       credentials.password,
     );
     const payload = { username: user.name, sub: user.id };
-    const access_token = this.jwtService.sign(payload);
+    const accessToken = this.jwtService.sign(payload);
     return {
-      access_token,
+      accessToken,
     };
   }
 

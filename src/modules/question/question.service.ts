@@ -17,16 +17,16 @@ export class QuestionService {
     private questionRepository: Repository<Questions>,
   ) {}
 
-  async create(user_id: string, createQuestionDto: CreateQuestionDto) {
+  async create(userId: string, createQuestionDto: CreateQuestionDto) {
     const folder = await this.folderService.getById(
-      user_id,
-      createQuestionDto.folder_id || user_id,
+      userId,
+      createQuestionDto.folderId || userId,
     );
     // question record
     const question = this.questionRepository.create({
       ...createQuestionDto,
       user: {
-        id: user_id,
+        id: userId,
       },
       folder,
     });
@@ -36,10 +36,10 @@ export class QuestionService {
     return question;
   }
 
-  async getAll(user_id: string) {
+  async getAll(userId: string) {
     const questions = await this.questionRepository
       .createQueryBuilder('questions')
-      .where({ user: user_id })
+      .where({ user: userId })
       .leftJoin('questions.folder', 'folder')
       .addSelect(['folder.id'])
       .leftJoinAndSelect('questions.answers', 'answers')
@@ -48,10 +48,10 @@ export class QuestionService {
     return questions;
   }
 
-  async getById(user_id: string, id: string) {
+  async getById(userId: string, id: string) {
     const question = await this.questionRepository
       .createQueryBuilder('questions')
-      .where({ user: user_id, id })
+      .where({ user: userId, id })
       .leftJoin('questions.folder', 'folder')
       .addSelect(['folder.id'])
       .leftJoinAndSelect('questions.answers', 'answers')
@@ -82,18 +82,18 @@ export class QuestionService {
   }
 
   async updateById(
-    user_id: string,
+    userId: string,
     id: string,
     updateQuestionDto: UpdateQuestionDto,
   ) {
-    const question = await this.getById(user_id, id);
+    const question = await this.getById(userId, id);
 
     const updatedQuestion = { ...question, ...updateQuestionDto };
 
-    if (updateQuestionDto.folder_id) {
+    if (updateQuestionDto.folderId) {
       const newParent = await this.folderService.getById(
-        user_id,
-        updateQuestionDto.folder_id,
+        userId,
+        updateQuestionDto.folderId,
       );
       updatedQuestion.folder = newParent;
     }
@@ -102,8 +102,8 @@ export class QuestionService {
     return updatedQuestion;
   }
 
-  async removeById(user_id: string, id: string) {
-    const question = await this.getById(user_id, id);
+  async removeById(userId: string, id: string) {
+    const question = await this.getById(userId, id);
     await this.questionRepository.softRemove(question);
   }
 }

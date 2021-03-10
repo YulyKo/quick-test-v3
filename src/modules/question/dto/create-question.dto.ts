@@ -41,9 +41,9 @@ export class CreateQuestionDto {
 
   @ApiProperty()
   @IsEnum(QuestionAnswerType)
-  answer_type: QuestionAnswerType;
+  answerType: QuestionAnswerType;
 
   @ApiPropertyOptional()
   @IsUUID()
-  folder_id?: string;
+  folderId?: string;
 }

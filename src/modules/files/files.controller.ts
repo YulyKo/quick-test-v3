@@ -39,7 +39,7 @@ export class FilesController {
           {
             id: 'uuid',
             name: 'text',
-            answer_type: 'button|user_input',
+            answerType: 'button|userInput',
             created: 'timestamptz',
             updated: 'timestamptz',
           },
@@ -70,7 +70,7 @@ export class FilesController {
           {
             id: 'uuid',
             name: 'text',
-            answer_type: 'button|user_input',
+            answerType: 'button|userInput',
             created: 'timestamptz',
             updated: 'timestamptz',
           },

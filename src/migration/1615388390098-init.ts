@@ -1,16 +1,16 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class init1614696869698 implements MigrationInterface {
-    name = 'init1614696869698'
+export class init1615388390098 implements MigrationInterface {
+    name = 'init1615388390098'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "test" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "text" character varying NOT NULL, "code" character varying(6) NOT NULL, "is_open" boolean NOT NULL DEFAULT 'FALSE', "created" TIMESTAMP NOT NULL DEFAULT now(), "updated" TIMESTAMP NOT NULL DEFAULT now(), "deleted" TIMESTAMP, "userId" uuid, "folderId" uuid, CONSTRAINT "PK_5417af0062cf987495b611b59c7" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "folders" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "color" character varying NOT NULL, "created" TIMESTAMP NOT NULL DEFAULT now(), "updated" TIMESTAMP NOT NULL DEFAULT now(), "deleted" TIMESTAMP, "parentId" uuid, "userId" uuid, CONSTRAINT "PK_8578bd31b0e7f6d6c2480dbbca8" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "email" character varying NOT NULL, "name" character varying NOT NULL, "hash" character varying NOT NULL, CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TYPE "questions_template_enum" AS ENUM('boolean')`);
-        await queryRunner.query(`CREATE TYPE "questions_answer_type_enum" AS ENUM('button', 'user_input')`);
-        await queryRunner.query(`CREATE TABLE "questions" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "text" character varying NOT NULL, "time" integer NOT NULL, "template" "questions_template_enum" NOT NULL, "answer_type" "questions_answer_type_enum" NOT NULL, "created" TIMESTAMP NOT NULL DEFAULT now(), "updated" TIMESTAMP NOT NULL DEFAULT now(), "deleted" TIMESTAMP, "userId" uuid, "folderId" uuid, CONSTRAINT "PK_08a6d4b0f49ff300bf3a0ca60ac" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "answers" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "is_true" boolean NOT NULL, "created" TIMESTAMP NOT NULL DEFAULT now(), "updated" TIMESTAMP NOT NULL DEFAULT now(), "deleted" TIMESTAMP, "questionId" uuid, CONSTRAINT "PK_9c32cec6c71e06da0254f2226c6" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TYPE "questions_answertype_enum" AS ENUM('button', 'userInput')`);
+        await queryRunner.query(`CREATE TABLE "questions" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "text" character varying NOT NULL, "time" integer NOT NULL, "template" "questions_template_enum" NOT NULL, "answerType" "questions_answertype_enum" NOT NULL, "created" TIMESTAMP NOT NULL DEFAULT now(), "updated" TIMESTAMP NOT NULL DEFAULT now(), "deleted" TIMESTAMP, "userId" uuid, "folderId" uuid, CONSTRAINT "PK_08a6d4b0f49ff300bf3a0ca60ac" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "answers" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "isTrue" boolean NOT NULL, "created" TIMESTAMP NOT NULL DEFAULT now(), "updated" TIMESTAMP NOT NULL DEFAULT now(), "deleted" TIMESTAMP, "questionId" uuid, CONSTRAINT "PK_9c32cec6c71e06da0254f2226c6" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "test_questions_questions" ("testId" uuid NOT NULL, "questionsId" uuid NOT NULL, CONSTRAINT "PK_d1deb699b189c1a2009cb864684" PRIMARY KEY ("testId", "questionsId"))`);
         await queryRunner.query(`CREATE INDEX "IDX_80942d30d72b7c1f1b4ee5442f" ON "test_questions_questions" ("testId") `);
         await queryRunner.query(`CREATE INDEX "IDX_eec101181752c792bc3c326b9f" ON "test_questions_questions" ("questionsId") `);
@@ -40,7 +40,7 @@ export class init1614696869698 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE "test_questions_questions"`);
         await queryRunner.query(`DROP TABLE "answers"`);
         await queryRunner.query(`DROP TABLE "questions"`);
-        await queryRunner.query(`DROP TYPE "questions_answer_type_enum"`);
+        await queryRunner.query(`DROP TYPE "questions_answertype_enum"`);
         await queryRunner.query(`DROP TYPE "questions_template_enum"`);
         await queryRunner.query(`DROP TABLE "users"`);
         await queryRunner.query(`DROP TABLE "folders"`);

@@ -44,10 +44,8 @@ export class ResponseQuestionDto {
 
   @Expose()
   @IsUUID()
-  @Transform((value) => value.obj.folder.id, {
-    toClassOnly: true,
-  })
-  folder_id: string;
+  @Transform((value) => value.obj.folder.id, { toClassOnly: true })
+  folderId: string;
 
   @Expose()
   @IsEnum(QuestionTemplate)
@@ -55,7 +53,7 @@ export class ResponseQuestionDto {
 
   @Expose()
   @IsEnum(QuestionAnswerType)
-  answer_type: QuestionAnswerType;
+  answerType: QuestionAnswerType;
 
   @Expose()
   @Type(() => ResponseAnswersDto)

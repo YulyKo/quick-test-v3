@@ -11,5 +11,5 @@ export class CreateFolderDto {
     description: 'If create new folder in parent folder',
     required: false,
   })
-  folder_id?: string;
+  folderId?: string;
 }

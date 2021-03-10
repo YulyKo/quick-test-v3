@@ -17,10 +17,10 @@ export class Answers {
   id: string;
 
   @Column()
-  public name: string;
+  name: string;
 
   @Column()
-  public is_true: boolean;
+  isTrue: boolean;
 
   @CreateDateColumn()
   created: Date;

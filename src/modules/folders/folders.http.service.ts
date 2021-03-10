@@ -10,9 +10,9 @@ import { FoldersService } from './folders.service';
 export class FoldersHttpService {
   constructor(private readonly foldersService: FoldersService) {}
 
-  async create(user_id: string, createFolderDto: CreateFolderDto) {
+  async create(userId: string, createFolderDto: CreateFolderDto) {
     try {
-      const folder = await this.foldersService.create(user_id, createFolderDto);
+      const folder = await this.foldersService.create(userId, createFolderDto);
 
       const responseFolder = plainToClass(ResponseFolderDto, folder);
       return responseFolder;
@@ -27,9 +27,9 @@ export class FoldersHttpService {
     }
   }
 
-  async getAll(user_id: string) {
+  async getAll(userId: string) {
     try {
-      const folders = await this.foldersService.getAll(user_id);
+      const folders = await this.foldersService.getAll(userId);
       return folders.map((folder) => plainToClass(ResponseFolderDto, folder));
     } catch (error) {
       if (error instanceof FoldersError)
@@ -42,9 +42,9 @@ export class FoldersHttpService {
     }
   }
 
-  async getById(user_id: string, id: string) {
+  async getById(userId: string, id: string) {
     try {
-      const folder = await this.foldersService.getById(user_id, id);
+      const folder = await this.foldersService.getById(userId, id);
       const responseFolder = plainToClass(ResponseFolderDto, folder);
       return responseFolder;
     } catch (error) {
@@ -59,13 +59,13 @@ export class FoldersHttpService {
   }
 
   async updateById(
-    user_id: string,
+    userId: string,
     id: string,
     updateFolderDto: UpdateFolderDto,
   ) {
     try {
       const folder = await this.foldersService.updateById(
-        user_id,
+        userId,
         id,
         updateFolderDto,
       );
@@ -82,9 +82,9 @@ export class FoldersHttpService {
     }
   }
 
-  async deleteById(user_id: string, id: string) {
+  async deleteById(userId: string, id: string) {
     try {
-      await this.foldersService.removeById(user_id, id);
+      await this.foldersService.removeById(userId, id);
     } catch (error) {
       if (error instanceof FoldersError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);

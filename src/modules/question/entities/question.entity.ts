@@ -20,7 +20,7 @@ export enum QuestionTemplate {
 
 export enum QuestionAnswerType {
   BUTTON = 'button',
-  USER_INPUT = 'user_input',
+  userInput = 'userInput',
 }
 
 @Entity()
@@ -47,7 +47,7 @@ export class Questions {
     type: 'enum',
     enum: QuestionAnswerType,
   })
-  public answer_type: QuestionAnswerType;
+  public answerType: QuestionAnswerType;
 
   @CreateDateColumn()
   created: Date;
