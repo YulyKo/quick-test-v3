@@ -27,6 +27,8 @@ export class AnswersHttpService {
       const responseAnswer = plainToClass(ResponseAnswersDto, answer);
       return responseAnswer;
     } catch (error) {
+      if (error instanceof QuestionError || error instanceof AnswerError)
+        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -89,7 +91,7 @@ export class AnswersHttpService {
     try {
       await this.answersService.deleteById(userId, questionId, id);
     } catch (error) {
-      if (error instanceof AnswerError)
+      if (error instanceof QuestionError || error instanceof AnswerError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
 
       throw new HttpException(
