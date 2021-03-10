@@ -1,3 +1,4 @@
+import { HttpCode } from '@nestjs/common';
 import {
   Controller,
   Get,
@@ -27,6 +28,7 @@ export class TestController {
   }
 
   @ApiOperation({ summary: 'add question in test' })
+  @HttpCode(200)
   @Post(':id/questions/:questionId')
   addQuestion(
     @GetUser() user,
