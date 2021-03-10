@@ -38,7 +38,7 @@ export class TestController {
     return this.testHttpService.addQuestion(user.id, testId, questionId);
   }
 
-  @ApiOperation({ summary: 'add question in test' })
+  @ApiOperation({ summary: 'remove question from test' })
   @Delete(':id/questions/:questionId')
   removeQuestion(
     @GetUser() user,
