@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UpdateFolderDto {
+export class UpdateFoldersDto {
   @ApiProperty()
   name?: string;
 

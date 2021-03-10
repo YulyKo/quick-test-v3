@@ -9,7 +9,7 @@ import {
 import { config } from 'src/config';
 
 @Exclude()
-export class ResponseFolderDto {
+export class ResponseFoldersDto {
   @Expose()
   @IsUUID()
   id: string;

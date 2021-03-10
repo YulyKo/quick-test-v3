@@ -20,10 +20,10 @@ export class Folders {
   id: string;
 
   @Column()
-  public name: string;
+  name: string;
 
   @Column()
-  public color: string;
+  color: string;
 
   @CreateDateColumn()
   created: Date;

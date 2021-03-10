@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateFolderDto } from './dto/create-folder.dto';
-import { UpdateFolderDto } from './dto/update-folder.dto';
+import { CreateFoldersDto } from './dto/create-folders.dto';
+import { UpdateFoldersDto } from './dto/update-folders.dto';
 import { Folders } from './entities/folders.entity';
 import { FoldersError } from './folders.error';
 
@@ -15,7 +15,7 @@ export class FoldersService {
 
   async create(
     userId: string,
-    createFolderDto: CreateFolderDto,
+    createFolderDto: CreateFoldersDto,
     isMainFolder?: boolean,
   ) {
     const folder = this.folderRepository.create({
@@ -107,7 +107,7 @@ export class FoldersService {
   async updateById(
     userId: string,
     id: string,
-    updateFolderDto: UpdateFolderDto,
+    updateFolderDto: UpdateFoldersDto,
   ) {
     const folder = await this.getById(userId, id);
 

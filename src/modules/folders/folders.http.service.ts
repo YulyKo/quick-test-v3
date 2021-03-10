@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
-import { CreateFolderDto } from './dto/create-folder.dto';
-import { ResponseFolderDto } from './dto/response-folder.dto';
-import { UpdateFolderDto } from './dto/update-folder.dto';
+import { CreateFoldersDto } from './dto/create-folders.dto';
+import { ResponseFoldersDto } from './dto/response-folders.dto';
+import { UpdateFoldersDto } from './dto/update-folders.dto';
 import { FoldersError } from './folders.error';
 import { FoldersService } from './folders.service';
 
@@ -10,11 +10,11 @@ import { FoldersService } from './folders.service';
 export class FoldersHttpService {
   constructor(private readonly foldersService: FoldersService) {}
 
-  async create(userId: string, createFolderDto: CreateFolderDto) {
+  async create(userId: string, createFolderDto: CreateFoldersDto) {
     try {
       const folder = await this.foldersService.create(userId, createFolderDto);
 
-      const responseFolder = plainToClass(ResponseFolderDto, folder);
+      const responseFolder = plainToClass(ResponseFoldersDto, folder);
       return responseFolder;
     } catch (error) {
       if (error instanceof FoldersError)
@@ -30,7 +30,7 @@ export class FoldersHttpService {
   async getAll(userId: string) {
     try {
       const folders = await this.foldersService.getAll(userId);
-      return folders.map((folder) => plainToClass(ResponseFolderDto, folder));
+      return folders.map((folder) => plainToClass(ResponseFoldersDto, folder));
     } catch (error) {
       if (error instanceof FoldersError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -45,7 +45,7 @@ export class FoldersHttpService {
   async getById(userId: string, id: string) {
     try {
       const folder = await this.foldersService.getById(userId, id);
-      const responseFolder = plainToClass(ResponseFolderDto, folder);
+      const responseFolder = plainToClass(ResponseFoldersDto, folder);
       return responseFolder;
     } catch (error) {
       if (error instanceof FoldersError)
@@ -61,7 +61,7 @@ export class FoldersHttpService {
   async updateById(
     userId: string,
     id: string,
-    updateFolderDto: UpdateFolderDto,
+    updateFolderDto: UpdateFoldersDto,
   ) {
     try {
       const folder = await this.foldersService.updateById(
@@ -69,7 +69,7 @@ export class FoldersHttpService {
         id,
         updateFolderDto,
       );
-      const responseFolder = plainToClass(ResponseFolderDto, folder);
+      const responseFolder = plainToClass(ResponseFoldersDto, folder);
       return responseFolder;
     } catch (error) {
       if (error instanceof FoldersError)
