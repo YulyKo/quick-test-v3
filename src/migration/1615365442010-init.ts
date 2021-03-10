@@ -1,10 +1,10 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class init1613913765022 implements MigrationInterface {
-    name = 'init1613913765022'
+export class init1615365442010 implements MigrationInterface {
+    name = 'init1615365442010'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "email" character varying NOT NULL, "name" character varying NOT NULL, "hash" character varying NOT NULL, CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "email" character varying NOT NULL, "name" character varying NOT NULL, "hash" character varying NOT NULL, "current_hashed_refresh_token_signature" character varying DEFAULT null, CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "folders" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "color" character varying NOT NULL, "created" TIMESTAMP NOT NULL DEFAULT now(), "updated" TIMESTAMP NOT NULL DEFAULT now(), "deleted" TIMESTAMP, "parentId" uuid, "userId" uuid, CONSTRAINT "PK_8578bd31b0e7f6d6c2480dbbca8" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TYPE "questions_template_enum" AS ENUM('boolean')`);
         await queryRunner.query(`CREATE TYPE "questions_answer_type_enum" AS ENUM('button', 'user_input')`);

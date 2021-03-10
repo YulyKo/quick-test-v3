@@ -38,6 +38,7 @@ export class AuthService {
         hash,
       });
       delete createdUser.hash;
+      delete createdUser.current_hashed_refresh_token_signature;
       await this.folderService.create(
         createdUser.id,
         config.constants.default.folder,
@@ -59,11 +60,46 @@ export class AuthService {
       credentials.email,
       credentials.password,
     );
-    const payload = { username: user.name, sub: user.id };
-    const access_token = this.jwtService.sign(payload);
-    return {
-      access_token,
-    };
+
+    const tokens = await this.saveRefreshAndGetBothTokens(user.name, user.id);
+
+    return tokens;
+  }
+
+  public async refreshToken(user_id, username, authorization_header) {
+    const refresh_token = authorization_header.replace('Bearer ', '');
+    const isRefreshTokenMatching = await this.isUserRefreshToken(
+      user_id,
+      refresh_token,
+    );
+    if (!isRefreshTokenMatching) {
+      throw new HttpException(
+        'Refresh token is incorrect',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const tokens = await this.saveRefreshAndGetBothTokens(username, user_id);
+
+    return tokens;
+  }
+
+  public async logout(user_id, authorization_header) {
+    const refresh_token = authorization_header.replace('Bearer ', '');
+    const isRefreshTokenMatching = await this.isUserRefreshToken(
+      user_id,
+      refresh_token,
+    );
+    if (!isRefreshTokenMatching) {
+      throw new HttpException(
+        'Refresh token is incorrect',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    await this.userService.setCurrentRefreshToken(null, user_id);
+
+    return { message: 'OK' };
   }
 
   public async validateUser(email: string, password: string) {
@@ -77,6 +113,7 @@ export class AuthService {
         );
       }
       delete user.hash;
+      delete user.current_hashed_refresh_token_signature;
       return user;
     } catch (error) {
       throw new HttpException(
@@ -84,5 +121,55 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  public async saveRefreshAndGetBothTokens(
+    username: string,
+    sub: string,
+  ): Promise<{ access_token; refresh_token }> {
+    const payload = { username, sub };
+
+    const access_token = this.jwtService.sign(payload, {
+      secret: config.env.JWT_ACCESS_SECRET,
+      expiresIn: config.env.JWT_ACCESS_EXPIRATION_TIME,
+    });
+
+    const refresh_token = this.jwtService.sign(payload, {
+      secret: config.env.JWT_REFRESH_SECRET,
+      expiresIn: config.env.JWT_REFRESH_EXPIRATION_TIME,
+    });
+
+    const refresh_token_signature = this.getTokenSignature(refresh_token);
+
+    const current_hashed_refresh_token_signature = await bcrypt.hash(
+      refresh_token_signature,
+      10,
+    );
+    await this.userService.setCurrentRefreshToken(
+      current_hashed_refresh_token_signature,
+      sub,
+    );
+
+    return { access_token, refresh_token };
+  }
+
+  public async isUserRefreshToken(user_id, token): Promise<boolean> {
+    const user = await this.userService.getById(user_id);
+
+    if (!user.current_hashed_refresh_token_signature) {
+      return false;
+    }
+
+    const refresh_token_signature = this.getTokenSignature(token);
+
+    const isRefreshTokenMatching = await bcrypt.compare(
+      refresh_token_signature,
+      user.current_hashed_refresh_token_signature,
+    );
+    return isRefreshTokenMatching;
+  }
+
+  public getTokenSignature(token: string) {
+    return token.slice(token.lastIndexOf('.') + 1);
   }
 }

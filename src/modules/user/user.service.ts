@@ -40,4 +40,24 @@ export class UserService {
       HttpStatus.NOT_FOUND,
     );
   }
+
+  async setCurrentRefreshToken(
+    current_hashed_refresh_token_signature: string,
+    userId: string,
+  ) {
+    await this.userRepository.update(userId, {
+      current_hashed_refresh_token_signature,
+    });
+  }
+
+  async getById(id: string) {
+    const user = await this.userRepository.findOne({ id });
+    if (user) {
+      return user;
+    }
+    throw new HttpException(
+      'User with this id does not exist',
+      HttpStatus.BAD_REQUEST,
+    );
+  }
 }

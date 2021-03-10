@@ -17,6 +17,9 @@ export class Users {
   @Column()
   public hash: string;
 
+  @Column({ nullable: true, default: null })
+  public current_hashed_refresh_token_signature: string;
+
   @OneToMany(() => Questions, (question) => question.user, { cascade: true })
   questions: Questions[];
 

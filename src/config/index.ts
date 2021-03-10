@@ -36,7 +36,16 @@ class EnvironmentVariables {
   TYPEORM_SYNCHRONIZE: string;
 
   @IsString()
-  JWT_SECRET: string;
+  JWT_ACCESS_SECRET: string;
+
+  @IsString()
+  JWT_ACCESS_EXPIRATION_TIME: string;
+
+  @IsString()
+  JWT_REFRESH_SECRET: string;
+
+  @IsString()
+  JWT_REFRESH_EXPIRATION_TIME: string;
 }
 
 const validation = () => {
@@ -53,7 +62,10 @@ const validation = () => {
     TYPEORM_MIGRATIONS_DIR: process.env.TYPEORM_MIGRATIONS_DIR,
     TYPEORM_SYNCHRONIZE: process.env.TYPEORM_SYNCHRONIZE,
 
-    JWT_SECRET: process.env.JWT_SECRET,
+    JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET,
+    JWT_ACCESS_EXPIRATION_TIME: process.env.JWT_ACCESS_EXPIRATION_TIME,
+    JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
+    JWT_REFRESH_EXPIRATION_TIME: process.env.JWT_REFRESH_EXPIRATION_TIME,
   };
   const validatedConfig = plainToClass(EnvironmentVariables, config, {
     enableImplicitConversion: true,
