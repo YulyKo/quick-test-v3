@@ -19,7 +19,7 @@ export class CreateTestDto {
   @ApiProperty({
     description: 'array of uuid questions id',
   })
-  questions: string[];
+  questions?: string[];
 
   @ApiPropertyOptional()
   @IsUUID()

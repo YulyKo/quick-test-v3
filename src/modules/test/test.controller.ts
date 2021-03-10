@@ -26,6 +26,26 @@ export class TestController {
     return this.testHttpService.create(user.id, createTestDto);
   }
 
+  @ApiOperation({ summary: 'add question in test' })
+  @Post(':id/questions/:questionId')
+  addQuestion(
+    @GetUser() user,
+    @Param('id') testId: string,
+    @Param('questionId') questionId: string,
+  ) {
+    return this.testHttpService.addQuestion(user.id, testId, questionId);
+  }
+
+  @ApiOperation({ summary: 'add question in test' })
+  @Delete(':id/questions/:questionId')
+  removeQuestion(
+    @GetUser() user,
+    @Param('id') testId: string,
+    @Param('questionId') questionId: string,
+  ) {
+    return this.testHttpService.removeQuestion(user.id, testId, questionId);
+  }
+
   @Get()
   getAll(@GetUser() user) {
     return this.testHttpService.getAll(user.id);
@@ -37,12 +57,16 @@ export class TestController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateTestDto: UpdateTestDto) {
-    return this.testHttpService.updateById(id, updateTestDto);
+  update(
+    @GetUser() user,
+    @Param('id') id: string,
+    @Body() updateTestDto: UpdateTestDto,
+  ) {
+    return this.testHttpService.updateById(user.id, id, updateTestDto);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string) {
-    return this.testHttpService.deleteById(id);
+  delete(@GetUser() user, @Param('id') id: string) {
+    return this.testHttpService.deleteById(user.id, id);
   }
 }
