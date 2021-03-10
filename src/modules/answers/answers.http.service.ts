@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 
-import { QuestionError } from '../question/question.error';
+import { QuestionsError } from '../questions/questions.error';
 import { AnswerError } from './answers.error';
 import { AnswersService } from './answers.service';
 import { CreateAnswerDto } from './dto/create-answer.dto';
@@ -27,7 +27,7 @@ export class AnswersHttpService {
       const responseAnswer = plainToClass(ResponseAnswersDto, answer);
       return responseAnswer;
     } catch (error) {
-      if (error instanceof QuestionError || error instanceof AnswerError)
+      if (error instanceof QuestionsError || error instanceof AnswerError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -77,7 +77,7 @@ export class AnswersHttpService {
       const responseAnswer = plainToClass(ResponseAnswersDto, answer);
       return responseAnswer;
     } catch (error) {
-      if (error instanceof QuestionError || error instanceof AnswerError)
+      if (error instanceof QuestionsError || error instanceof AnswerError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
 
       throw new HttpException(
@@ -91,7 +91,7 @@ export class AnswersHttpService {
     try {
       await this.answersService.deleteById(userId, questionId, id);
     } catch (error) {
-      if (error instanceof QuestionError || error instanceof AnswerError)
+      if (error instanceof QuestionsError || error instanceof AnswerError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
 
       throw new HttpException(

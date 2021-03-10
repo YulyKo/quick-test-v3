@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { QuestionModule } from './modules/question/question.module';
+import { QuestionsModule } from './modules/questions/questions.module';
 import { AnswersModule } from './modules/answers/answers.module';
 import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
 import { FoldersModule } from './modules/folders/folders.module';
@@ -16,7 +16,7 @@ import { TestModule } from './modules/test/test.module';
     TypeOrmModule.forRoot(),
     UserModule,
     AuthModule,
-    QuestionModule,
+    QuestionsModule,
     AnswersModule,
     FoldersModule,
     FilesModule,

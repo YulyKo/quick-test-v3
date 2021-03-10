@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { QuestionService } from '../question/question.service';
+import { QuestionsService } from '../questions/questions.service';
 import { AnswerError } from './answers.error';
 import { CreateAnswerDto } from './dto/create-answer.dto';
 import { UpdateAnswerDto } from './dto/update-answer.dto';
@@ -11,7 +11,7 @@ import { Answers } from './entities/answers.entity';
 @Injectable()
 export class AnswersService {
   constructor(
-    private readonly questionService: QuestionService,
+    private readonly questionService: QuestionsService,
 
     @InjectRepository(Answers)
     private answersRepository: Repository<Answers>,

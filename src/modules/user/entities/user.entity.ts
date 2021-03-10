@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { Questions } from '../../question/entities/question.entity';
+import { Questions } from '../../questions/entities/questions.entity';
 import { Folders } from '../../folders/entities/folders.entity';
 import { Test } from '../../test/entities/test.entity';
 

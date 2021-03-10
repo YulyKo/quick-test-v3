@@ -1,43 +1,43 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { FoldersService } from '../folders/folders.service';
 
-import { CreateQuestionDto } from './dto/create-question.dto';
-import { UpdateQuestionDto } from './dto/update-question.dto';
-import { Questions } from './entities/question.entity';
-import { QuestionError } from './question.error';
+import { FoldersService } from '../folders/folders.service';
+import { CreateQuestionsDto } from './dto/create-questions.dto';
+import { UpdateQuestionsDto } from './dto/update-questions.dto';
+import { Questions } from './entities/questions.entity';
+import { QuestionsError } from './questions.error';
 
 @Injectable()
-export class QuestionService {
+export class QuestionsService {
   constructor(
-    private readonly folderService: FoldersService,
+    private readonly foldersService: FoldersService,
 
     @InjectRepository(Questions)
-    private questionRepository: Repository<Questions>,
+    private questionsRepository: Repository<Questions>,
   ) {}
 
-  async create(userId: string, createQuestionDto: CreateQuestionDto) {
-    const folder = await this.folderService.getById(
+  async create(userId: string, createQuestionsDto: CreateQuestionsDto) {
+    const folders = await this.foldersService.getById(
       userId,
-      createQuestionDto.folderId || userId,
+      createQuestionsDto.folderId || userId,
     );
     // question record
-    const question = this.questionRepository.create({
-      ...createQuestionDto,
+    const question = this.questionsRepository.create({
+      ...createQuestionsDto,
       user: {
         id: userId,
       },
-      folder,
+      folders,
     });
 
-    await this.questionRepository.save(question);
+    await this.questionsRepository.save(question);
 
     return question;
   }
 
   async getAll(userId: string) {
-    const questions = await this.questionRepository
+    const questions = await this.questionsRepository
       .createQueryBuilder('questions')
       .where({ user: userId })
       .leftJoin('questions.folder', 'folder')
@@ -49,7 +49,7 @@ export class QuestionService {
   }
 
   async getById(userId: string, id: string) {
-    const question = await this.questionRepository
+    const question = await this.questionsRepository
       .createQueryBuilder('questions')
       .where({ user: userId, id })
       .leftJoin('questions.folder', 'folder')
@@ -58,13 +58,13 @@ export class QuestionService {
       .getOne();
 
     if (!question)
-      throw new QuestionError('user does not have question with this id');
+      throw new QuestionsError('user does not have question with this id');
 
     return question;
   }
 
   async getByIds(user_id: string, ids: string[]) {
-    const questions = await this.questionRepository
+    const questions = await this.questionsRepository
       .createQueryBuilder('questions')
       .where({ user: user_id })
       .andWhereInIds(ids)
@@ -74,7 +74,7 @@ export class QuestionService {
       .getMany();
 
     if (questions.length !== ids.length)
-      throw new QuestionError(
+      throw new QuestionsError(
         'user does not have one of questions with requested id',
       );
 
@@ -84,26 +84,26 @@ export class QuestionService {
   async updateById(
     userId: string,
     id: string,
-    updateQuestionDto: UpdateQuestionDto,
+    updateQuestionsDto: UpdateQuestionsDto,
   ) {
     const question = await this.getById(userId, id);
 
-    const updatedQuestion = { ...question, ...updateQuestionDto };
+    const updatedQuestion = { ...question, ...updateQuestionsDto };
 
-    if (updateQuestionDto.folderId) {
-      const newParent = await this.folderService.getById(
+    if (updateQuestionsDto.folderId) {
+      const newParent = await this.foldersService.getById(
         userId,
-        updateQuestionDto.folderId,
+        updateQuestionsDto.folderId,
       );
-      updatedQuestion.folder = newParent;
+      updatedQuestion.folders = newParent;
     }
 
-    await this.questionRepository.save(updatedQuestion);
+    await this.questionsRepository.save(updatedQuestion);
     return updatedQuestion;
   }
 
   async removeById(userId: string, id: string) {
     const question = await this.getById(userId, id);
-    await this.questionRepository.softRemove(question);
+    await this.questionsRepository.softRemove(question);
   }
 }

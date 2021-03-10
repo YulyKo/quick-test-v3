@@ -4,11 +4,11 @@ import { TestController } from './test.controller';
 import { FoldersModule } from '../folders/folders.module';
 import { Test } from './entities/test.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { QuestionModule } from '../question/question.module';
+import { QuestionsModule } from '../questions/questions.module';
 import { TestHttpService } from './test.http.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Test]), FoldersModule, QuestionModule],
+  imports: [TypeOrmModule.forFeature([Test]), FoldersModule, QuestionsModule],
   controllers: [TestController],
   providers: [TestHttpService, TestService],
 })

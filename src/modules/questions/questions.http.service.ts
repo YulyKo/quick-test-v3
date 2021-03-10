@@ -1,28 +1,28 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
-import { FoldersError } from '../folders/folders.error';
 
-import { CreateQuestionDto } from './dto/create-question.dto';
-import { ResponseQuestionDto } from './dto/response-question.dto';
-import { UpdateQuestionDto } from './dto/update-question.dto';
-import { QuestionError } from './question.error';
-import { QuestionService } from './question.service';
+import { FoldersError } from '../folders/folders.error';
+import { CreateQuestionsDto } from './dto/create-questions.dto';
+import { ResponseQuestionsDto } from './dto/response-questions.dto';
+import { UpdateQuestionsDto } from './dto/update-questions.dto';
+import { QuestionsError } from './questions.error';
+import { QuestionsService } from './questions.service';
 
 @Injectable()
-export class QuestionHttpService {
-  constructor(private readonly questionService: QuestionService) {}
+export class QuestionsHttpService {
+  constructor(private readonly questionsService: QuestionsService) {}
 
-  async create(userId: string, createQuestionDto: CreateQuestionDto) {
+  async create(userId: string, createQuestionsDto: CreateQuestionsDto) {
     try {
-      const question = await this.questionService.create(
+      const question = await this.questionsService.create(
         userId,
-        createQuestionDto,
+        createQuestionsDto,
       );
 
-      const responseQuestion = plainToClass(ResponseQuestionDto, question);
+      const responseQuestion = plainToClass(ResponseQuestionsDto, question);
       return responseQuestion;
     } catch (error) {
-      if (error instanceof QuestionError || error instanceof FoldersError)
+      if (error instanceof QuestionsError || error instanceof FoldersError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
 
       throw new HttpException(
@@ -34,9 +34,9 @@ export class QuestionHttpService {
 
   async getAll(userId: string) {
     try {
-      const questions = await this.questionService.getAll(userId);
+      const questions = await this.questionsService.getAll(userId);
       return questions.map((question) =>
-        plainToClass(ResponseQuestionDto, question),
+        plainToClass(ResponseQuestionsDto, question),
       );
     } catch (error) {
       throw new HttpException(
@@ -48,11 +48,11 @@ export class QuestionHttpService {
 
   async getById(userId: string, id: string) {
     try {
-      const question = await this.questionService.getById(userId, id);
-      const responseQuestion = plainToClass(ResponseQuestionDto, question);
+      const question = await this.questionsService.getById(userId, id);
+      const responseQuestion = plainToClass(ResponseQuestionsDto, question);
       return responseQuestion;
     } catch (error) {
-      if (error instanceof QuestionError)
+      if (error instanceof QuestionsError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
 
       throw new HttpException(
@@ -65,18 +65,18 @@ export class QuestionHttpService {
   async updateById(
     userId: string,
     id: string,
-    updateQuestionDto: UpdateQuestionDto,
+    updateQuestionDto: UpdateQuestionsDto,
   ) {
     try {
-      const question = await this.questionService.updateById(
+      const question = await this.questionsService.updateById(
         userId,
         id,
         updateQuestionDto,
       );
-      const responseQuestion = plainToClass(ResponseQuestionDto, question);
+      const responseQuestion = plainToClass(ResponseQuestionsDto, question);
       return responseQuestion;
     } catch (error) {
-      if (error instanceof QuestionError)
+      if (error instanceof QuestionsError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
 
       throw new HttpException(
@@ -88,9 +88,9 @@ export class QuestionHttpService {
 
   async deleteById(userId: string, id: string) {
     try {
-      await this.questionService.removeById(userId, id);
+      await this.questionsService.removeById(userId, id);
     } catch (error) {
-      if (error instanceof QuestionError)
+      if (error instanceof QuestionsError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
 
       throw new HttpException(

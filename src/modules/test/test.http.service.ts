@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { FoldersError } from '../folders/folders.error';
-import { QuestionError } from '../question/question.error';
+import { QuestionsError } from '../questions/questions.error';
 import { CreateTestDto } from './dto/create-test.dto';
 import { ResponseTestDto } from './dto/response-test.dto';
 import { UpdateTestDto } from './dto/update-test.dto';
@@ -21,7 +21,7 @@ export class TestHttpService {
       if (
         error instanceof TestError ||
         error instanceof FoldersError ||
-        error instanceof QuestionError
+        error instanceof QuestionsError
       )
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
 
@@ -41,7 +41,7 @@ export class TestHttpService {
       if (
         error instanceof TestError ||
         error instanceof FoldersError ||
-        error instanceof QuestionError
+        error instanceof QuestionsError
       )
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
 
@@ -61,7 +61,7 @@ export class TestHttpService {
       if (
         error instanceof TestError ||
         error instanceof FoldersError ||
-        error instanceof QuestionError
+        error instanceof QuestionsError
       )
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
 
@@ -85,7 +85,7 @@ export class TestHttpService {
       if (
         error instanceof TestError ||
         error instanceof FoldersError ||
-        error instanceof QuestionError
+        error instanceof QuestionsError
       )
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
 
@@ -109,7 +109,7 @@ export class TestHttpService {
       if (
         error instanceof TestError ||
         error instanceof FoldersError ||
-        error instanceof QuestionError
+        error instanceof QuestionsError
       )
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
 
@@ -133,7 +133,7 @@ export class TestHttpService {
       if (
         error instanceof TestError ||
         error instanceof FoldersError ||
-        error instanceof QuestionError
+        error instanceof QuestionsError
       )
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
 
@@ -151,7 +151,7 @@ export class TestHttpService {
       if (
         error instanceof TestError ||
         error instanceof FoldersError ||
-        error instanceof QuestionError
+        error instanceof QuestionsError
       )
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
 

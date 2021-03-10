@@ -10,7 +10,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 
-import { Questions } from '../../question/entities/question.entity';
+import { Questions } from '../../questions/entities/questions.entity';
 import { Users } from '../../user/entities/user.entity';
 import { Test } from '../../test/entities/test.entity';
 
@@ -47,7 +47,7 @@ export class Folders {
   })
   children: Folders[];
 
-  @OneToMany(() => Questions, (question) => question.folder, {
+  @OneToMany(() => Questions, (question) => question.folders, {
     cascade: true,
   })
   questions: Questions[];

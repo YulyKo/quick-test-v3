@@ -3,19 +3,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { FoldersService } from '../folders/folders.service';
-import { QuestionService } from '../question/question.service';
+import { QuestionsService } from '../questions/questions.service';
 import { CreateTestDto } from './dto/create-test.dto';
 import { UpdateTestDto } from './dto/update-test.dto';
 import { Test } from './entities/test.entity';
 import { config } from '../../config';
-import { Questions } from '../question/entities/question.entity';
+import { Questions } from '../questions/entities/questions.entity';
 import { TestError } from './test.error';
 
 @Injectable()
 export class TestService {
   constructor(
     private readonly folderService: FoldersService,
-    private readonly questionService: QuestionService,
+    private readonly questionService: QuestionsService,
 
     @InjectRepository(Test)
     private testRepository: Repository<Test>,

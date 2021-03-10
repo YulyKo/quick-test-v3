@@ -1,10 +1,4 @@
-import {
-  Exclude,
-  Expose,
-  plainToClass,
-  Transform,
-  Type,
-} from 'class-transformer';
+import { Exclude, Expose, Transform, Type } from 'class-transformer';
 import {
   IsBoolean,
   IsString,
@@ -14,7 +8,7 @@ import {
   MinLength,
 } from 'class-validator';
 import { config } from 'src/config';
-import { ResponseQuestionDto } from 'src/modules/question/dto/response-question.dto';
+import { ResponseQuestionsDto } from 'src/modules/questions/dto/response-questions.dto';
 
 @Exclude()
 export class ResponseTestDto {
@@ -49,6 +43,6 @@ export class ResponseTestDto {
   folder_id: string;
 
   @Expose()
-  @Type(() => ResponseQuestionDto)
-  questions: ResponseQuestionDto[];
+  @Type(() => ResponseQuestionsDto)
+  questions: ResponseQuestionsDto[];
 }

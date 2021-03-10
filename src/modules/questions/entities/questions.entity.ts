@@ -14,11 +14,11 @@ import { Answers } from '../../answers/entities/answers.entity';
 import { Users } from '../../user/entities/user.entity';
 import { Folders } from '../../folders/entities/folders.entity';
 
-export enum QuestionTemplate {
+export enum QuestionsTemplate {
   BOOLEAN = 'boolean',
 }
 
-export enum QuestionAnswerType {
+export enum QuestionsAnswerType {
   BUTTON = 'button',
   userInput = 'userInput',
 }
@@ -39,15 +39,15 @@ export class Questions {
 
   @Column({
     type: 'enum',
-    enum: QuestionTemplate,
+    enum: QuestionsTemplate,
   })
-  public template: QuestionTemplate;
+  public template: QuestionsTemplate;
 
   @Column({
     type: 'enum',
-    enum: QuestionAnswerType,
+    enum: QuestionsAnswerType,
   })
-  public answerType: QuestionAnswerType;
+  public answerType: QuestionsAnswerType;
 
   @CreateDateColumn()
   created: Date;
@@ -70,5 +70,5 @@ export class Questions {
   user: Users;
 
   @ManyToOne(() => Folders, (folder) => folder.questions)
-  folder: Folders;
+  folders: Folders;
 }

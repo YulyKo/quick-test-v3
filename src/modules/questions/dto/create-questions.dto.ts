@@ -12,11 +12,11 @@ import {
 
 import { config } from 'src/config';
 import {
-  QuestionAnswerType,
-  QuestionTemplate,
-} from '../entities/question.entity';
+  QuestionsAnswerType,
+  QuestionsTemplate,
+} from '../entities/questions.entity';
 
-export class CreateQuestionDto {
+export class CreateQuestionsDto {
   @ApiProperty()
   @IsString()
   @MinLength(config.constants.question.name.min)
@@ -36,12 +36,12 @@ export class CreateQuestionDto {
   time: number;
 
   @ApiProperty()
-  @IsEnum(QuestionTemplate)
-  template: QuestionTemplate;
+  @IsEnum(QuestionsTemplate)
+  template: QuestionsTemplate;
 
   @ApiProperty()
-  @IsEnum(QuestionAnswerType)
-  answerType: QuestionAnswerType;
+  @IsEnum(QuestionsAnswerType)
+  answerType: QuestionsAnswerType;
 
   @ApiPropertyOptional()
   @IsUUID()

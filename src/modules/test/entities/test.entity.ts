@@ -1,5 +1,5 @@
 import { Folders } from '../../folders/entities/folders.entity';
-import { Questions } from '../../question/entities/question.entity';
+import { Questions } from '../../questions/entities/questions.entity';
 import { Users } from '../../user/entities/user.entity';
 import {
   BeforeUpdate,

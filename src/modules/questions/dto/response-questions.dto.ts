@@ -14,12 +14,12 @@ import {
 import { config } from 'src/config';
 import { ResponseAnswersDto } from 'src/modules/answers/dto/response-answer.dto';
 import {
-  QuestionAnswerType,
-  QuestionTemplate,
-} from '../entities/question.entity';
+  QuestionsAnswerType,
+  QuestionsTemplate,
+} from '../entities/questions.entity';
 
 @Exclude()
-export class ResponseQuestionDto {
+export class ResponseQuestionsDto {
   @Expose()
   @IsUUID()
   id: string;
@@ -48,12 +48,12 @@ export class ResponseQuestionDto {
   folderId: string;
 
   @Expose()
-  @IsEnum(QuestionTemplate)
-  template: QuestionTemplate;
+  @IsEnum(QuestionsTemplate)
+  template: QuestionsTemplate;
 
   @Expose()
-  @IsEnum(QuestionAnswerType)
-  answerType: QuestionAnswerType;
+  @IsEnum(QuestionsAnswerType)
+  answerType: QuestionsAnswerType;
 
   @Expose()
   @Type(() => ResponseAnswersDto)
