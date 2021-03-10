@@ -90,6 +90,14 @@ export class FoldersService {
         'questions.created',
         'questions.updated',
       ])
+      .leftJoin('folders.test', 'test', 'test.deleted IS NULL')
+      .addSelect([
+        'test.id',
+        'test.name',
+        'test.code',
+        'test.created',
+        'test.updated',
+      ])
       .getOne();
     if (!folder)
       throw new FoldersError("user doesn't have folder with this id");
