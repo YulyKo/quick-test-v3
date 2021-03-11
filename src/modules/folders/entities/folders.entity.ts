@@ -12,6 +12,7 @@ import {
 
 import { Questions } from '../../question/entities/question.entity';
 import { Users } from '../../user/entities/user.entity';
+import { Test } from '../../test/entities/test.entity';
 
 @Entity()
 export class Folders {
@@ -53,4 +54,7 @@ export class Folders {
 
   @ManyToOne(() => Users, (user) => user.folders)
   user: Users;
+
+  @OneToMany(() => Test, (test) => test.folder, { cascade: true })
+  test: Test[];
 }

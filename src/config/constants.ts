@@ -40,4 +40,18 @@ export const constants = {
       max: 60,
     },
   },
+  test: {
+    name: {
+      min: 2,
+      max: 20,
+    },
+    text: {
+      min: 2,
+      max: 200,
+    },
+    code: {
+      length: 6,
+      characters: '0123456789',
+    },
+  },
 };

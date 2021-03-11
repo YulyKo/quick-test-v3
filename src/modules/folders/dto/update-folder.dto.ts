@@ -8,5 +8,5 @@ export class UpdateFolderDto {
   color?: string;
 
   @ApiProperty()
-  parent_id?: string;
+  parentId?: string;
 }

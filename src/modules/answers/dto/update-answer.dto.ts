@@ -5,5 +5,5 @@ export class UpdateAnswerDto {
   name?: string;
 
   @ApiProperty()
-  is_true?: boolean;
+  isTrue?: boolean;
 }

@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { Questions } from '../../question/entities/question.entity';
 import { Folders } from '../../folders/entities/folders.entity';
+import { Test } from '../../test/entities/test.entity';
 
 @Entity()
 export class Users {
@@ -9,13 +10,13 @@ export class Users {
   id: string;
 
   @Column()
-  public email: string;
+  email: string;
 
   @Column()
-  public name: string;
+  name: string;
 
   @Column()
-  public hash: string;
+  hash: string;
 
   @Column({ nullable: true, default: null })
   public current_hashed_refresh_token_signature: string;
@@ -23,6 +24,9 @@ export class Users {
   @OneToMany(() => Questions, (question) => question.user, { cascade: true })
   questions: Questions[];
 
-  @OneToMany(() => Questions, (folder) => folder.user, { cascade: true })
+  @OneToMany(() => Folders, (folder) => folder.user, { cascade: true })
   folders: Folders[];
+
+  @OneToMany(() => Test, (test) => test.user, { cascade: true })
+  test: Test[];
 }

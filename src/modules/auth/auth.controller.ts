@@ -64,8 +64,8 @@ export class AuthController {
     status: HttpStatus.OK,
     schema: {
       example: {
-        access_token: 'some access_token',
-        refresh_token: 'some refresh_token',
+        access_token: 'some accessToken',
+        refresh_token: 'some refreshToken',
       },
     },
   })

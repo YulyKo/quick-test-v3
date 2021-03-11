@@ -13,27 +13,29 @@ export class AnswersHttpService {
   constructor(private readonly answersService: AnswersService) {}
 
   async create(
-    user_id: string,
-    question_id: string,
+    userId: string,
+    questionId: string,
     createAnswerDto: CreateAnswerDto,
   ) {
     try {
       const answer = await this.answersService.create(
-        user_id,
-        question_id,
+        userId,
+        questionId,
         createAnswerDto,
       );
 
       const responseAnswer = plainToClass(ResponseAnswersDto, answer);
       return responseAnswer;
     } catch (error) {
+      if (error instanceof QuestionError || error instanceof AnswerError)
+        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  async getAll(user_id: string, question_id: string) {
+  async getAll(userId: string, questionId: string) {
     try {
-      const answers = await this.answersService.getAll(user_id, question_id);
+      const answers = await this.answersService.getAll(userId, questionId);
       return answers.map((answer) => plainToClass(ResponseAnswersDto, answer));
     } catch (error) {
       throw new HttpException(
@@ -43,13 +45,9 @@ export class AnswersHttpService {
     }
   }
 
-  async getById(user_id: string, question_id: string, id: string) {
+  async getById(userId: string, questionId: string, id: string) {
     try {
-      const answer = await this.answersService.getById(
-        user_id,
-        question_id,
-        id,
-      );
+      const answer = await this.answersService.getById(userId, questionId, id);
       const responseAnswer = plainToClass(ResponseAnswersDto, answer);
       return responseAnswer;
     } catch (error) {
@@ -64,15 +62,15 @@ export class AnswersHttpService {
   }
 
   async updateById(
-    user_id: string,
-    question_id: string,
+    userId: string,
+    questionId: string,
     id: string,
     updateAnswerDto: UpdateAnswerDto,
   ) {
     try {
       const answer = await this.answersService.updateById(
-        user_id,
-        question_id,
+        userId,
+        questionId,
         id,
         updateAnswerDto,
       );
@@ -89,11 +87,11 @@ export class AnswersHttpService {
     }
   }
 
-  async deleteById(user_id: string, question_id: string, id: string) {
+  async deleteById(userId: string, questionId: string, id: string) {
     try {
-      await this.answersService.deleteById(user_id, question_id, id);
+      await this.answersService.deleteById(userId, questionId, id);
     } catch (error) {
-      if (error instanceof AnswerError)
+      if (error instanceof QuestionError || error instanceof AnswerError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
 
       throw new HttpException(

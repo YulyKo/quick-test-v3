@@ -14,29 +14,29 @@ export class FoldersService {
   ) {}
 
   async create(
-    user_id: string,
+    userId: string,
     createFolderDto: CreateFolderDto,
     isMainFolder?: boolean,
   ) {
     const folder = this.folderRepository.create({
       ...createFolderDto,
-      user: { id: user_id },
+      user: { id: userId },
     });
     if (isMainFolder) {
-      folder.id = user_id;
+      folder.id = userId;
     } else {
-      folder.parent = createFolderDto.folder_id
-        ? await this.getById(user_id, createFolderDto.folder_id)
-        : await this.getById(user_id, user_id);
+      folder.parent = createFolderDto.folderId
+        ? await this.getById(userId, createFolderDto.folderId)
+        : await this.getById(userId, userId);
     }
     await this.folderRepository.save(folder);
     return folder;
   }
 
-  async getAll(user_id: string) {
+  async getAll(userId: string) {
     const folders = await this.folderRepository
       .createQueryBuilder('folders')
-      .where({ user: user_id })
+      .where({ user: userId })
       .andWhere('folders.parent NOTNULL')
       .select([
         'folders.id',
@@ -51,10 +51,10 @@ export class FoldersService {
     return folders;
   }
 
-  async getById(user_id: string, id: string) {
+  async getById(userId: string, id: string) {
     const folder = await this.folderRepository
       .createQueryBuilder('folders')
-      .where({ user: user_id, id })
+      .where({ user: userId, id })
       .select([
         'folders.id',
         'folders.name',
@@ -70,10 +70,10 @@ export class FoldersService {
     return folder;
   }
 
-  async getAllById(user_id: string, id: string) {
+  async getAllById(userId: string, id: string) {
     const folder = await this.folderRepository
       .createQueryBuilder('folders')
-      .where({ user: user_id, id })
+      .where({ user: userId, id })
       .leftJoin('folders.children', 'children', 'children.deleted IS NULL')
       .addSelect([
         'children.id',
@@ -86,9 +86,17 @@ export class FoldersService {
       .addSelect([
         'questions.id',
         'questions.name',
-        'questions.answer_type',
+        'questions.answerType',
         'questions.created',
         'questions.updated',
+      ])
+      .leftJoin('folders.test', 'test', 'test.deleted IS NULL')
+      .addSelect([
+        'test.id',
+        'test.name',
+        'test.code',
+        'test.created',
+        'test.updated',
       ])
       .getOne();
     if (!folder)
@@ -97,25 +105,25 @@ export class FoldersService {
   }
 
   async updateById(
-    user_id: string,
+    userId: string,
     id: string,
     updateFolderDto: UpdateFolderDto,
   ) {
-    const folder = await this.getById(user_id, id);
+    const folder = await this.getById(userId, id);
 
     const newFolder = { ...folder, ...updateFolderDto };
 
-    if (updateFolderDto.parent_id) {
-      if (updateFolderDto.parent_id === id)
-        throw new FoldersError('folder id and parent_id has equal value');
-      newFolder.parent = await this.getById(user_id, updateFolderDto.parent_id);
+    if (updateFolderDto.parentId) {
+      if (updateFolderDto.parentId === id)
+        throw new FoldersError('folder id and parentId has equal value');
+      newFolder.parent = await this.getById(userId, updateFolderDto.parentId);
     }
     await this.folderRepository.save(newFolder);
     return folder;
   }
 
-  async removeById(user_id: string, id: string) {
-    const folder = await this.getAllById(user_id, id);
+  async removeById(userId: string, id: string) {
+    const folder = await this.getAllById(userId, id);
     await this.folderRepository.softRemove(folder);
   }
 }

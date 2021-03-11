@@ -13,7 +13,7 @@ export class ResponseAnswersDto {
 
   @Expose()
   @IsBoolean()
-  is_true: string;
+  isTrue: string;
 
   @Expose()
   @IsDate()
