@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateAnswerDto {
+export class UpdateAnswersDto {
   @ApiProperty()
-  name: string;
+  name?: string;
 
   @ApiProperty()
-  isTrue: boolean;
+  isTrue?: boolean;
 }

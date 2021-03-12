@@ -4,9 +4,9 @@ import { plainToClass } from 'class-transformer';
 import { QuestionsError } from '../questions/questions.error';
 import { AnswerError } from './answers.error';
 import { AnswersService } from './answers.service';
-import { CreateAnswerDto } from './dto/create-answer.dto';
-import { ResponseAnswersDto } from './dto/response-answer.dto';
-import { UpdateAnswerDto } from './dto/update-answer.dto';
+import { CreateAnswersDto } from './dto/create-answers.dto';
+import { ResponseAnswersDto } from './dto/response-answers.dto';
+import { UpdateAnswersDto } from './dto/update-answers.dto';
 
 @Injectable()
 export class AnswersHttpService {
@@ -15,7 +15,7 @@ export class AnswersHttpService {
   async create(
     userId: string,
     questionId: string,
-    createAnswerDto: CreateAnswerDto,
+    createAnswerDto: CreateAnswersDto,
   ) {
     try {
       const answer = await this.answersService.create(
@@ -65,7 +65,7 @@ export class AnswersHttpService {
     userId: string,
     questionId: string,
     id: string,
-    updateAnswerDto: UpdateAnswerDto,
+    updateAnswerDto: UpdateAnswersDto,
   ) {
     try {
       const answer = await this.answersService.updateById(

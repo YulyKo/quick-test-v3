@@ -12,14 +12,14 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { GetUser } from '../auth/get-user.decorator';
 import { AnswersHttpService } from './answers.http.service';
-import { CreateAnswerDto } from './dto/create-answer.dto';
-import { UpdateAnswerDto } from './dto/update-answer.dto';
+import { CreateAnswersDto } from './dto/create-answers.dto';
+import { UpdateAnswersDto } from './dto/update-answers.dto';
 
 @ApiTags('answers')
 @ApiBearerAuth()
 @Controller('questions/:questionId/answers')
 export class AnswersController {
-  constructor(private readonly answerHttpService: AnswersHttpService) {}
+  constructor(private readonly answersHttpService: AnswersHttpService) {}
 
   @ApiOperation({ summary: 'get all answers in question this user' })
   @Get()
@@ -27,7 +27,7 @@ export class AnswersController {
     @GetUser() user,
     @Param('questionId', new ParseUUIDPipe()) questionId: string,
   ) {
-    return this.answerHttpService.getAll(user.id, questionId);
+    return this.answersHttpService.getAll(user.id, questionId);
   }
 
   @ApiOperation({ summary: 'get answer in question this user' })
@@ -37,7 +37,7 @@ export class AnswersController {
     @Param('questionId', new ParseUUIDPipe()) questionId: string,
     @Param('id', new ParseUUIDPipe()) id: string,
   ) {
-    return this.answerHttpService.getById(user.id, questionId, id);
+    return this.answersHttpService.getById(user.id, questionId, id);
   }
 
   @ApiOperation({ summary: 'create answer' })
@@ -45,9 +45,9 @@ export class AnswersController {
   create(
     @GetUser() user,
     @Param('questionId', new ParseUUIDPipe()) questionId: string,
-    @Body() createAnswerDto: CreateAnswerDto,
+    @Body() createAnswerDto: CreateAnswersDto,
   ) {
-    return this.answerHttpService.create(user.id, questionId, createAnswerDto);
+    return this.answersHttpService.create(user.id, questionId, createAnswerDto);
   }
 
   @ApiOperation({ summary: 'update answer' })
@@ -56,9 +56,9 @@ export class AnswersController {
     @GetUser() user,
     @Param('questionId', new ParseUUIDPipe()) questionId: string,
     @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() updateAnswerDto: UpdateAnswerDto,
+    @Body() updateAnswerDto: UpdateAnswersDto,
   ) {
-    return this.answerHttpService.updateById(
+    return this.answersHttpService.updateById(
       user.id,
       questionId,
       id,
@@ -73,6 +73,6 @@ export class AnswersController {
     @Param('questionId', new ParseUUIDPipe()) questionId: string,
     @Param('id', new ParseUUIDPipe()) id: string,
   ) {
-    return this.answerHttpService.deleteById(user.id, questionId, id);
+    return this.answersHttpService.deleteById(user.id, questionId, id);
   }
 }

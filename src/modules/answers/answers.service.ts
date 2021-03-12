@@ -4,8 +4,8 @@ import { Repository } from 'typeorm';
 
 import { QuestionsService } from '../questions/questions.service';
 import { AnswerError } from './answers.error';
-import { CreateAnswerDto } from './dto/create-answer.dto';
-import { UpdateAnswerDto } from './dto/update-answer.dto';
+import { CreateAnswersDto } from './dto/create-answers.dto';
+import { UpdateAnswersDto } from './dto/update-answers.dto';
 import { Answers } from './entities/answers.entity';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class AnswersService {
   async create(
     userId: string,
     questionId: string,
-    createAnswerDto: CreateAnswerDto,
+    createAnswerDto: CreateAnswersDto,
   ) {
     try {
       const question = await this.questionService.getById(userId, questionId);
@@ -71,7 +71,7 @@ export class AnswersService {
     userId: string,
     questionId: string,
     id: string,
-    updateAnswerDto: UpdateAnswerDto,
+    updateAnswerDto: UpdateAnswersDto,
   ) {
     try {
       const answer = await this.getById(userId, questionId, id);

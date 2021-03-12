@@ -12,7 +12,7 @@ import {
 } from 'class-validator';
 
 import { config } from 'src/config';
-import { ResponseAnswersDto } from 'src/modules/answers/dto/response-answer.dto';
+import { ResponseAnswersDto } from 'src/modules/answers/dto/response-answers.dto';
 import {
   QuestionsAnswerType,
   QuestionsTemplate,
