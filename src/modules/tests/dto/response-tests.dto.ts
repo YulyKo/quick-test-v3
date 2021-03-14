@@ -11,7 +11,7 @@ import { config } from 'src/config';
 import { ResponseQuestionsDto } from 'src/modules/questions/dto/response-questions.dto';
 
 @Exclude()
-export class ResponseTestDto {
+export class ResponseTestsDto {
   @Expose()
   @IsUUID()
   id: string;
@@ -35,12 +35,12 @@ export class ResponseTestDto {
 
   @Expose()
   @IsBoolean()
-  is_open: boolean;
+  isOpen: boolean;
 
   @Expose()
   @IsUUID()
   @Transform((value) => value.obj.folder.id, { toClassOnly: true })
-  folder_id: string;
+  folderId: string;
 
   @Expose()
   @Type(() => ResponseQuestionsDto)

@@ -2,20 +2,20 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { FoldersError } from '../folders/folders.error';
 import { QuestionsError } from '../questions/questions.error';
-import { CreateTestDto } from './dto/create-test.dto';
-import { ResponseTestDto } from './dto/response-test.dto';
-import { UpdateTestDto } from './dto/update-test.dto';
-import { TestError } from './test.error';
-import { TestService } from './test.service';
+import { CreateTestsDto } from './dto/create-tests.dto';
+import { ResponseTestsDto } from './dto/response-tests.dto';
+import { UpdateTestsDto } from './dto/update-tests.dto';
+import { TestError } from './tests.error';
+import { TestsService } from './tests.service';
 
 @Injectable()
-export class TestHttpService {
-  constructor(private readonly testService: TestService) {}
-  async create(user_id: string, createTestDto: CreateTestDto) {
+export class TestsHttpService {
+  constructor(private readonly testsService: TestsService) {}
+  async create(userId: string, createTestDto: CreateTestsDto) {
     try {
-      const test = await this.testService.create(user_id, createTestDto);
+      const test = await this.testsService.create(userId, createTestDto);
 
-      const responseQuestion = plainToClass(ResponseTestDto, test);
+      const responseQuestion = plainToClass(ResponseTestsDto, test);
       return responseQuestion;
     } catch (error) {
       if (
@@ -32,11 +32,11 @@ export class TestHttpService {
     }
   }
 
-  async getAll(user_id: string) {
+  async getAll(userId: string) {
     try {
-      const tests = await this.testService.getAll(user_id);
+      const tests = await this.testsService.getAll(userId);
 
-      return tests.map((test) => plainToClass(ResponseTestDto, test));
+      return tests.map((test) => plainToClass(ResponseTestsDto, test));
     } catch (error) {
       if (
         error instanceof TestError ||
@@ -52,11 +52,11 @@ export class TestHttpService {
     }
   }
 
-  async getOne(user_id: string, id: string) {
+  async getOne(userId: string, id: string) {
     try {
-      const test = await this.testService.getById(user_id, id);
+      const test = await this.testsService.getById(userId, id);
 
-      return plainToClass(ResponseTestDto, test);
+      return plainToClass(ResponseTestsDto, test);
     } catch (error) {
       if (
         error instanceof TestError ||
@@ -72,15 +72,15 @@ export class TestHttpService {
     }
   }
 
-  async updateById(user_id: string, id: string, updateTestDto: UpdateTestDto) {
+  async updateById(userId: string, id: string, updateTestDto: UpdateTestsDto) {
     try {
-      const test = await this.testService.updateById(
-        user_id,
+      const test = await this.testsService.updateById(
+        userId,
         id,
         updateTestDto,
       );
 
-      return plainToClass(ResponseTestDto, test);
+      return plainToClass(ResponseTestsDto, test);
     } catch (error) {
       if (
         error instanceof TestError ||
@@ -98,13 +98,13 @@ export class TestHttpService {
 
   async addQuestion(userId: string, testId: string, questionId: string) {
     try {
-      const test = await this.testService.addQuestion(
+      const test = await this.testsService.addQuestion(
         userId,
         testId,
         questionId,
       );
 
-      return plainToClass(ResponseTestDto, test);
+      return plainToClass(ResponseTestsDto, test);
     } catch (error) {
       if (
         error instanceof TestError ||
@@ -122,13 +122,13 @@ export class TestHttpService {
 
   async removeQuestion(userId: string, testId: string, questionId: string) {
     try {
-      const test = await this.testService.removeQuestion(
+      const test = await this.testsService.removeQuestion(
         userId,
         testId,
         questionId,
       );
 
-      return plainToClass(ResponseTestDto, test);
+      return plainToClass(ResponseTestsDto, test);
     } catch (error) {
       if (
         error instanceof TestError ||
@@ -144,9 +144,9 @@ export class TestHttpService {
     }
   }
 
-  async deleteById(user_id: string, id: string) {
+  async deleteById(userId: string, id: string) {
     try {
-      await this.testService.deleteById(user_id, id);
+      await this.testsService.deleteById(userId, id);
     } catch (error) {
       if (
         error instanceof TestError ||

@@ -1,6 +1,6 @@
 import { Folders } from '../../folders/entities/folders.entity';
 import { Questions } from '../../questions/entities/questions.entity';
-import { Users } from '../../user/entities/user.entity';
+import { Users } from '../../users/entities/users.entity';
 import {
   BeforeUpdate,
   Column,
@@ -17,7 +17,7 @@ import {
 import { config } from '../../../config';
 
 @Entity()
-export class Test {
+export class Tests {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -35,7 +35,7 @@ export class Test {
   @Column({
     default: 'FALSE',
   })
-  is_open: boolean;
+  isOpen: boolean;
 
   @CreateDateColumn()
   created: Date;
@@ -51,10 +51,10 @@ export class Test {
     this.updated = new Date();
   }
 
-  @ManyToOne(() => Users, (user) => user.test)
+  @ManyToOne(() => Users, (user) => user.tests)
   user: Users;
 
-  @ManyToOne(() => Folders, (folder) => folder.test)
+  @ManyToOne(() => Folders, (folder) => folder.tests)
   folder: Folders;
 
   @ManyToMany(() => Questions)

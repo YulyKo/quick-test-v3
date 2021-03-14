@@ -11,8 +11,8 @@ import {
 } from 'typeorm';
 
 import { Questions } from '../../questions/entities/questions.entity';
-import { Users } from '../../user/entities/user.entity';
-import { Test } from '../../test/entities/test.entity';
+import { Users } from '../../users/entities/users.entity';
+import { Tests } from '../../tests/entities/tests.entity';
 
 @Entity()
 export class Folders {
@@ -47,7 +47,7 @@ export class Folders {
   })
   children: Folders[];
 
-  @OneToMany(() => Questions, (question) => question.folders, {
+  @OneToMany(() => Questions, (question) => question.folder, {
     cascade: true,
   })
   questions: Questions[];
@@ -55,6 +55,6 @@ export class Folders {
   @ManyToOne(() => Users, (user) => user.folders)
   user: Users;
 
-  @OneToMany(() => Test, (test) => test.folder, { cascade: true })
-  test: Test[];
+  @OneToMany(() => Tests, (test) => test.folder, { cascade: true })
+  tests: Tests[];
 }

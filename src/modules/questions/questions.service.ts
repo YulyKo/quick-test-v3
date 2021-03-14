@@ -18,7 +18,7 @@ export class QuestionsService {
   ) {}
 
   async create(userId: string, createQuestionsDto: CreateQuestionsDto) {
-    const folders = await this.foldersService.getById(
+    const folder = await this.foldersService.getById(
       userId,
       createQuestionsDto.folderId || userId,
     );
@@ -28,7 +28,7 @@ export class QuestionsService {
       user: {
         id: userId,
       },
-      folders,
+      folder,
     });
 
     await this.questionsRepository.save(question);
@@ -63,10 +63,10 @@ export class QuestionsService {
     return question;
   }
 
-  async getByIds(user_id: string, ids: string[]) {
+  async getByIds(userId: string, ids: string[]) {
     const questions = await this.questionsRepository
       .createQueryBuilder('questions')
-      .where({ user: user_id })
+      .where({ user: userId })
       .andWhereInIds(ids)
       .leftJoin('questions.folder', 'folder')
       .addSelect(['folder.id'])
@@ -95,7 +95,7 @@ export class QuestionsService {
         userId,
         updateQuestionsDto.folderId,
       );
-      updatedQuestion.folders = newParent;
+      updatedQuestion.folder = newParent;
     }
 
     await this.questionsRepository.save(updatedQuestion);

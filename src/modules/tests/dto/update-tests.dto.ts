@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsUUID, MaxLength, MinLength } from 'class-validator';
 import { config } from 'src/config';
 
-export class UpdateTestDto {
+export class UpdateTestsDto {
   @ApiProperty()
   @IsString()
   @MinLength(config.constants.test.name.min)
@@ -17,5 +17,5 @@ export class UpdateTestDto {
 
   @ApiPropertyOptional()
   @IsUUID()
-  folder_id?: string;
+  folderId?: string;
 }

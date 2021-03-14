@@ -2,7 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { Questions } from '../../questions/entities/questions.entity';
 import { Folders } from '../../folders/entities/folders.entity';
-import { Test } from '../../test/entities/test.entity';
+import { Tests } from '../../tests/entities/tests.entity';
 
 @Entity()
 export class Users {
@@ -24,6 +24,6 @@ export class Users {
   @OneToMany(() => Folders, (folder) => folder.user, { cascade: true })
   folders: Folders[];
 
-  @OneToMany(() => Test, (test) => test.user, { cascade: true })
-  test: Test[];
+  @OneToMany(() => Tests, (test) => test.user, { cascade: true })
+  tests: Tests[];
 }

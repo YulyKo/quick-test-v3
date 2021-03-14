@@ -90,13 +90,13 @@ export class FoldersService {
         'questions.created',
         'questions.updated',
       ])
-      .leftJoin('folders.test', 'test', 'test.deleted IS NULL')
+      .leftJoin('folders.tests', 'tests', 'tests.deleted IS NULL')
       .addSelect([
-        'test.id',
-        'test.name',
-        'test.code',
-        'test.created',
-        'test.updated',
+        'tests.id',
+        'tests.name',
+        'tests.code',
+        'tests.created',
+        'tests.updated',
       ])
       .getOne();
     if (!folder)
@@ -107,16 +107,16 @@ export class FoldersService {
   async updateById(
     userId: string,
     id: string,
-    updateFolderDto: UpdateFoldersDto,
+    updateFoldersDto: UpdateFoldersDto,
   ) {
     const folder = await this.getById(userId, id);
 
-    const newFolder = { ...folder, ...updateFolderDto };
+    const newFolder = { ...folder, ...updateFoldersDto };
 
-    if (updateFolderDto.parentId) {
-      if (updateFolderDto.parentId === id)
+    if (updateFoldersDto.parentId) {
+      if (updateFoldersDto.parentId === id)
         throw new FoldersError('folder id and parentId has equal value');
-      newFolder.parent = await this.getById(userId, updateFolderDto.parentId);
+      newFolder.parent = await this.getById(userId, updateFoldersDto.parentId);
     }
     await this.folderRepository.save(newFolder);
     return folder;

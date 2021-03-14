@@ -2,24 +2,24 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
-import { UserService } from '../user/user.service';
+import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/loginDto';
 import { RegistrationDto } from './dto/registrationDto';
 import { EmailDto } from './dto/emailDto';
 import { FoldersService } from '../folders/folders.service';
 import { config } from 'src/config';
-import { UserError } from '../user/user.error';
+import { UsersError } from '../users/users.error';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private userService: UserService,
+    private usersService: UsersService,
     private jwtService: JwtService,
-    private folderService: FoldersService,
+    private foldersService: FoldersService,
   ) {}
 
   public async checkEmail(params: EmailDto) {
-    const isFree: boolean = await this.userService.isFreeEmail(params.email);
+    const isFree: boolean = await this.usersService.isFreeEmail(params.email);
     if (isFree) {
       return true;
     } else {
@@ -33,19 +33,19 @@ export class AuthService {
   public async registration(credentials: RegistrationDto) {
     const hash = await bcrypt.hash(credentials.password, 10);
     try {
-      const createdUser = await this.userService.create({
+      const createdUser = await this.usersService.create({
         ...credentials,
         hash,
       });
       delete createdUser.hash;
-      await this.folderService.create(
+      await this.foldersService.create(
         createdUser.id,
         config.constants.default.folder,
         true,
       );
       return createdUser;
     } catch (error) {
-      if (error instanceof UserError)
+      if (error instanceof UsersError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
       throw new HttpException(
         'Something went wrong',
@@ -68,7 +68,7 @@ export class AuthService {
 
   public async validateUser(email: string, password: string) {
     try {
-      const user = await this.userService.getByEmail(email);
+      const user = await this.usersService.getByEmail(email);
       const isPasswordMatching = await bcrypt.compare(password, user.hash);
       if (!isPasswordMatching) {
         throw new HttpException(

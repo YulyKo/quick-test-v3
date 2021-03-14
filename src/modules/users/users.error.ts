@@ -1,4 +1,4 @@
-export class UserError extends Error {
+export class UsersError extends Error {
   constructor(message: string) {
     super(message);
   }

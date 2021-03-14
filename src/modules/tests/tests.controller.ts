@@ -11,20 +11,20 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GetUser } from '../auth/get-user.decorator';
 
-import { CreateTestDto } from './dto/create-test.dto';
-import { UpdateTestDto } from './dto/update-test.dto';
-import { TestHttpService } from './test.http.service';
+import { CreateTestsDto } from './dto/create-tests.dto';
+import { UpdateTestsDto } from './dto/update-tests.dto';
+import { TestsHttpService } from './tests.http.service';
 
 @ApiTags('test')
 @ApiBearerAuth()
 @Controller('tests')
 export class TestController {
-  constructor(private readonly testHttpService: TestHttpService) {}
+  constructor(private readonly testsHttpService: TestsHttpService) {}
 
   @ApiOperation({ summary: 'create test' })
   @Post()
-  create(@GetUser() user, @Body() createTestDto: CreateTestDto) {
-    return this.testHttpService.create(user.id, createTestDto);
+  create(@GetUser() user, @Body() createTestsDto: CreateTestsDto) {
+    return this.testsHttpService.create(user.id, createTestsDto);
   }
 
   @ApiOperation({ summary: 'add question in test' })
@@ -35,7 +35,7 @@ export class TestController {
     @Param('id') testId: string,
     @Param('questionId') questionId: string,
   ) {
-    return this.testHttpService.addQuestion(user.id, testId, questionId);
+    return this.testsHttpService.addQuestion(user.id, testId, questionId);
   }
 
   @ApiOperation({ summary: 'remove question from test' })
@@ -45,30 +45,30 @@ export class TestController {
     @Param('id') testId: string,
     @Param('questionId') questionId: string,
   ) {
-    return this.testHttpService.removeQuestion(user.id, testId, questionId);
+    return this.testsHttpService.removeQuestion(user.id, testId, questionId);
   }
 
   @Get()
   getAll(@GetUser() user) {
-    return this.testHttpService.getAll(user.id);
+    return this.testsHttpService.getAll(user.id);
   }
 
   @Get(':id')
   getOne(@GetUser() user, @Param('id') id: string) {
-    return this.testHttpService.getOne(user.id, id);
+    return this.testsHttpService.getOne(user.id, id);
   }
 
   @Put(':id')
   update(
     @GetUser() user,
     @Param('id') id: string,
-    @Body() updateTestDto: UpdateTestDto,
+    @Body() updateTestDto: UpdateTestsDto,
   ) {
-    return this.testHttpService.updateById(user.id, id, updateTestDto);
+    return this.testsHttpService.updateById(user.id, id, updateTestDto);
   }
 
   @Delete(':id')
   delete(@GetUser() user, @Param('id') id: string) {
-    return this.testHttpService.deleteById(user.id, id);
+    return this.testsHttpService.deleteById(user.id, id);
   }
 }

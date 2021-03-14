@@ -2,36 +2,36 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { CreateUserDto } from './dto/createUserDto';
-import { Users } from './entities/user.entity';
-import { UserError } from './user.error';
+import { CreateUsersDto } from './dto/createUsersDto';
+import { Users } from './entities/users.entity';
+import { UsersError } from './users.error';
 
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(
     @InjectRepository(Users)
-    private userRepository: Repository<Users>,
+    private usersRepository: Repository<Users>,
   ) {}
 
   async isFreeEmail(email: string) {
-    const userWithEmail = await this.userRepository.find({ email });
+    const userWithEmail = await this.usersRepository.find({ email });
     if (userWithEmail.length) {
       return false;
     }
     return true;
   }
 
-  async create(userData: CreateUserDto) {
+  async create(userData: CreateUsersDto) {
     const emailIsFree = await this.isFreeEmail(userData.email);
     if (!emailIsFree)
-      throw new UserError('User with this email has already existed');
-    const newUser = await this.userRepository.create(userData);
-    await this.userRepository.save(newUser);
+      throw new UsersError('User with this email has already existed');
+    const newUser = await this.usersRepository.create(userData);
+    await this.usersRepository.save(newUser);
     return newUser;
   }
 
   async getByEmail(email: string) {
-    const user = await this.userRepository.findOne({ email });
+    const user = await this.usersRepository.findOne({ email });
     if (user) {
       return user;
     }

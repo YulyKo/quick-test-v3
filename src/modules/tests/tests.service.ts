@@ -4,60 +4,60 @@ import { Repository } from 'typeorm';
 
 import { FoldersService } from '../folders/folders.service';
 import { QuestionsService } from '../questions/questions.service';
-import { CreateTestDto } from './dto/create-test.dto';
-import { UpdateTestDto } from './dto/update-test.dto';
-import { Test } from './entities/test.entity';
+import { CreateTestsDto } from './dto/create-tests.dto';
+import { UpdateTestsDto } from './dto/update-tests.dto';
+import { Tests } from './entities/tests.entity';
 import { config } from '../../config';
 import { Questions } from '../questions/entities/questions.entity';
-import { TestError } from './test.error';
+import { TestError } from './tests.error';
 
 @Injectable()
-export class TestService {
+export class TestsService {
   constructor(
-    private readonly folderService: FoldersService,
-    private readonly questionService: QuestionsService,
+    private readonly foldersService: FoldersService,
+    private readonly questionsService: QuestionsService,
 
-    @InjectRepository(Test)
-    private testRepository: Repository<Test>,
+    @InjectRepository(Tests)
+    private testsRepository: Repository<Tests>,
   ) {}
 
-  async create(user_id: string, createTestDto: CreateTestDto) {
-    const folder = await this.folderService.getById(
-      user_id,
-      createTestDto.folder_id || user_id,
+  async create(userId: string, createTestsDto: CreateTestsDto) {
+    const folder = await this.foldersService.getById(
+      userId,
+      createTestsDto.folderId || userId,
     );
 
     const code = await this.getUniqCode();
     let questions = [];
 
-    if (createTestDto.questions) {
-      questions = await this.questionService.getByIds(
-        user_id,
-        createTestDto.questions,
+    if (createTestsDto.questions) {
+      questions = await this.questionsService.getByIds(
+        userId,
+        createTestsDto.questions,
       );
     }
 
-    const test = this.testRepository.create({
-      ...createTestDto,
+    const test = this.testsRepository.create({
+      ...createTestsDto,
       code,
       folder,
       questions,
       user: {
-        id: user_id,
+        id: userId,
       },
     });
 
-    await this.testRepository.save(test);
+    await this.testsRepository.save(test);
     return test;
   }
 
-  async getAll(user_id: string) {
-    const tests = await this.testRepository
-      .createQueryBuilder('test')
-      .where({ user: user_id })
-      .leftJoin('test.folder', 'folder')
+  async getAll(userId: string) {
+    const tests = await this.testsRepository
+      .createQueryBuilder('tests')
+      .where({ user: userId })
+      .leftJoin('tests.folder', 'folder')
       .addSelect(['folder.id'])
-      .leftJoinAndSelect('test.questions', 'questions')
+      .leftJoinAndSelect('tests.questions', 'questions')
       .leftJoin('questions.folder', 'question_folder')
       .addSelect(['question_folder.id'])
       .leftJoinAndSelect('questions.answers', 'answers')
@@ -66,13 +66,13 @@ export class TestService {
     return tests;
   }
 
-  async getById(user_id: string, id: string) {
-    const test = await this.testRepository
-      .createQueryBuilder('test')
-      .where({ user: user_id, id })
-      .leftJoin('test.folder', 'folder')
+  async getById(userId: string, id: string) {
+    const test = await this.testsRepository
+      .createQueryBuilder('tests')
+      .where({ user: userId, id })
+      .leftJoin('tests.folder', 'folder')
       .addSelect(['folder.id'])
-      .leftJoinAndSelect('test.questions', 'questions')
+      .leftJoinAndSelect('tests.questions', 'questions')
       .leftJoin('questions.folder', 'question_folder')
       .addSelect(['question_folder.id'])
       .leftJoinAndSelect('questions.answers', 'answers')
@@ -81,24 +81,24 @@ export class TestService {
     return test;
   }
 
-  async updateById(user_id: string, id: string, updateTestDto: UpdateTestDto) {
-    const test = await this.getById(user_id, id);
+  async updateById(userId: string, id: string, updateTestDto: UpdateTestsDto) {
+    const test = await this.getById(userId, id);
 
     const newTest = { ...test, updateTestDto };
-    if (updateTestDto.folder_id) {
-      const newFolder = await this.folderService.getById(
-        user_id,
-        updateTestDto.folder_id,
+    if (updateTestDto.folderId) {
+      const newFolder = await this.foldersService.getById(
+        userId,
+        updateTestDto.folderId,
       );
       newTest.folder = newFolder;
     }
 
-    await this.testRepository.save(newTest);
+    await this.testsRepository.save(newTest);
     return newTest;
   }
 
   async addQuestion(userId: string, testId: string, questionId: string) {
-    const question = await this.questionService.getById(userId, questionId);
+    const question = await this.questionsService.getById(userId, questionId);
     const test = await this.getById(userId, testId);
 
     const questionIndex = this.hasTestQuestion(test.questions, questionId);
@@ -107,12 +107,12 @@ export class TestService {
         `This test has already had question with id: ${questionId}`,
       );
     test.questions.push(question);
-    await this.testRepository.save(test);
+    await this.testsRepository.save(test);
     return test;
   }
 
   async removeQuestion(userId: string, testId: string, questionId: string) {
-    const question = await this.questionService.getById(userId, questionId);
+    const question = await this.questionsService.getById(userId, questionId);
     const test = await this.getById(userId, testId);
 
     const questionIndex = this.hasTestQuestion(test.questions, question.id);
@@ -122,13 +122,13 @@ export class TestService {
       );
 
     test.questions.splice(questionIndex, 1);
-    await this.testRepository.save(test);
+    await this.testsRepository.save(test);
     return test;
   }
 
-  async deleteById(user_id: string, id: string) {
-    const test = await this.getById(user_id, id);
-    await this.testRepository.softRemove(test);
+  async deleteById(userId: string, id: string) {
+    const test = await this.getById(userId, id);
+    await this.testsRepository.softRemove(test);
   }
 
   private hasTestQuestion(questions: Questions[], questionId: string) {
@@ -149,7 +149,7 @@ export class TestService {
   }
 
   private async isUniqCode(code: string) {
-    const codeFromDB = await this.testRepository.findOne({ code });
+    const codeFromDB = await this.testsRepository.findOne({ code });
     return !codeFromDB;
   }
 

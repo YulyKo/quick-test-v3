@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 
 import { Answers } from '../../answers/entities/answers.entity';
-import { Users } from '../../user/entities/user.entity';
+import { Users } from '../../users/entities/users.entity';
 import { Folders } from '../../folders/entities/folders.entity';
 
 export enum QuestionsTemplate {
@@ -70,5 +70,5 @@ export class Questions {
   user: Users;
 
   @ManyToOne(() => Folders, (folder) => folder.questions)
-  folders: Folders;
+  folder: Folders;
 }
