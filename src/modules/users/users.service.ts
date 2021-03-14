@@ -40,4 +40,21 @@ export class UsersService {
       HttpStatus.NOT_FOUND,
     );
   }
+
+  async setCurrentRefreshToken(refreshToken: string, userId: string) {
+    await this.usersRepository.update(userId, {
+      refreshToken,
+    });
+  }
+
+  async getById(id: string) {
+    const user = await this.usersRepository.findOne({ id });
+    if (user) {
+      return user;
+    }
+    throw new HttpException(
+      'User with this id does not exist',
+      HttpStatus.BAD_REQUEST,
+    );
+  }
 }

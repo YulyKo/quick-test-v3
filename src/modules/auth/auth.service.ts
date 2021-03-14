@@ -38,6 +38,7 @@ export class AuthService {
         hash,
       });
       delete createdUser.hash;
+      delete createdUser.refreshToken;
       await this.foldersService.create(
         createdUser.id,
         config.constants.default.folder,
@@ -59,11 +60,46 @@ export class AuthService {
       credentials.email,
       credentials.password,
     );
-    const payload = { username: user.name, sub: user.id };
-    const accessToken = this.jwtService.sign(payload);
-    return {
-      accessToken,
-    };
+
+    const tokens = await this.saveRefreshAndGetBothTokens(user.name, user.id);
+
+    return tokens;
+  }
+
+  public async refreshToken(userId, username, authorizationHeader) {
+    const refreshToken = authorizationHeader.replace('Bearer ', '');
+    const isRefreshTokenMatching = await this.isUserRefreshToken(
+      userId,
+      refreshToken,
+    );
+    if (!isRefreshTokenMatching) {
+      throw new HttpException(
+        'Refresh token is incorrect',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const tokens = await this.saveRefreshAndGetBothTokens(username, userId);
+
+    return tokens;
+  }
+
+  public async logout(userId, authorizationHeader) {
+    const refreshToken = authorizationHeader.replace('Bearer ', '');
+    const isRefreshTokenMatching = await this.isUserRefreshToken(
+      userId,
+      refreshToken,
+    );
+    if (!isRefreshTokenMatching) {
+      throw new HttpException(
+        'Refresh token is incorrect',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    await this.usersService.setCurrentRefreshToken(null, userId);
+
+    return { message: 'OK' };
   }
 
   public async validateUser(email: string, password: string) {
@@ -77,6 +113,7 @@ export class AuthService {
         );
       }
       delete user.hash;
+      delete user.refreshToken;
       return user;
     } catch (error) {
       throw new HttpException(
@@ -84,5 +121,55 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  public async saveRefreshAndGetBothTokens(
+    username: string,
+    sub: string,
+  ): Promise<{ accessToken; refreshToken }> {
+    const payload = { username, sub };
+
+    const accessToken = this.jwtService.sign(payload, {
+      secret: config.env.JWT_ACCESS_SECRET,
+      expiresIn: config.env.JWT_ACCESS_EXPIRATION_TIME,
+    });
+
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: config.env.JWT_REFRESH_SECRET,
+      expiresIn: config.env.JWT_REFRESH_EXPIRATION_TIME,
+    });
+
+    const refreshTokenSignature = this.getTokenSignature(refreshToken);
+
+    const refreshTokenSignatureHashed = await bcrypt.hash(
+      refreshTokenSignature,
+      10,
+    );
+    await this.usersService.setCurrentRefreshToken(
+      refreshTokenSignatureHashed,
+      sub,
+    );
+
+    return { accessToken, refreshToken };
+  }
+
+  public async isUserRefreshToken(userId, token): Promise<boolean> {
+    const user = await this.usersService.getById(userId);
+
+    if (!user.refreshToken) {
+      return false;
+    }
+
+    const refreshTokenSignature = this.getTokenSignature(token);
+
+    const isRefreshTokenMatching = await bcrypt.compare(
+      refreshTokenSignature,
+      user.refreshToken,
+    );
+    return isRefreshTokenMatching;
+  }
+
+  public getTokenSignature(token: string) {
+    return token.slice(token.lastIndexOf('.') + 1);
   }
 }
