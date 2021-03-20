@@ -2,6 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsEnum,
   IsNumber,
+  IsOptional,
   IsString,
   IsUUID,
   Max,
@@ -44,6 +45,7 @@ export class CreateQuestionsDto {
   answerType: QuestionsAnswerType;
 
   @ApiPropertyOptional()
+  @IsOptional()
   @IsUUID()
   folderId?: string;
 }
