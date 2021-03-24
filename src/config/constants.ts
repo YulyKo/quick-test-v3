@@ -11,6 +11,10 @@ export const constants = {
   JWT: {
     expiresIn: '720m',
     publicKey: 'isPublic',
+    strategy: {
+      jwt: 'jwt',
+      jwtRefresh: 'jwt-refresh',
+    },
   },
   SWAGGER,
   auth: {

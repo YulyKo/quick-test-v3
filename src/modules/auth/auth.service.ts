@@ -61,36 +61,30 @@ export class AuthService {
       credentials.password,
     );
 
-    const tokens = await this.saveRefreshAndGetBothTokens(user.name, user.id);
+    const tokens = await this.getValidTokens(user.name, user.id);
 
     return tokens;
   }
 
-  public async refreshToken(userId, username, authorizationHeader) {
-    const refreshToken = authorizationHeader.replace('Bearer ', '');
-    const isRefreshTokenMatching = await this.isUserRefreshToken(
-      userId,
-      refreshToken,
-    );
-    if (!isRefreshTokenMatching) {
+  public async refreshToken(userId, username, authorization) {
+    const refreshToken = authorization.split(' ')[1];
+    const isMatching = await this.isUserRefreshToken(userId, refreshToken);
+    if (!isMatching) {
       throw new HttpException(
         'Refresh token is incorrect',
         HttpStatus.BAD_REQUEST,
       );
     }
 
-    const tokens = await this.saveRefreshAndGetBothTokens(username, userId);
+    const tokens = await this.getValidTokens(username, userId);
 
     return tokens;
   }
 
-  public async logout(userId, authorizationHeader) {
-    const refreshToken = authorizationHeader.replace('Bearer ', '');
-    const isRefreshTokenMatching = await this.isUserRefreshToken(
-      userId,
-      refreshToken,
-    );
-    if (!isRefreshTokenMatching) {
+  public async logout(userId, authorization) {
+    const refreshToken = authorization.split(' ')[1];
+    const isMatching = await this.isUserRefreshToken(userId, refreshToken);
+    if (!isMatching) {
       throw new HttpException(
         'Refresh token is incorrect',
         HttpStatus.BAD_REQUEST,
@@ -123,7 +117,7 @@ export class AuthService {
     }
   }
 
-  public async saveRefreshAndGetBothTokens(
+  public async getValidTokens(
     username: string,
     sub: string,
   ): Promise<{ accessToken; refreshToken }> {
@@ -162,11 +156,11 @@ export class AuthService {
 
     const refreshTokenSignature = this.getTokenSignature(token);
 
-    const isRefreshTokenMatching = await bcrypt.compare(
+    const isMatching = await bcrypt.compare(
       refreshTokenSignature,
       user.refreshToken,
     );
-    return isRefreshTokenMatching;
+    return isMatching;
   }
 
   public getTokenSignature(token: string) {

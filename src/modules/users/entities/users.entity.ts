@@ -19,7 +19,7 @@ export class Users {
   hash: string;
 
   @Column({ nullable: true, default: null })
-  public refreshToken: string;
+  refreshToken: string;
 
   @OneToMany(() => Questions, (question) => question.user, { cascade: true })
   questions: Questions[];
