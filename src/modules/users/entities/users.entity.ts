@@ -18,6 +18,9 @@ export class Users {
   @Column()
   hash: string;
 
+  @Column({ nullable: true, default: null })
+  refreshToken: string;
+
   @OneToMany(() => Questions, (question) => question.user, { cascade: true })
   questions: Questions[];
 

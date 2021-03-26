@@ -1,12 +1,14 @@
 import {
   Controller,
   Post,
+  Get,
   ValidationPipe,
   Body,
   Head,
   Param,
   HttpStatus,
   HttpCode,
+  Headers,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -15,6 +17,9 @@ import { RegistrationDto } from './dto/registrationDto';
 import { LoginDto } from './dto/loginDto';
 import { EmailDto } from './dto/emailDto';
 import { Public } from './auth.decorator';
+import { GetUser } from './get-user.decorator';
+import { UseGuards } from '@nestjs/common';
+import { JwtRefreshGuard } from './jwt-auth.guard';
 
 @Public()
 @ApiTags('auth')
@@ -28,6 +33,7 @@ export class AuthController {
     schema: {
       example: {
         accessToken: 'some accessToken',
+        refreshToken: 'some refreshToken',
       },
     },
   })
@@ -51,6 +57,37 @@ export class AuthController {
   @Post('registration')
   async registration(@Body(ValidationPipe) credentials: RegistrationDto) {
     return this.authService.registration(credentials);
+  }
+
+  @ApiOperation({ summary: 'refresh tokens' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    schema: {
+      example: {
+        accessToken: 'some accessToken',
+        refreshToken: 'some refreshToken',
+      },
+    },
+  })
+  @Get('refresh')
+  @UseGuards(JwtRefreshGuard)
+  async refresh(@GetUser() user, @Headers('authorization') authorization) {
+    return this.authService.refreshToken(user.id, user.name, authorization);
+  }
+
+  @ApiOperation({ summary: 'logout user' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    schema: {
+      example: {
+        message: 'OK',
+      },
+    },
+  })
+  @Get('logout')
+  @UseGuards(JwtRefreshGuard)
+  async logout(@GetUser() user, @Headers('authorization') authorization) {
+    return this.authService.logout(user.id, authorization);
   }
 
   @ApiResponse({

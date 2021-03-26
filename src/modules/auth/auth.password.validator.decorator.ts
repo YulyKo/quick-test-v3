@@ -13,6 +13,9 @@ export function IsPassword(validationOptions?: ValidationOptions) {
       options: validationOptions,
       validator: {
         validate(password: string) {
+          if (!password) {
+            throw new HttpException('No password', HttpStatus.BAD_REQUEST);
+          }
           if (password.match(config.constants.auth.password)) return true;
           throw new HttpException('Bad password', HttpStatus.BAD_REQUEST);
         },

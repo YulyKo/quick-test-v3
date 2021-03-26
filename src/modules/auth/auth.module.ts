@@ -5,7 +5,7 @@ import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UserModule } from '../users/users.module';
-import { JwtStrategy } from './jwt.strategy';
+import { JwtStrategy, JwtRefreshStrategy } from './jwt.strategy';
 import { config } from '../../config';
 import { FoldersModule } from '../folders/folders.module';
 
@@ -15,12 +15,12 @@ import { FoldersModule } from '../folders/folders.module';
     PassportModule,
     FoldersModule,
     JwtModule.register({
-      secret: config.env.JWT_SECRET,
-      signOptions: { expiresIn: config.constants.JWT.expiresIn },
+      secret: config.env.JWT_ACCESS_SECRET,
+      signOptions: { expiresIn: config.env.JWT_ACCESS_EXPIRATION_TIME },
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, JwtRefreshStrategy],
   exports: [AuthService, JwtModule],
 })
 export class AuthModule {}

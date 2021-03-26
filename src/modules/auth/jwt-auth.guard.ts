@@ -5,7 +5,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { config } from '../../config';
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {
+export class JwtAuthGuard extends AuthGuard(config.constants.JWT.strategy.jwt) {
   constructor(private reflector: Reflector) {
     super();
   }
@@ -19,5 +19,14 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       return true;
     }
     return super.canActivate(context);
+  }
+}
+
+@Injectable()
+export class JwtRefreshGuard extends AuthGuard(
+  config.constants.JWT.strategy.jwtRefresh,
+) {
+  constructor() {
+    super();
   }
 }
