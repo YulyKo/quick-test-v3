@@ -7,7 +7,7 @@ import { LoginDto } from './dto/loginDto';
 import { RegistrationDto } from './dto/registrationDto';
 import { EmailDto } from './dto/emailDto';
 import { FoldersService } from '../folders/folders.service';
-import { config } from 'src/config';
+import { config } from '../../config';
 import { UsersError } from '../users/users.error';
 
 @Injectable()
@@ -117,18 +117,15 @@ export class AuthService {
     }
   }
 
-  public async getValidTokens(
-    username: string,
-    sub: string,
-  ): Promise<{ accessToken; refreshToken }> {
+  public async getValidTokens(username: string, sub: string) {
     const payload = { username, sub };
 
-    const accessToken = this.jwtService.sign(payload, {
+    const accessToken: string = this.jwtService.sign(payload, {
       secret: config.env.JWT_ACCESS_SECRET,
       expiresIn: config.env.JWT_ACCESS_EXPIRATION_TIME,
     });
 
-    const refreshToken = this.jwtService.sign(payload, {
+    const refreshToken: string = this.jwtService.sign(payload, {
       secret: config.env.JWT_REFRESH_SECRET,
       expiresIn: config.env.JWT_REFRESH_EXPIRATION_TIME,
     });
@@ -144,7 +141,7 @@ export class AuthService {
       sub,
     );
 
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken, userId: sub };
   }
 
   public async isUserRefreshToken(userId, token): Promise<boolean> {

@@ -10,9 +10,9 @@ import {
   Min,
   MinLength,
 } from 'class-validator';
+import { ResponseAnswersDto } from '../../answers/dto/response-answers.dto';
 
-import { config } from 'src/config';
-import { ResponseAnswersDto } from 'src/modules/answers/dto/response-answers.dto';
+import { config } from '../../../config';
 import {
   QuestionsAnswerType,
   QuestionsTemplate,
