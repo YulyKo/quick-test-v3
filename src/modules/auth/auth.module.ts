@@ -8,9 +8,11 @@ import { UserModule } from '../users/users.module';
 import { JwtStrategy, JwtRefreshStrategy } from './jwt.strategy';
 import { config } from '../../config';
 import { FoldersModule } from '../folders/folders.module';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
   imports: [
+    MailModule,
     UserModule,
     PassportModule,
     FoldersModule,
