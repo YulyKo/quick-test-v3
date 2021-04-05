@@ -7,8 +7,8 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { config } from 'src/config';
-import { ResponseQuestionsDto } from 'src/modules/questions/dto/response-questions.dto';
+import { config } from '../../../config';
+import { ResponseQuestionsDto } from '../../questions/dto/response-questions.dto';
 
 @Exclude()
 export class ResponseTestsDto {

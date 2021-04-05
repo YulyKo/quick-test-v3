@@ -11,7 +11,7 @@ import {
   MinLength,
 } from 'class-validator';
 
-import { config } from 'src/config';
+import { config } from '../../../config';
 import {
   QuestionsAnswerType,
   QuestionsTemplate,

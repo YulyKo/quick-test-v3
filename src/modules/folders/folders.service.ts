@@ -113,13 +113,13 @@ export class FoldersService {
 
     const newFolder = { ...folder, ...updateFoldersDto };
 
-    if (updateFoldersDto.parentId) {
-      if (updateFoldersDto.parentId === id)
-        throw new FoldersError('folder id and parentId has equal value');
-      newFolder.parent = await this.getById(userId, updateFoldersDto.parentId);
+    if (updateFoldersDto.folderId) {
+      if (updateFoldersDto.folderId === id)
+        throw new FoldersError('folder id and id has equal value');
+      newFolder.parent = await this.getById(userId, updateFoldersDto.folderId);
     }
     await this.folderRepository.save(newFolder);
-    return folder;
+    return newFolder;
   }
 
   async removeById(userId: string, id: string) {

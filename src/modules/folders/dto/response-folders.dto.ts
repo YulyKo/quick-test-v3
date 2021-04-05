@@ -6,7 +6,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { config } from 'src/config';
+import { config } from '../../../config';
 
 @Exclude()
 export class ResponseFoldersDto {

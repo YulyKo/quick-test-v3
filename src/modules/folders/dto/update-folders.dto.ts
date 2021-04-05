@@ -15,5 +15,5 @@ export class UpdateFoldersDto {
   @ApiProperty()
   @IsOptional()
   @IsUUID()
-  parentId?: string;
+  folderId?: string;
 }

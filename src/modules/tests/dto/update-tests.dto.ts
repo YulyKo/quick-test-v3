@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsUUID, MaxLength, MinLength } from 'class-validator';
-import { config } from 'src/config';
+import { config } from '../../../config';
 
 export class UpdateTestsDto {
   @ApiProperty()
