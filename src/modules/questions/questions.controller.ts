@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  ParseArrayPipe,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
@@ -23,7 +24,11 @@ export class QuestionsController {
 
   @ApiOperation({ summary: 'create question' })
   @Post()
-  create(@GetUser() user, @Body() createQuestionDto: CreateQuestionsDto) {
+  create(
+    @GetUser() user,
+    @Body(new ParseArrayPipe({ items: CreateQuestionsDto }))
+    createQuestionDto: CreateQuestionsDto[],
+  ) {
     return this.questionsHttpService.create(user.id, createQuestionDto);
   }
 
@@ -35,7 +40,7 @@ export class QuestionsController {
 
   @ApiOperation({ summary: 'get question by id this user' })
   @Get(':id')
-  getOne(@GetUser() user, @Param('id', new ParseUUIDPipe()) id: string) {
+  getOne(@GetUser() user, @Param('id') id: string) {
     return this.questionsHttpService.getById(user.id, id);
   }
 

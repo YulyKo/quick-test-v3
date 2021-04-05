@@ -40,34 +40,25 @@ describe('Question module (e2e)', () => {
     const response1 = await request(app.getHttpServer())
       .post('/questions')
       .set('Authorization', 'Bearer ' + accessToken)
-      .send(mockData.question.create)
+      .send([mockData.question.create, mockData.question.create])
       .expect(201);
 
-    questionId1 = response1.body.id;
+    const [question1, question2] = response1.body;
+    questionId1 = question1.id;
+    questionId2 = question2.id;
 
     const response2 = await request(app.getHttpServer())
-      .post('/questions')
-      .set('Authorization', 'Bearer ' + accessToken)
-      .send(mockData.question.create)
-      .expect(201);
-
-    questionId2 = response2.body.id;
-
-    const response3 = await request(app.getHttpServer())
       .post('/folders')
       .set('Authorization', 'Bearer ' + accessToken)
-      .send({ ...mockData.folder.create, folderId: userId })
+      .send([
+        { ...mockData.folder.create, folderId: userId },
+        { ...mockData.folder.create, folderId: userId },
+      ])
       .expect(201);
 
-    folderId1 = response3.body.id;
-
-    const response4 = await request(app.getHttpServer())
-      .post('/folders')
-      .set('Authorization', 'Bearer ' + accessToken)
-      .send({ ...mockData.folder.create, folderId: userId })
-      .expect(201);
-
-    folderId2 = response4.body.id;
+    const [folder1, folder2] = response2.body;
+    folderId1 = folder1.id;
+    folderId2 = folder2.id;
 
     done();
   });

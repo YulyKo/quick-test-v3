@@ -15,17 +15,15 @@ export class AnswersHttpService {
   async create(
     userId: string,
     questionId: string,
-    createAnswerDto: CreateAnswersDto,
+    createAnswerDtos: CreateAnswersDto[],
   ) {
     try {
-      const answer = await this.answersService.create(
-        userId,
-        questionId,
-        createAnswerDto,
+      const answers = await Promise.all(
+        createAnswerDtos.map((createAnswerDto) =>
+          this.answersService.create(userId, questionId, createAnswerDto),
+        ),
       );
-
-      const responseAnswer = plainToClass(ResponseAnswersDto, answer);
-      return responseAnswer;
+      return answers.map((answer) => plainToClass(ResponseAnswersDto, answer));
     } catch (error) {
       if (error instanceof QuestionsError || error instanceof AnswerError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);

@@ -10,12 +10,15 @@ import { FoldersService } from './folders.service';
 export class FoldersHttpService {
   constructor(private readonly foldersService: FoldersService) {}
 
-  async create(userId: string, createFolderDto: CreateFoldersDto) {
+  async create(userId: string, createFolderDtos: CreateFoldersDto[]) {
     try {
-      const folder = await this.foldersService.create(userId, createFolderDto);
+      const folders = await Promise.all(
+        createFolderDtos.map((createFolderDto) =>
+          this.foldersService.create(userId, createFolderDto),
+        ),
+      );
 
-      const responseFolder = plainToClass(ResponseFoldersDto, folder);
-      return responseFolder;
+      return folders.map((folder) => plainToClass(ResponseFoldersDto, folder));
     } catch (error) {
       if (error instanceof FoldersError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);

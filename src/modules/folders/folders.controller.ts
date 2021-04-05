@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseArrayPipe,
   ParseUUIDPipe,
   Post,
   Put,
@@ -25,8 +26,12 @@ export class FoldersController {
     summary: 'create folder in main folder, folderId is optional',
   })
   @Post()
-  create(@GetUser() user, @Body() createFolderDto: CreateFoldersDto) {
-    return this.filesHttpService.create(user.id, createFolderDto);
+  create(
+    @GetUser() user,
+    @Body(new ParseArrayPipe({ items: CreateFoldersDto }))
+    createFolderDtos: CreateFoldersDto[],
+  ) {
+    return this.filesHttpService.create(user.id, createFolderDtos);
   }
 
   @ApiOperation({ summary: 'update specific folder by id' })

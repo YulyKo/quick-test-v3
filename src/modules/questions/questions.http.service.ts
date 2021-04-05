@@ -12,15 +12,17 @@ import { QuestionsService } from './questions.service';
 export class QuestionsHttpService {
   constructor(private readonly questionsService: QuestionsService) {}
 
-  async create(userId: string, createQuestionsDto: CreateQuestionsDto) {
+  async create(userId: string, createQuestionsDtos: CreateQuestionsDto[]) {
     try {
-      const question = await this.questionsService.create(
-        userId,
-        createQuestionsDto,
+      const questions = await Promise.all(
+        createQuestionsDtos.map((createQuestionsDto) =>
+          this.questionsService.create(userId, createQuestionsDto),
+        ),
       );
 
-      const responseQuestion = plainToClass(ResponseQuestionsDto, question);
-      return responseQuestion;
+      return questions.map((question) =>
+        plainToClass(ResponseQuestionsDto, question),
+      );
     } catch (error) {
       if (error instanceof QuestionsError || error instanceof FoldersError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
