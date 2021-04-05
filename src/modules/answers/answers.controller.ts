@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseArrayPipe,
   ParseUUIDPipe,
   Post,
   Put,
@@ -45,9 +46,14 @@ export class AnswersController {
   create(
     @GetUser() user,
     @Param('questionId', new ParseUUIDPipe()) questionId: string,
-    @Body() createAnswerDto: CreateAnswersDto,
+    @Body(new ParseArrayPipe({ items: CreateAnswersDto }))
+    createAnswerDtos: CreateAnswersDto[],
   ) {
-    return this.answersHttpService.create(user.id, questionId, createAnswerDto);
+    return this.answersHttpService.create(
+      user.id,
+      questionId,
+      createAnswerDtos,
+    );
   }
 
   @ApiOperation({ summary: 'update answer' })

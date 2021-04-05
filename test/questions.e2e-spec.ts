@@ -36,17 +36,18 @@ describe('Question module (e2e)', () => {
     const response = await request(app.getHttpServer())
       .post('/questions')
       .set('Authorization', 'Bearer ' + accessToken)
-      .send(mockData.question.create)
+      .send([mockData.question.create])
       .expect(201);
 
-    questionId = response.body.id;
+    const [question] = response.body;
+    questionId = question.id;
 
-    expect(response.body.name).toBe(mockData.question.create.name);
-    expect(response.body.text).toBe(mockData.question.create.text);
-    expect(response.body.time).toBe(mockData.question.create.time);
-    expect(response.body.template).toBe(mockData.question.create.template);
-    expect(response.body.answerType).toBe(mockData.question.create.answerType);
-    expect(response.body.id).toMatch(new RegExp(config.constants.uuid));
+    expect(question.name).toBe(mockData.question.create.name);
+    expect(question.text).toBe(mockData.question.create.text);
+    expect(question.time).toBe(mockData.question.create.time);
+    expect(question.template).toBe(mockData.question.create.template);
+    expect(question.answerType).toBe(mockData.question.create.answerType);
+    expect(question.id).toMatch(new RegExp(config.constants.uuid));
     done();
   });
 

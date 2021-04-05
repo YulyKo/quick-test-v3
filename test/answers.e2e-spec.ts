@@ -33,21 +33,22 @@ describe('Answer module (e2e)', () => {
     done();
   });
 
-  it('create question for answer (POST)', async (done) => {
+  it('create question (POST)', async (done) => {
     const response = await request(app.getHttpServer())
       .post('/questions')
       .set('Authorization', 'Bearer ' + accessToken)
-      .send(mockData.question.create)
+      .send([mockData.question.create])
       .expect(201);
 
-    questionId = response.body.id;
+    const [question] = response.body;
+    questionId = question.id;
 
-    expect(response.body.name).toBe(mockData.question.create.name);
-    expect(response.body.text).toBe(mockData.question.create.text);
-    expect(response.body.time).toBe(mockData.question.create.time);
-    expect(response.body.template).toBe(mockData.question.create.template);
-    expect(response.body.answerType).toBe(mockData.question.create.answerType);
-    expect(response.body.id).toMatch(new RegExp(config.constants.uuid));
+    expect(question.name).toBe(mockData.question.create.name);
+    expect(question.text).toBe(mockData.question.create.text);
+    expect(question.time).toBe(mockData.question.create.time);
+    expect(question.template).toBe(mockData.question.create.template);
+    expect(question.answerType).toBe(mockData.question.create.answerType);
+    expect(question.id).toMatch(new RegExp(config.constants.uuid));
     done();
   });
 
@@ -55,14 +56,15 @@ describe('Answer module (e2e)', () => {
     const response = await request(app.getHttpServer())
       .post('/questions/' + questionId + '/answers')
       .set('Authorization', 'Bearer ' + accessToken)
-      .send(mockData.answer.create)
+      .send([mockData.answer.create])
       .expect(201);
 
-    answerId = response.body.id;
+    const [answer] = response.body;
+    answerId = answer.id;
 
-    expect(response.body.name).toBe(mockData.answer.create.name);
-    expect(response.body.isTrue).toBe(mockData.answer.create.isTrue);
-    expect(response.body.id).toMatch(new RegExp(config.constants.uuid));
+    expect(answer.name).toBe(mockData.answer.create.name);
+    expect(answer.isTrue).toBe(mockData.answer.create.isTrue);
+    expect(answer.id).toMatch(new RegExp(config.constants.uuid));
     done();
   });
 
