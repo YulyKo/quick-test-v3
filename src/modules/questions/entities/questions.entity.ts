@@ -64,7 +64,7 @@ export class Questions {
   }
 
   @OneToMany(() => Answers, (answer) => answer.question)
-  answers: Answers;
+  answers: Answers[];
 
   @ManyToOne(() => Users, (user) => user.questions)
   user: Users;

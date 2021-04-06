@@ -1,6 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 
+import { AnswerError } from '../answers/answers.error';
+import { AnswersService } from '../answers/answers.service';
 import { FoldersError } from '../folders/folders.error';
 import { CreateQuestionsDto } from './dto/create-questions.dto';
 import { ResponseQuestionsDto } from './dto/response-questions.dto';
@@ -10,21 +12,40 @@ import { QuestionsService } from './questions.service';
 
 @Injectable()
 export class QuestionsHttpService {
-  constructor(private readonly questionsService: QuestionsService) {}
+  constructor(
+    private readonly questionsService: QuestionsService,
+    private readonly answerService: AnswersService,
+  ) {}
 
   async create(userId: string, createQuestionsDtos: CreateQuestionsDto[]) {
     try {
       const questions = await Promise.all(
-        createQuestionsDtos.map((createQuestionsDto) =>
-          this.questionsService.create(userId, createQuestionsDto),
-        ),
+        createQuestionsDtos.map(async (createQuestionsDto) => {
+          const question = await this.questionsService.create(
+            userId,
+            createQuestionsDto,
+          );
+          // if (createQuestionsDto.questionAnswers) {
+          //   const answers = await Promise.all(
+          //     createQuestionsDto.questionAnswers.map((answerDto) =>
+          //       this.answerService.create(userId, question.id, answerDto),
+          //     ),
+          //   );
+          //   question.answers = answers;
+          // }
+          return question;
+        }),
       );
 
       return questions.map((question) =>
         plainToClass(ResponseQuestionsDto, question),
       );
     } catch (error) {
-      if (error instanceof QuestionsError || error instanceof FoldersError)
+      if (
+        error instanceof QuestionsError ||
+        error instanceof FoldersError ||
+        error instanceof AnswerError
+      )
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
 
       throw new HttpException(

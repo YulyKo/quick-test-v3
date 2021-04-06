@@ -32,7 +32,6 @@ export class QuestionsService {
     });
 
     await this.questionsRepository.save(question);
-
     return question;
   }
 
