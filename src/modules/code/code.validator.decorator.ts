@@ -16,7 +16,7 @@ export function IsCode(validationOptions?: ValidationOptions) {
           if (!code) {
             throw new HttpException('No code', HttpStatus.BAD_REQUEST);
           }
-          if (code.match(config.constants.auth.code.regexp)) return true;
+          if (code.match(config.constants.code.regexp)) return true;
           throw new HttpException('Bad code', HttpStatus.BAD_REQUEST);
         },
       },

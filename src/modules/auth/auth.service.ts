@@ -11,6 +11,7 @@ import { ChangePasswordDto } from './dto/changePasswordDto';
 import { IsValidCodeDto } from './dto/isValidCodeDto';
 import { FoldersService } from '../folders/folders.service';
 import { MailService } from '../mail/mail.service';
+import { CodeService } from '../code/code.service';
 import { config } from 'src/config';
 import { UsersError } from '../users/users.error';
 
@@ -21,6 +22,7 @@ export class AuthService {
     private jwtService: JwtService,
     private foldersService: FoldersService,
     private mailService: MailService,
+    private codeService: CodeService,
   ) {}
 
   public async checkEmail(params: EmailDto) {
@@ -214,20 +216,11 @@ export class AuthService {
     return token.slice(token.lastIndexOf('.') + 1);
   }
 
-  private generateCode() {
-    let code = '';
-    const { characters, length } = config.constants.auth.code;
-    for (let i = 0; i < length; i++) {
-      code += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return code;
-  }
-
   private async getUniqCode() {
     let code;
     let isUniq;
     do {
-      code = this.generateCode();
+      code = this.codeService.generateCode();
       isUniq = await this.usersService.isUniqCode(code);
     } while (!isUniq);
     return code;

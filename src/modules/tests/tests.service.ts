@@ -4,10 +4,10 @@ import { Repository } from 'typeorm';
 
 import { FoldersService } from '../folders/folders.service';
 import { QuestionsService } from '../questions/questions.service';
+import { CodeService } from '../code/code.service';
 import { CreateTestsDto } from './dto/create-tests.dto';
 import { UpdateTestsDto } from './dto/update-tests.dto';
 import { Tests } from './entities/tests.entity';
-import { config } from '../../config';
 import { Questions } from '../questions/entities/questions.entity';
 import { TestError } from './tests.error';
 
@@ -16,6 +16,7 @@ export class TestsService {
   constructor(
     private readonly foldersService: FoldersService,
     private readonly questionsService: QuestionsService,
+    private readonly codeService: CodeService,
 
     @InjectRepository(Tests)
     private testsRepository: Repository<Tests>,
@@ -136,18 +137,6 @@ export class TestsService {
     return index;
   }
 
-  private generateCode() {
-    let code = '';
-    for (let char = 0; char < config.constants.test.code.length; char++) {
-      code += config.constants.test.code.characters.charAt(
-        Math.round(
-          0 - 0.5 + Math.random() * (config.constants.test.code.length - 0 + 1),
-        ),
-      );
-    }
-    return code;
-  }
-
   private async isUniqCode(code: string) {
     const codeFromDB = await this.testsRepository.findOne({ code });
     return !codeFromDB;
@@ -157,7 +146,7 @@ export class TestsService {
     let code;
     let isUniq;
     do {
-      code = this.generateCode();
+      code = this.codeService.generateCode();
       isUniq = await this.isUniqCode(code);
     } while (!isUniq);
     return code;

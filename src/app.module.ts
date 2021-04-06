@@ -11,6 +11,7 @@ import { FoldersModule } from './modules/folders/folders.module';
 import { FilesModule } from './modules/files/files.module';
 import { TestModule } from './modules/tests/tests.module';
 import { MailModule } from './modules/mail/mail.module';
+import { CodeModule } from './modules/code/code.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { MailModule } from './modules/mail/mail.module';
     FilesModule,
     TestModule,
     MailModule,
+    CodeModule,
   ],
   providers: [
     {

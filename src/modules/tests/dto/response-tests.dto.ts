@@ -3,11 +3,11 @@ import {
   IsBoolean,
   IsString,
   IsUUID,
-  Length,
   MaxLength,
   MinLength,
 } from 'class-validator';
 import { config } from 'src/config';
+import { IsCode } from 'src/modules/code/code.validator.decorator';
 import { ResponseQuestionsDto } from 'src/modules/questions/dto/response-questions.dto';
 
 @Exclude()
@@ -29,8 +29,7 @@ export class ResponseTestsDto {
   text: string;
 
   @Expose()
-  @IsString()
-  @Length(config.constants.test.code.length)
+  @IsCode()
   code: string;
 
   @Expose()

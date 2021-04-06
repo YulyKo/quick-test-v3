@@ -23,10 +23,6 @@ export const constants = {
     },
     password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,20}$/,
     code: {
-      regexp: /^[a-zA-Z0-9]{6}$/,
-      length: 6,
-      characters:
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
       expiresIn: 60 * 60 * 1000,
     },
   },
@@ -62,10 +58,6 @@ export const constants = {
       min: 2,
       max: 200,
     },
-    code: {
-      length: 6,
-      characters: '0123456789',
-    },
   },
   mailer: {
     OAuthPlayground: 'https://developers.google.com/oauthplayground',
@@ -81,5 +73,11 @@ export const constants = {
     },
     from: 'noreply@quicktest.com',
     dir: '/templates',
+  },
+  code: {
+    regexp: /^[a-zA-Z0-9]{6}$/,
+    length: 6,
+    characters:
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
   },
 };
