@@ -4,7 +4,7 @@ import { plainToClass } from 'class-transformer';
 
 class eachIsUUID {
   @IsUUID(4, { each: true })
-  folderId: string;
+  id: string;
 }
 
 @Injectable()

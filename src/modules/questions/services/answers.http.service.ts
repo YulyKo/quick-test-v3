@@ -42,6 +42,8 @@ export class AnswersHttpService {
       const answers = await this.answersService.getAll(question);
       return answers.map((answer) => plainToClass(ResponseAnswersDto, answer));
     } catch (error) {
+      if (error instanceof AnswerError || error instanceof QuestionsError)
+        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
       throw new HttpException(
         'Something went wrong',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -49,14 +51,15 @@ export class AnswersHttpService {
     }
   }
 
-  async getById(userId: string, questionId: string, id: string) {
+  async getByIds(userId: string, questionId: string, ids: string[]) {
     try {
       const question = await this.questionsService.getById(userId, questionId);
-      const answer = await this.answersService.getById(question, id);
-      const responseAnswer = plainToClass(ResponseAnswersDto, answer);
-      return responseAnswer;
+      const answers = await Promise.all(
+        ids.map((id) => this.answersService.getById(question, id)),
+      );
+      return answers.map((answer) => plainToClass(ResponseAnswersDto, answer));
     } catch (error) {
-      if (error instanceof AnswerError)
+      if (error instanceof AnswerError || error instanceof QuestionsError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
 
       throw new HttpException(
@@ -66,21 +69,20 @@ export class AnswersHttpService {
     }
   }
 
-  async updateById(
+  async updateByIds(
     userId: string,
     questionId: string,
-    id: string,
-    updateAnswerDto: UpdateAnswersDto,
+    ids: string[],
+    updateAnswerDtos: UpdateAnswersDto[],
   ) {
     try {
       const question = await this.questionsService.getById(userId, questionId);
-      const answer = await this.answersService.updateById(
-        question,
-        id,
-        updateAnswerDto,
+      const answers = await Promise.all(
+        ids.map((id, index) =>
+          this.answersService.updateById(question, id, updateAnswerDtos[index]),
+        ),
       );
-      const responseAnswer = plainToClass(ResponseAnswersDto, answer);
-      return responseAnswer;
+      return answers.map((answer) => plainToClass(ResponseAnswersDto, answer));
     } catch (error) {
       if (error instanceof QuestionsError || error instanceof AnswerError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -92,10 +94,12 @@ export class AnswersHttpService {
     }
   }
 
-  async deleteById(userId: string, questionId: string, id: string) {
+  async deleteByIds(userId: string, questionId: string, ids: string[]) {
     try {
       const question = await this.questionsService.getById(userId, questionId);
-      await this.answersService.deleteById(question, id);
+      await Promise.all(
+        ids.map((id) => this.answersService.deleteById(question, id)),
+      );
     } catch (error) {
       if (error instanceof QuestionsError || error instanceof AnswerError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);

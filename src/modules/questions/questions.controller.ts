@@ -18,6 +18,7 @@ import { QuestionsHttpService } from './services/questions.http.service';
 import { AnswersHttpService } from './services/answers.http.service';
 import { CreateAnswersDto } from './dto/create-answers.dto';
 import { UpdateAnswersDto } from './dto/update-answers.dto';
+import { UuidCommaSeparatedPipe } from '../../utils/UuidCommaSeparated.pipe';
 
 @ApiTags('questions')
 @ApiBearerAuth()
@@ -97,28 +98,28 @@ export class QuestionsController {
   }
 
   @ApiOperation({ summary: 'get answer in question this user' })
-  @Get('/:questionId/answers/:id')
+  @Get('/:questionId/answers/:ids')
   getOneAnswer(
     @GetUser() user,
     @Param('questionId', new ParseUUIDPipe()) questionId: string,
-    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('ids', new UuidCommaSeparatedPipe()) ids: string[],
   ) {
-    return this.answersHttpService.getById(user.id, questionId, id);
+    return this.answersHttpService.getByIds(user.id, questionId, ids);
   }
 
   @ApiOperation({ summary: 'update answer' })
-  @Put('/:questionId/answers/:id')
+  @Put('/:questionId/answers/:ids')
   updateAnswerById(
     @GetUser() user,
     @Param('questionId', new ParseUUIDPipe()) questionId: string,
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() updateAnswerDto: UpdateAnswersDto,
+    @Param('ids', new UuidCommaSeparatedPipe()) ids: string[],
+    @Body() updateAnswerDtos: UpdateAnswersDto[],
   ) {
-    return this.answersHttpService.updateById(
+    return this.answersHttpService.updateByIds(
       user.id,
       questionId,
-      id,
-      updateAnswerDto,
+      ids,
+      updateAnswerDtos,
     );
   }
 
@@ -127,8 +128,8 @@ export class QuestionsController {
   deleteAnswerById(
     @GetUser() user,
     @Param('questionId', new ParseUUIDPipe()) questionId: string,
-    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('id', new UuidCommaSeparatedPipe()) ids: string[],
   ) {
-    return this.answersHttpService.deleteById(user.id, questionId, id);
+    return this.answersHttpService.deleteByIds(user.id, questionId, ids);
   }
 }
