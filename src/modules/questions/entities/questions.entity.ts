@@ -10,7 +10,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { Answers } from '../../answers/entities/answers.entity';
+import { Answers } from './answers.entity';
 import { Users } from '../../users/entities/users.entity';
 import { Folders } from '../../folders/entities/folders.entity';
 
@@ -64,7 +64,7 @@ export class Questions {
   }
 
   @OneToMany(() => Answers, (answer) => answer.question)
-  answers: Answers;
+  answers: Answers[];
 
   @ManyToOne(() => Users, (user) => user.questions)
   user: Users;

@@ -10,7 +10,7 @@ describe('Answer module (e2e)', () => {
   let app: INestApplication;
   let accessToken: string;
   let questionId: string;
-  let answerId: string;
+  const answerIds: string[] = [];
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -33,22 +33,29 @@ describe('Answer module (e2e)', () => {
     done();
   });
 
-  it('create question (POST)', async (done) => {
+  it('create question and 3 answers (POST)', async (done) => {
     const response = await request(app.getHttpServer())
       .post('/questions')
       .set('Authorization', 'Bearer ' + accessToken)
-      .send([mockData.question.create])
+      .send({
+        ...mockData.question.create,
+        questionAnswers: [
+          mockData.answer.create,
+          mockData.answer.create,
+          mockData.answer.create,
+        ],
+      })
       .expect(201);
 
-    const [question] = response.body;
+    const question = response.body;
     questionId = question.id;
+    question.answers.forEach((answer) => {
+      expect(answer.name).toBe(mockData.answer.create.name);
+      expect(answer.isTrue).toBe(mockData.answer.create.isTrue);
+      expect(answer.id).toMatch(new RegExp(config.constants.uuid));
+      answerIds.push(answer.id);
+    });
 
-    expect(question.name).toBe(mockData.question.create.name);
-    expect(question.text).toBe(mockData.question.create.text);
-    expect(question.time).toBe(mockData.question.create.time);
-    expect(question.template).toBe(mockData.question.create.template);
-    expect(question.answerType).toBe(mockData.question.create.answerType);
-    expect(question.id).toMatch(new RegExp(config.constants.uuid));
     done();
   });
 
@@ -60,41 +67,50 @@ describe('Answer module (e2e)', () => {
       .expect(201);
 
     const [answer] = response.body;
-    answerId = answer.id;
 
     expect(answer.name).toBe(mockData.answer.create.name);
     expect(answer.isTrue).toBe(mockData.answer.create.isTrue);
     expect(answer.id).toMatch(new RegExp(config.constants.uuid));
+    answerIds.push(answer.id);
     done();
   });
 
   it('update answer in question (PUT)', async (done) => {
     const response = await request(app.getHttpServer())
-      .put('/questions/' + questionId + '/answers/' + answerId)
+      .put('/questions/' + questionId + '/answers/' + answerIds.join())
       .set('Authorization', 'Bearer ' + accessToken)
-      .send(mockData.answer.update)
+      .send([
+        mockData.answer.update,
+        mockData.answer.update,
+        mockData.answer.update,
+        mockData.answer.update,
+      ])
       .expect(200);
 
-    expect(response.body.name).toBe(mockData.answer.update.name);
-    expect(response.body.isTrue).toBe(mockData.answer.update.isTrue);
-    expect(response.body.id).toBe(answerId);
+    response.body.forEach((answer, index) => {
+      expect(answer.name).toBe(mockData.answer.update.name);
+      expect(answer.isTrue).toBe(mockData.answer.update.isTrue);
+      expect(answer.id).toBe(answerIds[index]);
+    });
     done();
   });
 
   it('get question (GET)', async (done) => {
     const response = await request(app.getHttpServer())
-      .get('/questions/' + questionId + '/answers/' + answerId)
+      .get('/questions/' + questionId + '/answers/' + answerIds.join())
       .set('Authorization', 'Bearer ' + accessToken)
       .expect(200);
-    expect(response.body.id).toBe(answerId);
-    expect(response.body.name).toBe(mockData.answer.update.name);
-    expect(response.body.isTrue).toBe(mockData.answer.update.isTrue);
+    response.body.forEach((answer, index) => {
+      expect(answer.name).toBe(mockData.answer.update.name);
+      expect(answer.isTrue).toBe(mockData.answer.update.isTrue);
+      expect(answer.id).toBe(answerIds[index]);
+    });
     done();
   });
 
   it('delete answer (DELETE)', (done) => {
     request(app.getHttpServer())
-      .delete('/questions/' + questionId + '/answers/' + answerId)
+      .delete('/questions/' + questionId + '/answers/' + answerIds.join())
       .set('Authorization', 'Bearer ' + accessToken)
       .expect(200)
       .end(done);

@@ -9,8 +9,11 @@ import {
   MaxLength,
   Min,
   MinLength,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
+import { CreateAnswersDto } from './create-answers.dto';
 import { config } from '../../../config';
 import {
   QuestionsAnswerType,
@@ -48,4 +51,9 @@ export class CreateQuestionsDto {
   @IsOptional()
   @IsUUID()
   folderId?: string;
+
+  @ApiPropertyOptional()
+  @ValidateNested({ each: true })
+  @Type(() => CreateAnswersDto)
+  questionAnswers?: CreateAnswersDto[];
 }

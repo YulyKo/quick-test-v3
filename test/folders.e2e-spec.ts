@@ -38,16 +38,15 @@ describe('Question module (e2e)', () => {
     const response = await request(app.getHttpServer())
       .post('/folders')
       .set('Authorization', 'Bearer ' + accessToken)
-      .send([{ ...mockData.folder.create, folderId: userId }])
+      .send({ ...mockData.folder.create, folderId: userId })
       .expect(201);
 
-    const [folder] = response.body;
-    folderId = folder.id;
+    folderId = response.body.id;
 
-    expect(folder.name).toBe(mockData.folder.create.name);
-    expect(folder.color).toBe(mockData.folder.create.color);
-    expect(folder.folderId).toBe(userId);
-    expect(folder.id).toMatch(new RegExp(config.constants.uuid));
+    expect(response.body.name).toBe(mockData.folder.create.name);
+    expect(response.body.color).toBe(mockData.folder.create.color);
+    expect(response.body.folderId).toBe(userId);
+    expect(response.body.id).toMatch(new RegExp(config.constants.uuid));
     done();
   });
 

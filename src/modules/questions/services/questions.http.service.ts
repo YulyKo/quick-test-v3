@@ -1,30 +1,32 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 
-import { FoldersError } from '../folders/folders.error';
-import { CreateQuestionsDto } from './dto/create-questions.dto';
-import { ResponseQuestionsDto } from './dto/response-questions.dto';
-import { UpdateQuestionsDto } from './dto/update-questions.dto';
-import { QuestionsError } from './questions.error';
+import { AnswerError } from '../errors/answers.error';
+import { FoldersError } from '../../folders/folders.error';
+import { CreateQuestionsDto } from '../dto/create-questions.dto';
+import { ResponseQuestionsDto } from '../dto/response-questions.dto';
+import { UpdateQuestionsDto } from '../dto/update-questions.dto';
+import { QuestionsError } from '../errors/questions.error';
 import { QuestionsService } from './questions.service';
 
 @Injectable()
 export class QuestionsHttpService {
   constructor(private readonly questionsService: QuestionsService) {}
 
-  async create(userId: string, createQuestionsDtos: CreateQuestionsDto[]) {
+  async create(userId: string, createQuestionsDto: CreateQuestionsDto) {
     try {
-      const questions = await Promise.all(
-        createQuestionsDtos.map((createQuestionsDto) =>
-          this.questionsService.create(userId, createQuestionsDto),
-        ),
+      const question = await this.questionsService.create(
+        userId,
+        createQuestionsDto,
       );
 
-      return questions.map((question) =>
-        plainToClass(ResponseQuestionsDto, question),
-      );
+      return plainToClass(ResponseQuestionsDto, question);
     } catch (error) {
-      if (error instanceof QuestionsError || error instanceof FoldersError)
+      if (
+        error instanceof QuestionsError ||
+        error instanceof FoldersError ||
+        error instanceof AnswerError
+      )
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
 
       throw new HttpException(

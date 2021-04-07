@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { FoldersService } from '../folders/folders.service';
-import { QuestionsService } from '../questions/questions.service';
+import { QuestionsService } from '../questions/services/questions.service';
 import { CreateTestsDto } from './dto/create-tests.dto';
 import { UpdateTestsDto } from './dto/update-tests.dto';
 import { Tests } from './entities/tests.entity';

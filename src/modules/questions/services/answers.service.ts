@@ -2,28 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { QuestionsService } from '../questions/questions.service';
-import { AnswerError } from './answers.error';
-import { CreateAnswersDto } from './dto/create-answers.dto';
-import { UpdateAnswersDto } from './dto/update-answers.dto';
-import { Answers } from './entities/answers.entity';
+import { AnswerError } from '../errors/answers.error';
+import { CreateAnswersDto } from '../dto/create-answers.dto';
+import { UpdateAnswersDto } from '../dto/update-answers.dto';
+import { Answers } from '../entities/answers.entity';
+import { Questions } from '../entities/questions.entity';
 
 @Injectable()
 export class AnswersService {
   constructor(
-    private readonly questionService: QuestionsService,
-
     @InjectRepository(Answers)
     private answersRepository: Repository<Answers>,
   ) {}
 
-  async create(
-    userId: string,
-    questionId: string,
-    createAnswerDto: CreateAnswersDto,
-  ) {
+  async create(question: Questions, createAnswerDto: CreateAnswersDto) {
     try {
-      const question = await this.questionService.getById(userId, questionId);
       const answer = await this.answersRepository.create({
         ...createAnswerDto,
         question,
@@ -36,9 +29,8 @@ export class AnswersService {
     }
   }
 
-  async getAll(userId: string, questionId: string) {
+  async getAll(question: Questions) {
     try {
-      const question = await this.questionService.getById(userId, questionId);
       const answers = await this.answersRepository.find({
         where: {
           question,
@@ -50,9 +42,8 @@ export class AnswersService {
     }
   }
 
-  async getById(userId: string, questionId: string, id: string) {
+  async getById(question: Questions, id: string) {
     try {
-      const question = await this.questionService.getById(userId, questionId);
       const answer = await this.answersRepository.findOne({
         where: {
           question,
@@ -68,13 +59,12 @@ export class AnswersService {
   }
 
   async updateById(
-    userId: string,
-    questionId: string,
+    question: Questions,
     id: string,
     updateAnswerDto: UpdateAnswersDto,
   ) {
     try {
-      const answer = await this.getById(userId, questionId, id);
+      const answer = await this.getById(question, id);
       const updatedAnswer = {
         ...answer,
         ...updateAnswerDto,
@@ -86,9 +76,9 @@ export class AnswersService {
     }
   }
 
-  async deleteById(userId: string, questionId: string, id: string) {
+  async deleteById(question: Questions, id: string) {
     try {
-      const answer = await this.getById(userId, questionId, id);
+      const answer = await this.getById(question, id);
       await this.answersRepository.softDelete({
         id: answer.id,
       });
