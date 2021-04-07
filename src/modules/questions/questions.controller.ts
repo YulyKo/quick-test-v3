@@ -14,13 +14,19 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateQuestionsDto } from './dto/create-questions.dto';
 import { UpdateQuestionsDto } from './dto/update-questions.dto';
 import { GetUser } from '../auth/get-user.decorator';
-import { QuestionsHttpService } from './questions.http.service';
+import { QuestionsHttpService } from './services/questions.http.service';
+import { AnswersHttpService } from './services/answers.http.service';
+import { CreateAnswersDto } from './dto/create-answers.dto';
+import { UpdateAnswersDto } from './dto/update-answers.dto';
 
 @ApiTags('questions')
 @ApiBearerAuth()
 @Controller('questions')
 export class QuestionsController {
-  constructor(private readonly questionsHttpService: QuestionsHttpService) {}
+  constructor(
+    private readonly questionsHttpService: QuestionsHttpService,
+    private readonly answersHttpService: AnswersHttpService,
+  ) {}
 
   @ApiOperation({ summary: 'create question' })
   @Post()
@@ -62,5 +68,67 @@ export class QuestionsController {
   @Delete(':id')
   delete(@GetUser() user, @Param('id', new ParseUUIDPipe()) id: string) {
     return this.questionsHttpService.deleteById(user.id, id);
+  }
+
+  // Answers
+
+  @ApiOperation({ summary: 'create answer' })
+  @Post('/:questionId/answers')
+  createAnswer(
+    @GetUser() user,
+    @Param('questionId', new ParseUUIDPipe()) questionId: string,
+    @Body(new ParseArrayPipe({ items: CreateAnswersDto }))
+    createAnswerDtos: CreateAnswersDto[],
+  ) {
+    return this.answersHttpService.create(
+      user.id,
+      questionId,
+      createAnswerDtos,
+    );
+  }
+
+  @ApiOperation({ summary: 'get all answers in question this user' })
+  @Get()
+  getAllAnswers(
+    @GetUser() user,
+    @Param('/:questionId/answers', new ParseUUIDPipe()) questionId: string,
+  ) {
+    return this.answersHttpService.getAll(user.id, questionId);
+  }
+
+  @ApiOperation({ summary: 'get answer in question this user' })
+  @Get('/:questionId/answers/:id')
+  getOneAnswer(
+    @GetUser() user,
+    @Param('questionId', new ParseUUIDPipe()) questionId: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ) {
+    return this.answersHttpService.getById(user.id, questionId, id);
+  }
+
+  @ApiOperation({ summary: 'update answer' })
+  @Put('/:questionId/answers/:id')
+  updateAnswerById(
+    @GetUser() user,
+    @Param('questionId', new ParseUUIDPipe()) questionId: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() updateAnswerDto: UpdateAnswersDto,
+  ) {
+    return this.answersHttpService.updateById(
+      user.id,
+      questionId,
+      id,
+      updateAnswerDto,
+    );
+  }
+
+  @ApiOperation({ summary: 'delete answer by id' })
+  @Delete('/:questionId/answers/:id')
+  deleteAnswerById(
+    @GetUser() user,
+    @Param('questionId', new ParseUUIDPipe()) questionId: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ) {
+    return this.answersHttpService.deleteById(user.id, questionId, id);
   }
 }

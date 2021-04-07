@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { FoldersError } from '../folders/folders.error';
-import { QuestionsError } from '../questions/questions.error';
+import { QuestionsError } from '../questions/errors/questions.error';
 import { CreateTestsDto } from './dto/create-tests.dto';
 import { ResponseTestsDto } from './dto/response-tests.dto';
 import { UpdateTestsDto } from './dto/update-tests.dto';

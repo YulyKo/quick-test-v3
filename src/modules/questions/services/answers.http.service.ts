@@ -1,16 +1,20 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 
-import { QuestionsError } from '../questions/questions.error';
-import { AnswerError } from './answers.error';
+import { QuestionsError } from '../errors/questions.error';
+import { AnswerError } from '../errors/answers.error';
 import { AnswersService } from './answers.service';
-import { CreateAnswersDto } from './dto/create-answers.dto';
-import { ResponseAnswersDto } from './dto/response-answers.dto';
-import { UpdateAnswersDto } from './dto/update-answers.dto';
+import { CreateAnswersDto } from '../dto/create-answers.dto';
+import { ResponseAnswersDto } from '../dto/response-answers.dto';
+import { UpdateAnswersDto } from '../dto/update-answers.dto';
+import { QuestionsService } from './questions.service';
 
 @Injectable()
 export class AnswersHttpService {
-  constructor(private readonly answersService: AnswersService) {}
+  constructor(
+    private readonly answersService: AnswersService,
+    private readonly questionsService: QuestionsService,
+  ) {}
 
   async create(
     userId: string,
@@ -18,9 +22,10 @@ export class AnswersHttpService {
     createAnswerDtos: CreateAnswersDto[],
   ) {
     try {
+      const question = await this.questionsService.getById(userId, questionId);
       const answers = await Promise.all(
         createAnswerDtos.map((createAnswerDto) =>
-          this.answersService.create(userId, questionId, createAnswerDto),
+          this.answersService.create(question, createAnswerDto),
         ),
       );
       return answers.map((answer) => plainToClass(ResponseAnswersDto, answer));
@@ -33,7 +38,8 @@ export class AnswersHttpService {
 
   async getAll(userId: string, questionId: string) {
     try {
-      const answers = await this.answersService.getAll(userId, questionId);
+      const question = await this.questionsService.getById(userId, questionId);
+      const answers = await this.answersService.getAll(question);
       return answers.map((answer) => plainToClass(ResponseAnswersDto, answer));
     } catch (error) {
       throw new HttpException(
@@ -45,7 +51,8 @@ export class AnswersHttpService {
 
   async getById(userId: string, questionId: string, id: string) {
     try {
-      const answer = await this.answersService.getById(userId, questionId, id);
+      const question = await this.questionsService.getById(userId, questionId);
+      const answer = await this.answersService.getById(question, id);
       const responseAnswer = plainToClass(ResponseAnswersDto, answer);
       return responseAnswer;
     } catch (error) {
@@ -66,9 +73,9 @@ export class AnswersHttpService {
     updateAnswerDto: UpdateAnswersDto,
   ) {
     try {
+      const question = await this.questionsService.getById(userId, questionId);
       const answer = await this.answersService.updateById(
-        userId,
-        questionId,
+        question,
         id,
         updateAnswerDto,
       );
@@ -87,7 +94,8 @@ export class AnswersHttpService {
 
   async deleteById(userId: string, questionId: string, id: string) {
     try {
-      await this.answersService.deleteById(userId, questionId, id);
+      const question = await this.questionsService.getById(userId, questionId);
+      await this.answersService.deleteById(question, id);
     } catch (error) {
       if (error instanceof QuestionsError || error instanceof AnswerError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);

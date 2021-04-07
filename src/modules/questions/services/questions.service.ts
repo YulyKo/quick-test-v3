@@ -2,16 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { FoldersService } from '../folders/folders.service';
-import { CreateQuestionsDto } from './dto/create-questions.dto';
-import { UpdateQuestionsDto } from './dto/update-questions.dto';
-import { Questions } from './entities/questions.entity';
-import { QuestionsError } from './questions.error';
+import { FoldersService } from '../../folders/folders.service';
+import { CreateQuestionsDto } from '../dto/create-questions.dto';
+import { UpdateQuestionsDto } from '../dto/update-questions.dto';
+import { Questions } from '../entities/questions.entity';
+import { QuestionsError } from '../errors/questions.error';
+import { AnswersService } from './answers.service';
 
 @Injectable()
 export class QuestionsService {
   constructor(
     private readonly foldersService: FoldersService,
+    private readonly answerService: AnswersService,
 
     @InjectRepository(Questions)
     private questionsRepository: Repository<Questions>,
@@ -32,6 +34,15 @@ export class QuestionsService {
     });
 
     await this.questionsRepository.save(question);
+
+    if (createQuestionsDto.questionAnswers) {
+      question.answers = await Promise.all(
+        createQuestionsDto.questionAnswers.map((answerDto) =>
+          this.answerService.create(question, answerDto),
+        ),
+      );
+    }
+
     return question;
   }
 

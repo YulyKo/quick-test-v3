@@ -13,7 +13,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-import { CreateAnswersDto } from '../../answers/dto/create-answers.dto';
+import { CreateAnswersDto } from './create-answers.dto';
 import { config } from '../../../config';
 import {
   QuestionsAnswerType,
