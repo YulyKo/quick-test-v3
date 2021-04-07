@@ -9,7 +9,7 @@ import {
   ParseUUIDPipe,
   ParseArrayPipe,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CreateQuestionsDto } from './dto/create-questions.dto';
 import { UpdateQuestionsDto } from './dto/update-questions.dto';
@@ -31,11 +31,7 @@ export class QuestionsController {
 
   @ApiOperation({ summary: 'create question' })
   @Post()
-  create(
-    @GetUser() user,
-    @Body(new ParseArrayPipe({ items: CreateQuestionsDto }))
-    createQuestionDto: CreateQuestionsDto[],
-  ) {
+  create(@GetUser() user, @Body() createQuestionDto: CreateQuestionsDto) {
     return this.questionsHttpService.create(user.id, createQuestionDto);
   }
 
@@ -75,6 +71,7 @@ export class QuestionsController {
 
   @ApiOperation({ summary: 'create answer' })
   @Post('/:questionId/answers')
+  @ApiBody({ type: [CreateAnswersDto] })
   createAnswer(
     @GetUser() user,
     @Param('questionId', new ParseUUIDPipe()) questionId: string,
@@ -109,6 +106,7 @@ export class QuestionsController {
 
   @ApiOperation({ summary: 'update answer' })
   @Put('/:questionId/answers/:ids')
+  @ApiBody({ type: [UpdateAnswersDto] })
   updateAnswerById(
     @GetUser() user,
     @Param('questionId', new ParseUUIDPipe()) questionId: string,

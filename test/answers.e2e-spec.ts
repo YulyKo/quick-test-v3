@@ -37,19 +37,17 @@ describe('Answer module (e2e)', () => {
     const response = await request(app.getHttpServer())
       .post('/questions')
       .set('Authorization', 'Bearer ' + accessToken)
-      .send([
-        {
-          ...mockData.question.create,
-          questionAnswers: [
-            mockData.answer.create,
-            mockData.answer.create,
-            mockData.answer.create,
-          ],
-        },
-      ])
+      .send({
+        ...mockData.question.create,
+        questionAnswers: [
+          mockData.answer.create,
+          mockData.answer.create,
+          mockData.answer.create,
+        ],
+      })
       .expect(201);
 
-    const [question] = response.body;
+    const question = response.body;
     questionId = question.id;
     question.answers.forEach((answer) => {
       expect(answer.name).toBe(mockData.answer.create.name);

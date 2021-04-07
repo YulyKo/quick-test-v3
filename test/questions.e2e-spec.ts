@@ -36,10 +36,10 @@ describe('Question module (e2e)', () => {
     const response = await request(app.getHttpServer())
       .post('/questions')
       .set('Authorization', 'Bearer ' + accessToken)
-      .send([mockData.question.create])
+      .send(mockData.question.create)
       .expect(201);
 
-    const [question] = response.body;
+    const question = response.body;
     questionId = question.id;
 
     expect(question.name).toBe(mockData.question.create.name);

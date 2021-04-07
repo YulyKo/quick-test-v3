@@ -13,17 +13,14 @@ import { QuestionsService } from './questions.service';
 export class QuestionsHttpService {
   constructor(private readonly questionsService: QuestionsService) {}
 
-  async create(userId: string, createQuestionsDtos: CreateQuestionsDto[]) {
+  async create(userId: string, createQuestionsDto: CreateQuestionsDto) {
     try {
-      const questions = await Promise.all(
-        createQuestionsDtos.map((createQuestionsDto) =>
-          this.questionsService.create(userId, createQuestionsDto),
-        ),
+      const question = await this.questionsService.create(
+        userId,
+        createQuestionsDto,
       );
 
-      return questions.map((question) =>
-        plainToClass(ResponseQuestionsDto, question),
-      );
+      return plainToClass(ResponseQuestionsDto, question);
     } catch (error) {
       if (
         error instanceof QuestionsError ||
