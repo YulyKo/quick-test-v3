@@ -86,10 +86,10 @@ export class QuestionsController {
   }
 
   @ApiOperation({ summary: 'get all answers in question this user' })
-  @Get()
+  @Get('/:questionId/answers')
   getAllAnswers(
     @GetUser() user,
-    @Param('/:questionId/answers', new ParseUUIDPipe()) questionId: string,
+    @Param('questionId', new ParseUUIDPipe()) questionId: string,
   ) {
     return this.answersHttpService.getAll(user.id, questionId);
   }
