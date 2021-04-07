@@ -55,5 +55,5 @@ export class CreateQuestionsDto {
   @ApiPropertyOptional()
   @ValidateNested({ each: true })
   @Type(() => CreateAnswersDto)
-  questionAnswers?: CreateAnswersDto[];
+  answers?: CreateAnswersDto[];
 }

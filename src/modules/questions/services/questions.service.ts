@@ -35,9 +35,9 @@ export class QuestionsService {
 
     await this.questionsRepository.save(question);
 
-    if (createQuestionsDto.questionAnswers) {
+    if (createQuestionsDto.answers) {
       question.answers = await Promise.all(
-        createQuestionsDto.questionAnswers.map((answerDto) =>
+        createQuestionsDto.answers.map((answerDto) =>
           this.answerService.create(question, answerDto),
         ),
       );
