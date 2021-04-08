@@ -28,7 +28,7 @@ export class Tests {
   text: string;
 
   @Column({
-    length: config.constants.test.code.length,
+    length: config.constants.code.length,
   })
   code: string;
 

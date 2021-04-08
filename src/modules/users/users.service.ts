@@ -37,7 +37,7 @@ export class UsersService {
     }
     throw new HttpException(
       'User with this email does not exist',
-      HttpStatus.NOT_FOUND,
+      HttpStatus.BAD_REQUEST,
     );
   }
 
@@ -56,5 +56,26 @@ export class UsersService {
       'User with this id does not exist',
       HttpStatus.BAD_REQUEST,
     );
+  }
+
+  async isUniqCode(code: string) {
+    const user = await this.usersRepository.findOne({ code });
+    return !user;
+  }
+
+  async saveCode(id: string, code: string) {
+    await this.usersRepository.update(id, {
+      code,
+      codeCreatedAt: new Date(),
+    });
+  }
+
+  async updatePassword(id: string, hash: string) {
+    await this.usersRepository.update(id, {
+      hash,
+      refreshToken: null,
+      code: null,
+      codeCreatedAt: null,
+    });
   }
 }

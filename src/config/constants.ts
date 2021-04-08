@@ -9,7 +9,6 @@ const SWAGGER = new DocumentBuilder()
 
 export const constants = {
   JWT: {
-    expiresIn: '720m',
     publicKey: 'isPublic',
     strategy: {
       jwt: 'jwt',
@@ -23,11 +22,17 @@ export const constants = {
       max: 20,
     },
     password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,20}$/,
+    code: {
+      expiresIn: 60 * 60 * 1000,
+    },
   },
   default: {
     folder: {
       name: 'main',
       color: '#ffffff',
+    },
+    mailer: {
+      from: '"quick-test" <noreply@quicktest.com>',
     },
   },
   question: {
@@ -53,10 +58,27 @@ export const constants = {
       min: 2,
       max: 200,
     },
-    code: {
-      length: 6,
-      characters: '0123456789',
+  },
+  mailer: {
+    OAuthPlayground: 'https://developers.google.com/oauthplayground',
+    forgotPassword: {
+      subject: 'Quick-test Відновлення паролю',
+      template: 'forgotPassword',
     },
+    transport: {
+      service: 'gmail',
+      auth: {
+        type: 'OAuth2',
+      },
+    },
+    from: 'noreply@quicktest.com',
+    dir: '/templates',
+  },
+  code: {
+    regexp: /^[a-zA-Z0-9]{6}$/,
+    length: 6,
+    characters:
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
   },
   uuid:
     '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$',
