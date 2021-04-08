@@ -8,9 +8,12 @@ import { UserModule } from '../users/users.module';
 import { JwtStrategy, JwtRefreshStrategy } from './jwt.strategy';
 import { config } from '../../config';
 import { FoldersModule } from '../folders/folders.module';
+import { MailModule } from '../mail/mail.module';
+import { CodeModule } from '../code/code.module';
 
 @Module({
   imports: [
+    MailModule,
     UserModule,
     PassportModule,
     FoldersModule,
@@ -18,6 +21,7 @@ import { FoldersModule } from '../folders/folders.module';
       secret: config.env.JWT_ACCESS_SECRET,
       signOptions: { expiresIn: config.env.JWT_ACCESS_EXPIRATION_TIME },
     }),
+    CodeModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, JwtRefreshStrategy],

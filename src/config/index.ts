@@ -46,6 +46,21 @@ class EnvironmentVariables {
 
   @IsString()
   JWT_REFRESH_EXPIRATION_TIME: string;
+
+  @IsString()
+  PROJECT_ID: string;
+
+  @IsString()
+  SENDER_EMAIL_ADDRESS: string;
+
+  @IsString()
+  MAILER_CLIENT_ID: string;
+
+  @IsString()
+  MAILER_CLIENT_SECRET: string;
+
+  @IsString()
+  MAILER_CLIENT_REFRESH_TOKEN: string;
 }
 
 const validation = () => {
@@ -66,6 +81,12 @@ const validation = () => {
     JWT_ACCESS_EXPIRATION_TIME: process.env.JWT_ACCESS_EXPIRATION_TIME,
     JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
     JWT_REFRESH_EXPIRATION_TIME: process.env.JWT_REFRESH_EXPIRATION_TIME,
+
+    PROJECT_ID: process.env.PROJECT_ID,
+    SENDER_EMAIL_ADDRESS: process.env.SENDER_EMAIL_ADDRESS,
+    MAILER_CLIENT_ID: process.env.MAILER_CLIENT_ID,
+    MAILER_CLIENT_SECRET: process.env.MAILER_CLIENT_SECRET,
+    MAILER_CLIENT_REFRESH_TOKEN: process.env.MAILER_CLIENT_REFRESH_TOKEN,
   };
   const validatedConfig = plainToClass(EnvironmentVariables, config, {
     enableImplicitConversion: true,

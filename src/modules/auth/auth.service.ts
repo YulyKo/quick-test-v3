@@ -6,9 +6,15 @@ import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/loginDto';
 import { RegistrationDto } from './dto/registrationDto';
 import { EmailDto } from './dto/emailDto';
+import { ForgotPasswordDto } from './dto/forgotPasswordDto';
+import { ChangePasswordDto } from './dto/changePasswordDto';
+import { IsValidCodeDto } from './dto/isValidCodeDto';
 import { FoldersService } from '../folders/folders.service';
 import { config } from '../../config';
+import { MailService } from '../mail/mail.service';
+import { CodeService } from '../code/code.service';
 import { UsersError } from '../users/users.error';
+import { LoginResponseDto } from './dto/loginResponse.dto';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +22,8 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private foldersService: FoldersService,
+    private mailService: MailService,
+    private codeService: CodeService,
   ) {}
 
   public async checkEmail(params: EmailDto) {
@@ -39,6 +47,8 @@ export class AuthService {
       });
       delete createdUser.hash;
       delete createdUser.refreshToken;
+      delete createdUser.code;
+      delete createdUser.codeCreatedAt;
       await this.foldersService.create(
         createdUser.id,
         config.constants.default.folder,
@@ -66,7 +76,7 @@ export class AuthService {
     return tokens;
   }
 
-  public async refreshToken(userId, username, authorization) {
+  public async refresh(userId, username, authorization) {
     const refreshToken = authorization.split(' ')[1];
     const isMatching = await this.isUserRefreshToken(userId, refreshToken);
     if (!isMatching) {
@@ -96,7 +106,49 @@ export class AuthService {
     return { message: 'OK' };
   }
 
-  public async validateUser(email: string, password: string) {
+  public async isValidCode(credentials: IsValidCodeDto) {
+    await this.validateUserByCode(credentials.email, credentials.code);
+
+    return true;
+  }
+
+  public async changePassword(credentials: ChangePasswordDto) {
+    const user = await this.validateUserByCode(
+      credentials.email,
+      credentials.code,
+    );
+
+    const isPasswordMatching = await bcrypt.compare(
+      credentials.password,
+      user.hash,
+    );
+    if (isPasswordMatching) {
+      throw new HttpException('Input new password', HttpStatus.BAD_REQUEST);
+    }
+
+    const hash = await bcrypt.hash(credentials.password, 10);
+    await this.usersService.updatePassword(user.id, hash);
+
+    return true;
+  }
+
+  public async forgotPassword(credentials: ForgotPasswordDto) {
+    const user = await this.usersService.getByEmail(credentials.email);
+
+    const code = await this.getUniqCode();
+    const codeHash = await bcrypt.hash(code, 10);
+    await this.usersService.saveCode(user.id, codeHash);
+
+    await this.mailService.forgotPassword({
+      name: user.name,
+      email: credentials.email,
+      code,
+    });
+
+    return true;
+  }
+
+  private async validateUser(email: string, password: string) {
     try {
       const user = await this.usersService.getByEmail(email);
       const isPasswordMatching = await bcrypt.compare(password, user.hash);
@@ -106,8 +158,6 @@ export class AuthService {
           HttpStatus.BAD_REQUEST,
         );
       }
-      delete user.hash;
-      delete user.refreshToken;
       return user;
     } catch (error) {
       throw new HttpException(
@@ -117,7 +167,10 @@ export class AuthService {
     }
   }
 
-  public async getValidTokens(username: string, sub: string) {
+  private async getValidTokens(
+    username: string,
+    sub: string,
+  ): Promise<LoginResponseDto> {
     const payload = { username, sub };
 
     const accessToken: string = this.jwtService.sign(payload, {
@@ -144,7 +197,7 @@ export class AuthService {
     return { accessToken, refreshToken, userId: sub };
   }
 
-  public async isUserRefreshToken(userId, token): Promise<boolean> {
+  private async isUserRefreshToken(userId, token): Promise<boolean> {
     const user = await this.usersService.getById(userId);
 
     if (!user.refreshToken) {
@@ -162,5 +215,34 @@ export class AuthService {
 
   public getTokenSignature(token: string) {
     return token.slice(token.lastIndexOf('.') + 1);
+  }
+
+  private async getUniqCode() {
+    let code;
+    let isUniq;
+    do {
+      code = this.codeService.generateCode();
+      isUniq = await this.usersService.isUniqCode(code);
+    } while (!isUniq);
+    return code;
+  }
+
+  private async validateUserByCode(email, code) {
+    const user = await this.usersService.getByEmail(email);
+    if (!user.code || !user.codeCreatedAt) {
+      throw new HttpException('First send code', HttpStatus.BAD_REQUEST);
+    }
+    const codeLive = Date.now() - Date.parse(user.codeCreatedAt.toString());
+    const isCode = await bcrypt.compare(code, user.code);
+
+    const isValid = isCode && codeLive < config.constants.auth.code.expiresIn;
+    if (!isValid) {
+      throw new HttpException(
+        'Incorrect or expired code',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return user;
   }
 }

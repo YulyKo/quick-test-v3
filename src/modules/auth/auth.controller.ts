@@ -16,6 +16,9 @@ import { AuthService } from './auth.service';
 import { RegistrationDto } from './dto/registrationDto';
 import { LoginDto } from './dto/loginDto';
 import { EmailDto } from './dto/emailDto';
+import { IsValidCodeDto } from './dto/isValidCodeDto';
+import { ChangePasswordDto } from './dto/changePasswordDto';
+import { ForgotPasswordDto } from './dto/forgotPasswordDto';
 import { Public } from './auth.decorator';
 import { GetUser } from './get-user.decorator';
 import { UseGuards } from '@nestjs/common';
@@ -72,7 +75,7 @@ export class AuthController {
   @Get('refresh')
   @UseGuards(JwtRefreshGuard)
   async refresh(@GetUser() user, @Headers('authorization') authorization) {
-    return this.authService.refreshToken(user.id, user.name, authorization);
+    return this.authService.refresh(user.id, user.name, authorization);
   }
 
   @ApiOperation({ summary: 'logout user' })
@@ -88,6 +91,42 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   async logout(@GetUser() user, @Headers('authorization') authorization) {
     return this.authService.logout(user.id, authorization);
+  }
+
+  @ApiOperation({ summary: 'check is code valid' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+  })
+  @Post('code')
+  async isValidCode(@Body(ValidationPipe) credentials: IsValidCodeDto) {
+    return this.authService.isValidCode(credentials);
+  }
+
+  @ApiOperation({ summary: 'change user password if code valid' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+  })
+  @Post('changePassword')
+  async changePassword(@Body(ValidationPipe) credentials: ChangePasswordDto) {
+    return this.authService.changePassword(credentials);
+  }
+
+  @ApiOperation({ summary: 'forgot user password' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+  })
+  @Post('forgotPassword')
+  async forgotPassword(@Body(ValidationPipe) credentials: ForgotPasswordDto) {
+    return this.authService.forgotPassword(credentials);
   }
 
   @ApiResponse({
