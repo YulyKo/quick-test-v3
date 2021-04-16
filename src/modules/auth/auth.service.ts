@@ -106,8 +106,8 @@ export class AuthService {
     return { message: 'OK' };
   }
 
-  public async isValidCode(credentials: IsValidCodeDto) {
-    await this.validateUserByCode(credentials.email, credentials.code);
+  public async isValidCode(params: IsValidCodeDto) {
+    await this.validateUserByCode(params.email, params.code);
 
     return true;
   }

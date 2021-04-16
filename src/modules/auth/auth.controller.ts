@@ -2,6 +2,8 @@ import {
   Controller,
   Post,
   Get,
+  Put,
+  Patch,
   ValidationPipe,
   Body,
   Head,
@@ -99,10 +101,11 @@ export class AuthController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
+    description: 'Code is incorrect or expired',
   })
-  @Post('code')
-  async isValidCode(@Body(ValidationPipe) credentials: IsValidCodeDto) {
-    return this.authService.isValidCode(credentials);
+  @Head('email/:email/code/:code')
+  async isValidCode(@Param(ValidationPipe) params: IsValidCodeDto) {
+    return this.authService.isValidCode(params);
   }
 
   @ApiOperation({ summary: 'change user password if code valid' })
@@ -112,7 +115,7 @@ export class AuthController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
   })
-  @Post('changePassword')
+  @Put('changePassword')
   async changePassword(@Body(ValidationPipe) credentials: ChangePasswordDto) {
     return this.authService.changePassword(credentials);
   }
@@ -124,7 +127,7 @@ export class AuthController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
   })
-  @Post('forgotPassword')
+  @Patch('forgotPassword')
   async forgotPassword(@Body(ValidationPipe) credentials: ForgotPasswordDto) {
     return this.authService.forgotPassword(credentials);
   }
