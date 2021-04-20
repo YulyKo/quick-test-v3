@@ -240,7 +240,7 @@ describe('Authorization module (e2e)', () => {
     describe('forgot password', () => {
       it('send code to email', async (done) => {
         await request(app.getHttpServer())
-          .patch(`/auth/forgotPassword`)
+          .patch(`/auth/password/forgot`)
           .send({ email: mockData.auth.email })
           .expect(200);
 
@@ -255,7 +255,7 @@ describe('Authorization module (e2e)', () => {
           });
 
         await request(app.getHttpServer())
-          .patch(`/auth/forgotPassword`)
+          .patch(`/auth/password/forgot`)
           .send({ email: mockData.auth.email })
           .expect(200);
 
@@ -275,7 +275,7 @@ describe('Authorization module (e2e)', () => {
 
       it('this email is not exist', async (done) => {
         await request(app.getHttpServer())
-          .patch(`/auth/forgotPassword`)
+          .patch(`/auth/password/forgot`)
           .send({ email: fakeEmail })
           .expect(400, {
             statusCode: 400,
@@ -319,7 +319,7 @@ describe('Authorization module (e2e)', () => {
     describe('change password', () => {
       it('this email is not exist', async (done) => {
         await request(app.getHttpServer())
-          .put(`/auth/changePassword`)
+          .put(`/auth/password/change`)
           .send({
             email: fakeEmail,
             code,
@@ -335,7 +335,7 @@ describe('Authorization module (e2e)', () => {
 
       it('incorrect code', async (done) => {
         await request(app.getHttpServer())
-          .put(`/auth/changePassword`)
+          .put(`/auth/password/change`)
           .send({
             email: mockData.auth.email,
             code: codeService.generateCode(),
@@ -351,7 +351,7 @@ describe('Authorization module (e2e)', () => {
 
       it('input new password', async (done) => {
         await request(app.getHttpServer())
-          .put(`/auth/changePassword`)
+          .put(`/auth/password/change`)
           .send({
             email: mockData.auth.email,
             code,
@@ -367,7 +367,7 @@ describe('Authorization module (e2e)', () => {
 
       it('success', async (done) => {
         await request(app.getHttpServer())
-          .put(`/auth/changePassword`)
+          .put(`/auth/password/change`)
           .send({
             email: mockData.auth.email,
             code,
@@ -399,7 +399,7 @@ describe('Authorization module (e2e)', () => {
 
       it('no code in DB', async (done) => {
         await request(app.getHttpServer())
-          .put(`/auth/changePassword`)
+          .put(`/auth/password/change`)
           .send({
             email: mockData.auth.email,
             code,

@@ -39,7 +39,7 @@ describe('Answer module (e2e)', () => {
       .set('Authorization', 'Bearer ' + accessToken)
       .send({
         ...mockData.question.create,
-        questionAnswers: [
+        answers: [
           mockData.answer.create,
           mockData.answer.create,
           mockData.answer.create,
