@@ -115,7 +115,7 @@ export class AuthController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
   })
-  @Put('changePassword')
+  @Put('password/change')
   async changePassword(@Body(ValidationPipe) credentials: ChangePasswordDto) {
     return this.authService.changePassword(credentials);
   }
@@ -127,7 +127,7 @@ export class AuthController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
   })
-  @Patch('forgotPassword')
+  @Patch('password/forgot')
   async forgotPassword(@Body(ValidationPipe) credentials: ForgotPasswordDto) {
     return this.authService.forgotPassword(credentials);
   }

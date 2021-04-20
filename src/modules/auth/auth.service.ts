@@ -182,9 +182,7 @@ export class AuthService {
       secret: config.env.JWT_REFRESH_SECRET,
       expiresIn: config.env.JWT_REFRESH_EXPIRATION_TIME,
     });
-
     const refreshTokenSignature = this.getTokenSignature(refreshToken);
-
     const refreshTokenSignatureHashed = await bcrypt.hash(
       refreshTokenSignature,
       10,
