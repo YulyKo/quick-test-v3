@@ -6,6 +6,9 @@ import { google } from 'googleapis';
 import { MailService } from './mail.service';
 import { config } from '../../config';
 
+let refreshToken = config.env.MAILER_CLIENT_REFRESH_TOKEN;
+let accessToken;
+
 const oauth2Client = new google.auth.OAuth2(
   config.env.MAILER_CLIENT_ID,
   config.env.MAILER_CLIENT_SECRET,
@@ -13,7 +16,20 @@ const oauth2Client = new google.auth.OAuth2(
 );
 oauth2Client.setCredentials({
   // eslint-disable-next-line camelcase
-  refresh_token: config.env.MAILER_CLIENT_REFRESH_TOKEN,
+  refresh_token: refreshToken,
+});
+
+accessToken = oauth2Client.getAccessToken();
+
+oauth2Client.on('tokens', (tokens) => {
+  if (tokens.refresh_token) {
+    refreshToken = tokens.refresh_token;
+    // store the refresh_token in my database!
+  }
+
+  accessToken = tokens.access_token;
+
+  oauth2Client.setCredentials(tokens);
 });
 
 @Module({
@@ -28,7 +44,7 @@ oauth2Client.setCredentials({
             clientId: config.env.MAILER_CLIENT_ID,
             clientSecret: config.env.MAILER_CLIENT_SECRET,
             refreshToken: config.env.MAILER_CLIENT_REFRESH_TOKEN,
-            accessToken: oauth2Client.getAccessToken(),
+            accessToken,
           },
         },
         defaults: {
