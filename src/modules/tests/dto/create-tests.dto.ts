@@ -1,5 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsUUID, MaxLength, MinLength } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 import { config } from '../../../config';
 
 export class CreateTestsDto {
@@ -15,12 +21,14 @@ export class CreateTestsDto {
   @MaxLength(config.constants.test.text.max)
   text: string;
 
+  @IsOptional()
   @IsString({ each: true })
   @ApiProperty({
     description: 'array of uuid questions id',
   })
   questions?: string[];
 
+  @IsOptional()
   @ApiPropertyOptional()
   @IsUUID()
   folderId?: string;
