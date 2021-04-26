@@ -94,8 +94,13 @@ export class QuestionsHttpService {
     try {
       await this.questionsService.removeById(userId, id);
     } catch (error) {
-      if (error instanceof QuestionsError)
-        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      if (error instanceof QuestionsError) {
+        return HttpException.createBody(
+          error.body,
+          error.message,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
 
       throw new HttpException(
         'Something went wrong',

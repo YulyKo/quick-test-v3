@@ -1,5 +1,7 @@
 export class QuestionsError extends Error {
-  constructor(message: string) {
+  body: any;
+  constructor(message: string, params?: any) {
     super(message);
+    this.body = params;
   }
 }

@@ -8,11 +8,13 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  ManyToMany,
 } from 'typeorm';
 
 import { Answers } from './answers.entity';
 import { Users } from '../../users/entities/users.entity';
 import { Folders } from '../../folders/entities/folders.entity';
+import { Tests } from '../../tests/entities/tests.entity';
 
 export enum QuestionsTemplate {
   BOOLEAN = 'boolean',
@@ -71,4 +73,7 @@ export class Questions {
 
   @ManyToOne(() => Folders, (folder) => folder.questions)
   folder: Folders;
+
+  @ManyToMany(() => Tests, (tests) => tests.questions)
+  tests: Tests[];
 }

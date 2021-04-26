@@ -15,6 +15,7 @@ import {
 } from 'typeorm';
 
 import { config } from '../../../config';
+import question from 'test/mockData/question';
 
 @Entity()
 export class Tests {
@@ -57,7 +58,7 @@ export class Tests {
   @ManyToOne(() => Folders, (folder) => folder.tests)
   folder: Folders;
 
-  @ManyToMany(() => Questions)
+  @ManyToMany(() => Questions, (questions) => questions.tests)
   @JoinTable()
   questions: Questions[];
 }

@@ -113,7 +113,23 @@ export class QuestionsService {
   }
 
   async removeById(userId: string, id: string) {
-    const question = await this.getById(userId, id);
+    // const question = await this.getById(userId, id);
+    const question = await this.questionsRepository
+      .createQueryBuilder('questions')
+      .where({ user: userId, id })
+      .leftJoinAndSelect('questions.tests', 'tests')
+      .getOne();
+
+    if (question.tests.length > 0)
+      throw new QuestionsError(
+        'test has question',
+        question.tests.map((test) => {
+          return {
+            id: test.id,
+            name: test.name,
+          };
+        }),
+      );
     await this.questionsRepository.softRemove(question);
   }
 }
