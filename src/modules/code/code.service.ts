@@ -4,7 +4,7 @@ import { config } from '../../config';
 
 @Injectable()
 export class CodeService {
-  async generateCode() {
+  generateCode() {
     let code = '';
 
     const { characters, length } = config.constants.code;

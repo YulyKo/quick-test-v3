@@ -106,8 +106,8 @@ export class AuthService {
     return { message: 'OK' };
   }
 
-  public async isValidCode(credentials: IsValidCodeDto) {
-    await this.validateUserByCode(credentials.email, credentials.code);
+  public async isValidCode(params: IsValidCodeDto) {
+    await this.validateUserByCode(params.email, params.code);
 
     return true;
   }
@@ -182,9 +182,7 @@ export class AuthService {
       secret: config.env.JWT_REFRESH_SECRET,
       expiresIn: config.env.JWT_REFRESH_EXPIRATION_TIME,
     });
-
     const refreshTokenSignature = this.getTokenSignature(refreshToken);
-
     const refreshTokenSignatureHashed = await bcrypt.hash(
       refreshTokenSignature,
       10,
