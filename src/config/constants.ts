@@ -8,6 +8,18 @@ const SWAGGER = new DocumentBuilder()
   .build();
 
 export const constants = {
+  DEVELOPMENT: 'development',
+  logger: {
+    levels: {
+      development: 'debug',
+      production: 'info',
+    },
+    morganFormats: {
+      development: 'dev',
+      production: 'combined',
+    },
+    filename: 'app.dev.log',
+  },
   JWT: {
     publicKey: 'isPublic',
     strategy: {
