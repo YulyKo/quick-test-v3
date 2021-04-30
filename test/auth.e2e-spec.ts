@@ -2,6 +2,7 @@ import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import * as request from 'supertest';
+import * as crypto from 'crypto';
 
 import { AppModule } from '../src/app.module';
 import { CodeService } from '../src/modules/code/code.service';
@@ -14,6 +15,8 @@ describe('Authorization module (e2e)', () => {
   let mailerService: MailerService;
   let codeService: CodeService;
   const fakeEmail = 'asdffadsf@fadsf.sadf.sdf.com';
+  let spyMailService;
+  let code;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -23,16 +26,34 @@ describe('Authorization module (e2e)', () => {
     await app.init();
     mailerService = moduleRef.get<MailerService>(MailerService);
     codeService = moduleRef.get<CodeService>(CodeService);
+    spyMailService = jest
+      .spyOn(mailerService, 'sendMail')
+      .mockImplementation(async (mail) => {
+        code = mail.context.code;
+      });
   });
 
   afterAll(async () => {
+    await request(app.getHttpServer())
+      .patch(`/auth/password/forgot`)
+      .send({ email: mockData.auth.email })
+      .expect(200);
+
+    await request(app.getHttpServer())
+      .put(`/auth/password/change`)
+      .send({
+        email: mockData.auth.email,
+        code,
+        password: mockData.auth.password,
+      })
+      .expect(200);
     await app.close();
   });
 
   describe('registration', () => {
     const registration = {
       name: mockData.auth.name,
-      email: mockData.auth.email,
+      email: `${crypto.randomInt(1000, 10000000)}${mockData.auth.email}`,
       password: mockData.auth.password,
     };
 
@@ -223,8 +244,6 @@ describe('Authorization module (e2e)', () => {
   });
 
   describe('recover password', () => {
-    let code: string;
-
     it('code is not in DB yet', async (done) => {
       await request(app.getHttpServer())
         .head(
@@ -248,12 +267,6 @@ describe('Authorization module (e2e)', () => {
       });
 
       it('check if letter send correctly', async (done) => {
-        const spyMailService = jest
-          .spyOn(mailerService, 'sendMail')
-          .mockImplementation(async (mail) => {
-            code = mail.context.code;
-          });
-
         await request(app.getHttpServer())
           .patch(`/auth/password/forgot`)
           .send({ email: mockData.auth.email })
