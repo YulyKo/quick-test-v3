@@ -28,7 +28,7 @@ export class TestsService {
       createTestsDto.folderId || userId,
     );
 
-    const code = await this.getUniqCode();
+    const code = await this.codeService.getUniqCode();
     let questions = [];
 
     if (createTestsDto.questions) {
@@ -140,15 +140,5 @@ export class TestsService {
   private async isUniqCode(code: string) {
     const codeFromDB = await this.testsRepository.findOne({ code });
     return !codeFromDB;
-  }
-
-  private async getUniqCode() {
-    let code;
-    let isUniq;
-    do {
-      code = this.codeService.generateCode();
-      isUniq = await this.isUniqCode(code);
-    } while (!isUniq);
-    return code;
   }
 }

@@ -1,10 +1,13 @@
 import { plainToClass } from 'class-transformer';
-import { IsNumber, IsString, validateSync } from 'class-validator';
+import { IsIn, IsNumber, IsString, validateSync } from 'class-validator';
 import * as dotenv from 'dotenv';
 import { constants } from './constants';
 
 dotenv.config();
 class EnvironmentVariables {
+  @IsIn(['development', 'production'])
+  NODE_ENV: string;
+
   @IsNumber()
   PORT: number;
 
@@ -65,6 +68,7 @@ class EnvironmentVariables {
 
 const validation = () => {
   const config = {
+    NODE_ENV: process.env.NODE_ENV || 'production',
     PORT: parseInt(process.env.PORT, 10) || 3000,
 
     TYPEORM_HOST: process.env.TYPEORM_HOST,

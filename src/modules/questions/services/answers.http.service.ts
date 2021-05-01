@@ -8,9 +8,12 @@ import { CreateAnswersDto } from '../dto/create-answers.dto';
 import { ResponseAnswersDto } from '../dto/response-answers.dto';
 import { UpdateAnswersDto } from '../dto/update-answers.dto';
 import { QuestionsService } from './questions.service';
+import { LoggerService } from '../../../utils/logger.service';
 
 @Injectable()
 export class AnswersHttpService {
+  logger = new LoggerService(AnswersHttpService.name);
+
   constructor(
     private readonly answersService: AnswersService,
     private readonly questionsService: QuestionsService,
@@ -27,6 +30,12 @@ export class AnswersHttpService {
         createAnswerDtos.map((createAnswerDto) =>
           this.answersService.create(question, createAnswerDto),
         ),
+      );
+      this.logger.debug(
+        `Answers created, with ids: ${answers
+          .map(({ id }) => id)
+          .join(', ')}, questionId: ${questionId}, for user ${userId}`,
+        this.create.name,
       );
       return answers.map((answer) => plainToClass(ResponseAnswersDto, answer));
     } catch (error) {
@@ -82,6 +91,12 @@ export class AnswersHttpService {
           this.answersService.updateById(question, id, updateAnswerDtos[index]),
         ),
       );
+      this.logger.debug(
+        `Answers updated, with ids: ${ids.join(
+          ', ',
+        )}, questionId: ${questionId}, for user ${userId}`,
+        this.updateByIds.name,
+      );
       return answers.map((answer) => plainToClass(ResponseAnswersDto, answer));
     } catch (error) {
       if (error instanceof QuestionsError || error instanceof AnswerError)
@@ -99,6 +114,12 @@ export class AnswersHttpService {
       const question = await this.questionsService.getById(userId, questionId);
       await Promise.all(
         ids.map((id) => this.answersService.deleteById(question, id)),
+      );
+      this.logger.debug(
+        `Answers deleted, with ids: ${ids.join(
+          ', ',
+        )}, questionId: ${questionId}, for user ${userId}`,
+        this.deleteByIds.name,
       );
     } catch (error) {
       if (error instanceof QuestionsError || error instanceof AnswerError)
