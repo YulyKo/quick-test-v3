@@ -24,6 +24,7 @@ export const constants = {
     password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,20}$/,
     code: {
       expiresIn: 60 * 60 * 1000,
+      againSendAfter: 3 * 60 * 1000,
     },
   },
   default: {
