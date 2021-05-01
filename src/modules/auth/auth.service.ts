@@ -135,6 +135,19 @@ export class AuthService {
   public async forgotPassword(credentials: ForgotPasswordDto) {
     const user = await this.usersService.getByEmail(credentials.email);
 
+    if (user.codeCreatedAt) {
+      const canSendAgain =
+        Date.parse(user.codeCreatedAt.toString()) +
+          config.constants.auth.code.againSendAfter <
+        Date.now();
+      if (!canSendAgain) {
+        throw new HttpException(
+          'Code has already sent, wait to send again',
+          HttpStatus.TOO_MANY_REQUESTS,
+        );
+      }
+    }
+
     const code = await this.getUniqCode();
     const codeHash = await bcrypt.hash(code, 10);
     await this.usersService.saveCode(user.id, codeHash);
@@ -211,7 +224,7 @@ export class AuthService {
     return isMatching;
   }
 
-  public getTokenSignature(token: string) {
+  private getTokenSignature(token: string) {
     return token.slice(token.lastIndexOf('.') + 1);
   }
 
