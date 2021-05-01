@@ -7,15 +7,22 @@ import { ResponseTestsDto } from './dto/response-tests.dto';
 import { UpdateTestsDto } from './dto/update-tests.dto';
 import { TestError } from './tests.error';
 import { TestsService } from './tests.service';
+import { LoggerService } from '../../utils/logger.service';
 
 @Injectable()
 export class TestsHttpService {
+  logger = new LoggerService(TestsHttpService.name);
+
   constructor(private readonly testsService: TestsService) {}
   async create(userId: string, createTestDto: CreateTestsDto) {
     try {
       const test = await this.testsService.create(userId, createTestDto);
 
       const responseQuestion = plainToClass(ResponseTestsDto, test);
+      this.logger.debug(
+        `Test created, with id: ${test.id}, for user ${userId}`,
+        this.create.name,
+      );
       return responseQuestion;
     } catch (error) {
       if (
@@ -79,7 +86,10 @@ export class TestsHttpService {
         id,
         updateTestDto,
       );
-
+      this.logger.debug(
+        `Test updated, with id: ${id}, for user ${userId}`,
+        this.updateById.name,
+      );
       return plainToClass(ResponseTestsDto, test);
     } catch (error) {
       if (
@@ -103,7 +113,10 @@ export class TestsHttpService {
         testId,
         questionId,
       );
-
+      this.logger.debug(
+        `Question added, with id: ${questionId}, to test ${testId}, for user ${userId}`,
+        this.addQuestion.name,
+      );
       return plainToClass(ResponseTestsDto, test);
     } catch (error) {
       if (
@@ -127,7 +140,10 @@ export class TestsHttpService {
         testId,
         questionId,
       );
-
+      this.logger.debug(
+        `Question removed, with id: ${questionId}, from test ${testId}, for user ${userId}`,
+        this.removeQuestion.name,
+      );
       return plainToClass(ResponseTestsDto, test);
     } catch (error) {
       if (
@@ -147,6 +163,10 @@ export class TestsHttpService {
   async deleteById(userId: string, id: string) {
     try {
       await this.testsService.deleteById(userId, id);
+      this.logger.debug(
+        `Test deleted, with id: ${id}, for user ${userId}`,
+        this.addQuestion.name,
+      );
     } catch (error) {
       if (
         error instanceof TestError ||

@@ -8,7 +8,7 @@ export class ExceptionsLoggerFilter extends BaseExceptionFilter {
   logger = new LoggerService(ExceptionsLoggerFilter.name);
 
   catch(exception: HttpException, host: ArgumentsHost) {
-    this.logger.error(exception.message, exception.stack);
+    this.logger.error(exception.message, exception.stack, exception.name);
     super.catch(exception, host);
   }
 }

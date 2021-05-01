@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { plainToClass } from 'class-transformer';
 
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/loginDto';
@@ -15,9 +16,13 @@ import { MailService } from '../mail/mail.service';
 import { CodeService } from '../code/code.service';
 import { UsersError } from '../users/users.error';
 import { LoginResponseDto } from './dto/loginResponse.dto';
+import { LoggerService } from '../../utils/logger.service';
+import { ResponseUserDto } from './dto/response-user.dto';
 
 @Injectable()
 export class AuthService {
+  logger = new LoggerService(AuthService.name);
+
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
@@ -45,16 +50,17 @@ export class AuthService {
         ...credentials,
         hash,
       });
-      delete createdUser.hash;
-      delete createdUser.refreshToken;
-      delete createdUser.code;
-      delete createdUser.codeCreatedAt;
       await this.foldersService.create(
         createdUser.id,
         config.constants.default.folder,
         true,
       );
-      return createdUser;
+      const responseUser = plainToClass(ResponseUserDto, createdUser);
+      this.logger.debug(
+        `User and folder created, with id: ${createdUser.id}`,
+        this.registration.name,
+      );
+      return responseUser;
     } catch (error) {
       if (error instanceof UsersError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -128,14 +134,17 @@ export class AuthService {
 
     const hash = await bcrypt.hash(credentials.password, 10);
     await this.usersService.updatePassword(user.id, hash);
-
+    this.logger.debug(
+      `Password changed, for user ${user.id}`,
+      this.changePassword.name,
+    );
     return true;
   }
 
   public async forgotPassword(credentials: ForgotPasswordDto) {
     const user = await this.usersService.getByEmail(credentials.email);
 
-    const code = await this.getUniqCode();
+    const code = await this.codeService.getUniqCode();
     const codeHash = await bcrypt.hash(code, 10);
     await this.usersService.saveCode(user.id, codeHash);
 
@@ -144,7 +153,10 @@ export class AuthService {
       email: credentials.email,
       code,
     });
-
+    this.logger.debug(
+      `Forgot password email sent, for user ${user.id}`,
+      this.forgotPassword.name,
+    );
     return true;
   }
 
@@ -213,16 +225,6 @@ export class AuthService {
 
   public getTokenSignature(token: string) {
     return token.slice(token.lastIndexOf('.') + 1);
-  }
-
-  private async getUniqCode() {
-    let code;
-    let isUniq;
-    do {
-      code = this.codeService.generateCode();
-      isUniq = await this.usersService.isUniqCode(code);
-    } while (!isUniq);
-    return code;
   }
 
   private async validateUserByCode(email, code) {

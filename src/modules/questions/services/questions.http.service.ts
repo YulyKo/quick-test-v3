@@ -8,9 +8,12 @@ import { ResponseQuestionsDto } from '../dto/response-questions.dto';
 import { UpdateQuestionsDto } from '../dto/update-questions.dto';
 import { QuestionsError } from '../errors/questions.error';
 import { QuestionsService } from './questions.service';
+import { LoggerService } from '../../../utils/logger.service';
 
 @Injectable()
 export class QuestionsHttpService {
+  logger = new LoggerService(QuestionsHttpService.name);
+
   constructor(private readonly questionsService: QuestionsService) {}
 
   async create(userId: string, createQuestionsDto: CreateQuestionsDto) {
@@ -19,8 +22,12 @@ export class QuestionsHttpService {
         userId,
         createQuestionsDto,
       );
-
-      return plainToClass(ResponseQuestionsDto, question);
+      const responseQuestion = plainToClass(ResponseQuestionsDto, question);
+      this.logger.debug(
+        `Question created, with id: ${question.id}, for user ${userId}`,
+        this.create.name,
+      );
+      return responseQuestion;
     } catch (error) {
       if (
         error instanceof QuestionsError ||
@@ -78,6 +85,11 @@ export class QuestionsHttpService {
         updateQuestionDto,
       );
       const responseQuestion = plainToClass(ResponseQuestionsDto, question);
+      this.logger.debug(
+        `Question updated, with id: ${id}, for user ${userId}`,
+        this.updateById.name,
+        responseQuestion,
+      );
       return responseQuestion;
     } catch (error) {
       if (error instanceof QuestionsError)
@@ -93,6 +105,10 @@ export class QuestionsHttpService {
   async deleteById(userId: string, id: string) {
     try {
       await this.questionsService.removeById(userId, id);
+      this.logger.debug(
+        `Question deleted, with id: ${id}, for user ${userId}`,
+        this.deleteById.name,
+      );
     } catch (error) {
       if (error instanceof QuestionsError)
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
