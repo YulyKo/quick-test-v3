@@ -15,7 +15,6 @@ import {
 } from 'typeorm';
 
 import { config } from '../../../config';
-import question from 'test/mockData/question';
 
 @Entity()
 export class Tests {
@@ -30,8 +29,9 @@ export class Tests {
 
   @Column({
     length: config.constants.code.length,
+    nullable: true,
   })
-  code: string;
+  code!: string;
 
   @Column({
     default: 'FALSE',

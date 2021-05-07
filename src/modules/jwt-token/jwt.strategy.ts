@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 
 import { config } from '../../config';
+import { JwtTokenBody } from './jwt-body.interface';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(
@@ -17,8 +18,8 @@ export class JwtStrategy extends PassportStrategy(
     });
   }
 
-  async validate(payload: any) {
-    return { id: payload.sub, name: payload.username };
+  async validate(payload: JwtTokenBody) {
+    return { id: payload.id };
   }
 }
 
@@ -35,7 +36,25 @@ export class JwtRefreshStrategy extends PassportStrategy(
     });
   }
 
-  async validate(payload: any) {
-    return { id: payload.sub, name: payload.username };
+  async validate(payload: JwtTokenBody) {
+    return { id: payload.id };
+  }
+}
+
+@Injectable()
+export class JwtWsStrategy extends PassportStrategy(
+  Strategy,
+  config.constants.JWT.strategy.jwtWs,
+) {
+  constructor() {
+    super({
+      jwtFromRequest: ExtractJwt.fromUrlQueryParameter('jwtTokenFieldName'),
+      ignoreExpiration: false,
+      secretOrKey: config.env.JWT_WS_SECRET,
+    });
+  }
+
+  async validate(payload: JwtTokenBody) {
+    return { id: payload.id };
   }
 }

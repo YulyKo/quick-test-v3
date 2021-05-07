@@ -72,6 +72,49 @@ export class TestsHttpService {
     }
   }
 
+  async activate(userId: string, id: string) {
+    try {
+      await this.testsService.activate(userId, id);
+
+      return {
+        message: `test with id: ${id} has been opened`,
+      };
+    } catch (error) {
+      if (
+        error instanceof TestError ||
+        error instanceof FoldersError ||
+        error instanceof QuestionsError
+      )
+        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async disable(userId: string, id: string) {
+    try {
+      await this.testsService.activate(userId, id);
+      return {
+        message: `test with id: ${id} has been closed`,
+      };
+    } catch (error) {
+      if (
+        error instanceof TestError ||
+        error instanceof FoldersError ||
+        error instanceof QuestionsError
+      )
+        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   async updateById(userId: string, id: string, updateTestDto: UpdateTestsDto) {
     try {
       const test = await this.testsService.updateById(

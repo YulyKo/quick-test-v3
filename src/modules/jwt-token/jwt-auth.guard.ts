@@ -30,3 +30,12 @@ export class JwtRefreshGuard extends AuthGuard(
     super();
   }
 }
+
+@Injectable()
+export class JwtWsAuthGuard extends AuthGuard(
+  config.constants.JWT.strategy.jwtWs,
+) {
+  constructor(private reflector: Reflector) {
+    super();
+  }
+}

@@ -4,7 +4,6 @@ import { MailerService } from '@nestjs-modules/mailer';
 import * as request from 'supertest';
 
 import { AppModule } from '../src/app.module';
-import { CodeService } from '../src/modules/code/code.service';
 import mockData from './mockData';
 import { config } from '../src/config/index';
 
@@ -12,8 +11,8 @@ describe('Authorization module (e2e)', () => {
   let app: INestApplication;
   let refreshToken: string;
   let mailerService: MailerService;
-  let codeService: CodeService;
   const fakeEmail = 'asdffadsf@fadsf.sadf.sdf.com';
+  const INCORRECT_CODE = '123123';
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -22,7 +21,6 @@ describe('Authorization module (e2e)', () => {
     app = moduleRef.createNestApplication();
     await app.init();
     mailerService = moduleRef.get<MailerService>(MailerService);
-    codeService = moduleRef.get<CodeService>(CodeService);
   });
 
   afterAll(async () => {
@@ -227,11 +225,7 @@ describe('Authorization module (e2e)', () => {
 
     it('code is not in DB yet', async (done) => {
       await request(app.getHttpServer())
-        .head(
-          `/auth/email/${
-            mockData.auth.email
-          }/code/${codeService.generateCode()}`,
-        )
+        .head(`/auth/email/${mockData.auth.email}/code/${INCORRECT_CODE}`)
         .expect(400);
 
       done();
@@ -305,11 +299,7 @@ describe('Authorization module (e2e)', () => {
 
       it('incorrect code', async (done) => {
         await request(app.getHttpServer())
-          .head(
-            `/auth/email/${
-              mockData.auth.email
-            }/code/${codeService.generateCode()}`,
-          )
+          .head(`/auth/email/${mockData.auth.email}/code/${INCORRECT_CODE}`)
           .expect(400);
 
         done();
@@ -338,7 +328,7 @@ describe('Authorization module (e2e)', () => {
           .put(`/auth/password/change`)
           .send({
             email: mockData.auth.email,
-            code: codeService.generateCode(),
+            code: INCORRECT_CODE,
             password: mockData.auth.newPassword,
           })
           .expect(400, {

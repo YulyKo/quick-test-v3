@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 import { UsersService } from '../users/users.service';
@@ -15,12 +14,14 @@ import { MailService } from '../mail/mail.service';
 import { CodeService } from '../code/code.service';
 import { UsersError } from '../users/users.error';
 import { LoginResponseDto } from './dto/loginResponse.dto';
+import { JwtOptions } from '../jwt-token/jwt-body.interface';
+import { JwtTokenService } from '../jwt-token/jwt-token.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
-    private jwtService: JwtService,
+    private jwtTokenService: JwtTokenService,
     private foldersService: FoldersService,
     private mailService: MailService,
     private codeService: CodeService,
@@ -71,12 +72,12 @@ export class AuthService {
       credentials.password,
     );
 
-    const tokens = await this.getValidTokens(user.name, user.id);
+    const tokens = await this.getValidTokens(user.id);
 
     return tokens;
   }
 
-  public async refresh(userId, username, authorization) {
+  public async refresh(userId, authorization) {
     const refreshToken = authorization.split(' ')[1];
     const isMatching = await this.isUserRefreshToken(userId, refreshToken);
     if (!isMatching) {
@@ -86,7 +87,7 @@ export class AuthService {
       );
     }
 
-    const tokens = await this.getValidTokens(username, userId);
+    const tokens = await this.getValidTokens(userId);
 
     return tokens;
   }
@@ -135,7 +136,7 @@ export class AuthService {
   public async forgotPassword(credentials: ForgotPasswordDto) {
     const user = await this.usersService.getByEmail(credentials.email);
 
-    const code = await this.getUniqCode();
+    const code = await this.usersService.getCode();
     const codeHash = await bcrypt.hash(code, 10);
     await this.usersService.saveCode(user.id, codeHash);
 
@@ -167,32 +168,39 @@ export class AuthService {
     }
   }
 
-  private async getValidTokens(
-    username: string,
-    sub: string,
-  ): Promise<LoginResponseDto> {
-    const payload = { username, sub };
-
-    const accessToken: string = this.jwtService.sign(payload, {
+  private async getValidTokens(id: string): Promise<LoginResponseDto> {
+    const accessTokenOptions: JwtOptions = {
       secret: config.env.JWT_ACCESS_SECRET,
       expiresIn: config.env.JWT_ACCESS_EXPIRATION_TIME,
-    });
-
-    const refreshToken: string = this.jwtService.sign(payload, {
+    };
+    const refreshTokenOptions: JwtOptions = {
       secret: config.env.JWT_REFRESH_SECRET,
       expiresIn: config.env.JWT_REFRESH_EXPIRATION_TIME,
-    });
-    const refreshTokenSignature = this.getTokenSignature(refreshToken);
+    };
+
+    const accessToken = this.jwtTokenService.generate(
+      { id },
+      accessTokenOptions,
+    );
+
+    const refreshToken = this.jwtTokenService.generate(
+      { id },
+      refreshTokenOptions,
+    );
+
+    const refreshTokenSignature = this.jwtTokenService.getSignature(
+      refreshToken,
+    );
     const refreshTokenSignatureHashed = await bcrypt.hash(
       refreshTokenSignature,
       10,
     );
     await this.usersService.setCurrentRefreshToken(
       refreshTokenSignatureHashed,
-      sub,
+      id,
     );
 
-    return { accessToken, refreshToken, userId: sub };
+    return { accessToken, refreshToken, userId: id };
   }
 
   private async isUserRefreshToken(userId, token): Promise<boolean> {
@@ -202,27 +210,13 @@ export class AuthService {
       return false;
     }
 
-    const refreshTokenSignature = this.getTokenSignature(token);
+    const refreshTokenSignature = this.jwtTokenService.getSignature(token);
 
     const isMatching = await bcrypt.compare(
       refreshTokenSignature,
       user.refreshToken,
     );
     return isMatching;
-  }
-
-  public getTokenSignature(token: string) {
-    return token.slice(token.lastIndexOf('.') + 1);
-  }
-
-  private async getUniqCode() {
-    let code;
-    let isUniq;
-    do {
-      code = this.codeService.generateCode();
-      isUniq = await this.usersService.isUniqCode(code);
-    } while (!isUniq);
-    return code;
   }
 
   private async validateUserByCode(email, code) {

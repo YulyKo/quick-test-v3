@@ -48,6 +48,12 @@ class EnvironmentVariables {
   JWT_REFRESH_EXPIRATION_TIME: string;
 
   @IsString()
+  JWT_WS_SECRET: string;
+
+  @IsString()
+  JWT_WS_SECRET_EXPIRATION_TIME: string;
+
+  @IsString()
   PROJECT_ID: string;
 
   @IsString()
@@ -81,6 +87,8 @@ const validation = () => {
     JWT_ACCESS_EXPIRATION_TIME: process.env.JWT_ACCESS_EXPIRATION_TIME,
     JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
     JWT_REFRESH_EXPIRATION_TIME: process.env.JWT_REFRESH_EXPIRATION_TIME,
+    JWT_WS_SECRET: process.env.JWT_WS_SECRET,
+    JWT_WS_SECRET_EXPIRATION_TIME: process.env.JWT_WS_SECRET_EXPIRATION_TIME,
 
     PROJECT_ID: process.env.PROJECT_ID,
     SENDER_EMAIL_ADDRESS: process.env.SENDER_EMAIL_ADDRESS,

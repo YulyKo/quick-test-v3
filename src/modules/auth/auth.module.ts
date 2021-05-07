@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
 import { UserModule } from '../users/users.module';
-import { JwtStrategy, JwtRefreshStrategy } from './jwt.strategy';
-import { config } from '../../config';
 import { FoldersModule } from '../folders/folders.module';
 import { MailModule } from '../mail/mail.module';
+import { JwtTokenModule } from '../jwt-token/jwt-token.module';
+
+import { AuthService } from './auth.service';
+import { AuthController } from './auth.controller';
+import { JwtStrategy, JwtRefreshStrategy } from '../jwt-token/jwt.strategy';
 import { CodeModule } from '../code/code.module';
 
 @Module({
@@ -17,14 +17,11 @@ import { CodeModule } from '../code/code.module';
     UserModule,
     PassportModule,
     FoldersModule,
-    JwtModule.register({
-      secret: config.env.JWT_ACCESS_SECRET,
-      signOptions: { expiresIn: config.env.JWT_ACCESS_EXPIRATION_TIME },
-    }),
+    JwtTokenModule,
     CodeModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, JwtRefreshStrategy],
-  exports: [AuthService, JwtModule],
+  exports: [AuthService],
 })
 export class AuthModule {}

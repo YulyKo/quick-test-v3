@@ -11,6 +11,7 @@ import {
   HttpStatus,
   HttpCode,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -23,8 +24,7 @@ import { ChangePasswordDto } from './dto/changePasswordDto';
 import { ForgotPasswordDto } from './dto/forgotPasswordDto';
 import { Public } from './auth.decorator';
 import { GetUser } from './get-user.decorator';
-import { UseGuards } from '@nestjs/common';
-import { JwtRefreshGuard } from './jwt-auth.guard';
+import { JwtRefreshGuard } from '../jwt-token/jwt-auth.guard';
 
 @Public()
 @ApiTags('auth')
@@ -77,7 +77,7 @@ export class AuthController {
   @Get('refresh')
   @UseGuards(JwtRefreshGuard)
   async refresh(@GetUser() user, @Headers('authorization') authorization) {
-    return this.authService.refresh(user.id, user.name, authorization);
+    return this.authService.refresh(user.id, authorization);
   }
 
   @ApiOperation({ summary: 'logout user' })

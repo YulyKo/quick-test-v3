@@ -4,10 +4,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FoldersModule } from '../folders/folders.module';
 import { QuestionsModule } from '../questions/questions.module';
 import { CodeModule } from '../code/code.module';
+import { StorageModule } from '../storage/storage.module';
 import { TestController } from './tests.controller';
 import { Tests } from './entities/tests.entity';
 import { TestsHttpService } from './tests.http.service';
 import { TestsService } from './tests.service';
+import { JwtTokenModule } from '../jwt-token/jwt-token.module';
+import { TestsGateway } from './tests.gateway';
 
 @Module({
   imports: [
@@ -15,8 +18,10 @@ import { TestsService } from './tests.service';
     FoldersModule,
     QuestionsModule,
     CodeModule,
+    StorageModule,
+    JwtTokenModule,
   ],
   controllers: [TestController],
-  providers: [TestsHttpService, TestsService],
+  providers: [TestsHttpService, TestsService, TestsGateway],
 })
 export class TestModule {}

@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 import { FoldersService } from '../folders/folders.service';
 import { QuestionsService } from '../questions/services/questions.service';
 import { CodeService } from '../code/code.service';
+import { JwtTokenService } from '../jwt-token/jwt-token.service';
+import { StorageService } from '../storage/storage.service';
 import { CreateTestsDto } from './dto/create-tests.dto';
 import { UpdateTestsDto } from './dto/update-tests.dto';
 import { Tests } from './entities/tests.entity';
@@ -17,6 +19,8 @@ export class TestsService {
     private readonly foldersService: FoldersService,
     private readonly questionsService: QuestionsService,
     private readonly codeService: CodeService,
+    private readonly jwtTokenService: JwtTokenService,
+    private readonly storageService: StorageService,
 
     @InjectRepository(Tests)
     private testsRepository: Repository<Tests>,
@@ -28,7 +32,6 @@ export class TestsService {
       createTestsDto.folderId || userId,
     );
 
-    const code = await this.getUniqCode();
     let questions = [];
 
     if (createTestsDto.questions) {
@@ -40,7 +43,6 @@ export class TestsService {
 
     const test = this.testsRepository.create({
       ...createTestsDto,
-      code,
       folder,
       questions,
       user: {
@@ -80,6 +82,35 @@ export class TestsService {
       .getOne();
 
     return test;
+  }
+
+  async activate(userId: string, id: string) {
+    const test = await this.getById(userId, id);
+    if (test.isOpen)
+      throw new TestError(`This test with id: ${id} has been already opened`);
+
+    const code = await this.codeService.getUniqCode(this.testsRepository); // bad code
+    // const token = this.jwtTokenService.generate({ id: userId });
+    test.isOpen = true;
+    test.code = code;
+    await this.testsRepository.save(test);
+
+    return {
+      code,
+      // token,
+    };
+  }
+
+  async disable(userId: string, id: string) {
+    const test = await this.getById(userId, id);
+    if (!test.isOpen)
+      throw new TestError(
+        `This test with id: ${id} has not been already opened`,
+      );
+
+    test.isOpen = false;
+    test.code = null;
+    await this.testsRepository.save(test);
   }
 
   async updateById(userId: string, id: string, updateTestDto: UpdateTestsDto) {
@@ -135,20 +166,5 @@ export class TestsService {
   private hasTestQuestion(questions: Questions[], questionId: string) {
     const index = questions.findIndex((question) => question.id === questionId);
     return index;
-  }
-
-  private async isUniqCode(code: string) {
-    const codeFromDB = await this.testsRepository.findOne({ code });
-    return !codeFromDB;
-  }
-
-  private async getUniqCode() {
-    let code;
-    let isUniq;
-    do {
-      code = this.codeService.generateCode();
-      isUniq = await this.isUniqCode(code);
-    } while (!isUniq);
-    return code;
   }
 }

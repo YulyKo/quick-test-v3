@@ -13,6 +13,7 @@ export const constants = {
     strategy: {
       jwt: 'jwt',
       jwtRefresh: 'jwt-refresh',
+      jwtWs: 'jwt-websocket',
     },
   },
   SWAGGER,

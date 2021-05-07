@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { CodeService } from '../code/code.service';
 import { CreateUsersDto } from './dto/createUsersDto';
 import { Users } from './entities/users.entity';
 import { UsersError } from './users.error';
@@ -9,6 +10,8 @@ import { UsersError } from './users.error';
 @Injectable()
 export class UsersService {
   constructor(
+    private readonly codeService: CodeService,
+
     @InjectRepository(Users)
     private usersRepository: Repository<Users>,
   ) {}
@@ -58,9 +61,8 @@ export class UsersService {
     );
   }
 
-  async isUniqCode(code: string) {
-    const user = await this.usersRepository.findOne({ code });
-    return !user;
+  getCode() {
+    return this.codeService.getUniqCode(this.usersRepository);
   }
 
   async saveCode(id: string, code: string) {

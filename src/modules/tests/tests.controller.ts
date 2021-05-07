@@ -58,6 +58,16 @@ export class TestController {
     return this.testsHttpService.getOne(user.id, id);
   }
 
+  @Post(':id/activated')
+  activated(@GetUser() user, @Param('id') id: string) {
+    return this.testsHttpService.activate(user.id, id);
+  }
+
+  @Post(':id/disabled')
+  disabled(@GetUser() user, @Param('id') id: string) {
+    return this.testsHttpService.disable(user.id, id);
+  }
+
   @Put(':id')
   update(
     @GetUser() user,
